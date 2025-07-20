@@ -1,0 +1,20 @@
+.login-input-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    row-gap: 10px;
+}
+
+.username-input,
+.password-input,
+.login-button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-button {
+    background-color: #ff198c;
+    color: white;
+    cursor: pointer;
+}

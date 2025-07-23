@@ -3,28 +3,20 @@ package main
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"golang.org/x/crypto/argon2"
+
 	"github.com/spf13/viper"
-	"log"
+	"golang.org/x/crypto/argon2"
 )
 
-func InitConfig() {
-	viper.SetConfigName("hash_constants")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalf("Error reading config file, %s", err)
-	}
-}
+
 
 func hashPassword(password string, salt string) string {
-	hash := argon2.IDKey([]byte(password), []byte(salt), viper.GetUint32("time"), viper.GetUint32("memory"), viper.GetUint8("threads"), viper.GetUint32("keyLen"))
+	hash := argon2.IDKey([]byte(password), []byte(salt), viper.GetUint32("hash.time"), viper.GetUint32("hash.memory"), viper.GetUint8("hash.threads"), viper.GetUint32("hash.keyLen"))
 	return base64.RawStdEncoding.EncodeToString(hash)
 }
 
 func GenerateSalt() string {
-	salt := make([]byte, viper.GetInt("saltLen"))
+	salt := make([]byte, viper.GetInt("hash.saltLen"))
 	_, err := rand.Read(salt)
 	if err != nil {
 		panic("Failed to generate salt: " + err.Error())

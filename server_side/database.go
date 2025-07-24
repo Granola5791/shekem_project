@@ -119,25 +119,3 @@ func OpenSQLConnection(host string, port int, user string, password string, dbna
 	}
 	return db
 }
-
-func fun() {
-
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
-
-	defer db.Close()
-
-	err := db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	sqlStatement := `
-INSERT INTO users (username, user_role, created_at, hashed_password, salt)
-VALUES ('username', 'admin', NOW(), 'CIef5TxQciapUdekezYAyaWuzwtn6p1lrK2xieziHCI', 'LQxEEpsjti5sP9/YumTrbQ')`
-	_, err = db.Exec(sqlStatement)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
-}

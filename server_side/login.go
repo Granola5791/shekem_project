@@ -1,45 +1,71 @@
 package main
 
-func login(username string, password string) {
-	if !IsValidPassword(password) {
-		println("Invalid password") // implement this
+import (
+	"net/http"
+	"os"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
+
+type loginInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func HandleLogin(c *gin.Context) {
+	var input loginInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
-	if !UserExistsInDB(username) {
-		println("Invalid username or password") // implement this
+	if !(IsValidUserInput(input.Password) && IsValidUserInput(input.Username)) {
+		c.String(http.StatusUnauthorized, "Invalid username or password")
 		return
 	}
 
-	hashedPassword := GetUserHashedPasswordFromDB(username)
-	salt := GetUserSaltFromDB(username)
-	if !VerifyPassword(hashedPassword, password, salt) {
-		println("Invalid username or password") // implement this
+	if !UserExistsInDB(input.Username) {
+		c.String(http.StatusUnauthorized, "User does not exist")
 		return
 	}
 
-	if GetUserRoleFromDB(username) == "admin" {
-		println("Admin logged in") // implement this
-	} else {
-		println("User logged in") // implement this
+	hashedPassword := GetUserHashedPasswordFromDB(input.Username)
+	salt := GetUserSaltFromDB(input.Username)
+	if !VerifyPassword(hashedPassword, input.Password, salt) {
+		c.String(http.StatusUnauthorized, "Invalid username or password")
+		return
 	}
+
+	token, err := GenerateToken(input.Username, GetUserRoleFromDB(input.Username), []byte(os.Getenv("SECRET")))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to create token",
+		})
+		return
+	}
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/", // visible to all paths
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		MaxAge:   1800,
+	})
+
+	c.String(http.StatusOK, "Login successful")
 }
 
 func CreateNewHashedPassword(password string) (string, string) {
 	salt := GenerateSalt()
-	hashedPassword := hashPassword(password, salt)
+	hashedPassword := HashPassword(password, salt)
 	return hashedPassword, salt
 }
 
-func IsValidPassword(password string) bool {
-	var passwordLength int = len(password)
-	if passwordLength < 8 {
-		println("Password must be at least 8 characters long")
-		return false
-	}
-	if passwordLength > 30 {
-		println("Password must not exceed 30 characters")
-		return false
-	}
-	return true
+func IsValidUserInput(input string) bool {
+	var inputLen int = len(input)
+	return inputLen >= 8 && inputLen <= 30 && !strings.ContainsAny(input, " \t\n\r\f\v\b\a\"'")
 }

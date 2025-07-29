@@ -1,0 +1,22 @@
+body{
+    direction: rtl;
+    font-family: 'Vazir', sans-serif;
+}
+
+.caveret-logo {
+    width: 350px;
+}
+
+.login-title {
+    text-align: center;
+    color: #ff198c;
+}
+
+.login-input-container {
+    margin: auto;
+}
+
+.login-response {
+    text-align: center;
+    color: red;
+}

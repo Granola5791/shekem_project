@@ -8,9 +8,7 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
-
-
-func hashPassword(password string, salt string) string {
+func HashPassword(password string, salt string) string {
 	hash := argon2.IDKey([]byte(password), []byte(salt), viper.GetUint32("hash.time"), viper.GetUint32("hash.memory"), viper.GetUint8("hash.threads"), viper.GetUint32("hash.keyLen"))
 	return base64.RawStdEncoding.EncodeToString(hash)
 }
@@ -25,6 +23,6 @@ func GenerateSalt() string {
 }
 
 func VerifyPassword(hashedPassword string, password string, salt string) bool {
-	expectedHash := hashPassword(password, salt)
+	expectedHash := HashPassword(password, salt)
 	return expectedHash == hashedPassword
 }

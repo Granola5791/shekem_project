@@ -3,17 +3,15 @@ package main
 import (
 	"database/sql"
 	"fmt"
-
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
+	"os"
 )
 
 func InsertUserToDB(username string, hashedPassword string, salt string) {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-INSERT INTO users (username, hashed_password, salt)
-VALUES ($1, $2, $3)`
+	sqlStatement := `CALL create_user($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, username, hashedPassword, salt)
 	if err != nil {
 		panic(err)
@@ -21,11 +19,9 @@ VALUES ($1, $2, $3)`
 }
 
 func DeleteUserFromDB(username string) {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-DELETE FROM users
-WHERE username = $1`
+	sqlStatement := `CALL delete_user($1);`
 	_, err := db.Exec(sqlStatement, username)
 	if err != nil {
 		panic(err)
@@ -33,24 +29,29 @@ WHERE username = $1`
 }
 
 func UserExistsInDB(username string) bool {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	var exists bool
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-SELECT * FROM users
-WHERE username = $1`
+	sqlStatement := `SELECT user_exists($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
 		panic(err)
 	}
-	return rows.Next()
+	if !rows.Next() {
+		return false
+	}
+	err = rows.Scan(&exists)
+	if err != nil {
+		panic(err)
+	}
+	return exists
 }
 
 func GetUserRoleFromDB(username string) string {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	var userRole string
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-SELECT user_role FROM users
-WHERE username = $1`
+	sqlStatement := `SELECT get_user_role($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
 		panic(err)
@@ -58,21 +59,18 @@ WHERE username = $1`
 	if !rows.Next() {
 		return ""
 	}
-	var userRole string
 	err = rows.Scan(&userRole)
 	if err != nil {
 		panic(err)
 	}
 	return userRole
-
 }
 
 func GetUserHashedPasswordFromDB(username string) string {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	var hashedPassword string
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-SELECT hashed_password FROM users
-WHERE username = $1`
+	sqlStatement := `SELECT get_hashed_password($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
 		panic(err)
@@ -80,7 +78,6 @@ WHERE username = $1`
 	if !rows.Next() {
 		return ""
 	}
-	var hashedPassword string
 	err = rows.Scan(&hashedPassword)
 	if err != nil {
 		panic(err)
@@ -89,11 +86,10 @@ WHERE username = $1`
 }
 
 func GetUserSaltFromDB(username string) string {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), viper.GetString("database.password"), viper.GetString("database.dbname"))
+	var salt string
+	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
 	defer db.Close()
-	sqlStatement := `
-SELECT salt FROM users
-WHERE username = $1`
+	sqlStatement := `SELECT get_salt($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
 		panic(err)
@@ -101,7 +97,6 @@ WHERE username = $1`
 	if !rows.Next() {
 		return ""
 	}
-	var salt string
 	err = rows.Scan(&salt)
 	if err != nil {
 		panic(err)

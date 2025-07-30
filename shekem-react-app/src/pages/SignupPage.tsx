@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import SignupInput from '../components/SignupInput.tsx'
 import './SignupPage.css';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,13 @@ import { Link } from 'react-router-dom';
 
 
 const SignupPage = () => {
+    useEffect(() => {
+        document.body.style.backgroundColor = 'rgba(222, 255, 140, 1)';
+        return () => {
+            document.body.style.backgroundColor = ''; // Clean up
+        };
+    }, []);
+
     const [response, setResponse] = React.useState<React.ReactNode>('');
 
     const handleSignup = async (username: string, password: string, repeatedPassword: string) => {
@@ -42,8 +49,9 @@ const SignupPage = () => {
         <>
             <img src="./src/assets/caveret-logo.svg" alt="caveret-logo" className='caveret-logo' />
             <h1 className='signup-title'>הרשמה לחשבון</h1>
-            
+
             <div className='signup-input-container'>
+                <p>כבר יש לכם חשבון? <Link to="/login">להתחברות!</Link></p>
                 <p><b>שימו לב:</b> שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*).</p>
                 <SignupInput
                     onSignup={handleSignup}

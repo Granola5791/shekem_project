@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import LoginInput from '../components/LoginInput';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 const LoginPage = () => {
+  useEffect(() => {
+    document.body.style.backgroundColor = 'rgba(255, 255, 157, 1)';
+    return () => {
+      document.body.style.backgroundColor = ''; // Clean up
+    };
+  }, []);
+
   const [response, setResponse] = React.useState('');
   const navigate = useNavigate();
 
@@ -33,7 +40,10 @@ const LoginPage = () => {
     <>
       <img src="./src/assets/caveret-logo.svg" alt="caveret-logo" className='caveret-logo' />
       <h1 className='login-title'>כניסה לחשבון</h1>
-      <div className='login-input-container'><LoginInput onLogin={handleLogin} buttonText='נו תן כבר להיכנס'/></div>
+      <div className='login-input-container'>
+        <p>עוד אין לכם חשבון? <Link to="/signup">להרשמה!</Link></p>
+        <LoginInput onLogin={handleLogin} buttonText='נו תן כבר להיכנס' />
+      </div>
       <p className='login-response'>{response}</p>
     </>
   )

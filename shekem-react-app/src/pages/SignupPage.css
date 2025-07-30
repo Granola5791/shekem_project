@@ -1,0 +1,23 @@
+body{
+    direction: rtl;
+    font-family: 'Vazir', sans-serif;
+}
+
+.caveret-logo {
+    width: 350px;
+}
+
+.signup-title {
+    margin-top: 0px;
+    text-align: center;
+    color: rgb(9, 191, 9)
+}
+
+.signup-input-container {
+    margin: auto;
+}
+
+.signup-response {
+    text-align: center;
+    color: red;
+}

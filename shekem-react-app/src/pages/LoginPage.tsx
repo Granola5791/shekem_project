@@ -24,7 +24,7 @@ const LoginPage = () => {
         setResponse("שם המשתמש או הסיסמה שגויים");
       }
     } catch (err: any) {
-      setResponse('שגיאה בהתחברות לשרת');
+      setResponse('שגיאה בהתחברות לשרת, אנא נסה שוב במועד מאוחר יותר');
       console.error('Failed to contact backend:', err);
     }
   };

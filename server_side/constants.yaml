@@ -1,0 +1,30 @@
+hash:
+  time: 2 # Number of iterations
+  memory: 65536 # 64 MiB
+  threads: 4 # Number of threads
+  keyLen: 32 # Length of the derived key
+  saltLen: 16 # Length of the salt
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  dbname: "postgres"
+
+server:
+  listen_addr: "localhost:8081"
+  api:
+    login_path: "api/login"
+    signup_path: "api/signup"
+    check_login_path: "api/check_login"
+
+error:
+  user_exists: "User already exists"
+  user_not_exists: "User does not exist"
+  invalid_useraname_or_password: "Invalid username or password"
+  Invalid_input: "Invalid input"
+  failed_generate_token: "Failed to generate token"
+
+success:
+  login_success: "Login successful"
+  signup_success: "Signup successful"

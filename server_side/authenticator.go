@@ -40,7 +40,7 @@ func RequireAuthentication(c *gin.Context) {
 	}
 
 	// validate token
-	jwtKey := []byte(os.Getenv("SECRET"))
+	jwtKey := []byte(os.Getenv("JWT_SECRET"))
 	token, err := ParseToken(tokenString, jwtKey)
 	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)

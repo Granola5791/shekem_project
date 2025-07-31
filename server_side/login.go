@@ -38,7 +38,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := GenerateToken(input.Username, GetUserRoleFromDB(input.Username), []byte(os.Getenv("SECRET")))
+	token, err := GenerateToken(input.Username, GetUserRoleFromDB(input.Username), []byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": viper.GetString("error.failed_generate_token"),

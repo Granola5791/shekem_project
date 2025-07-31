@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
-	"strings"
-
-	"github.com/gin-gonic/gin"
+	"regexp"
 )
 
 type loginInput struct {
@@ -17,31 +17,31 @@ func HandleLogin(c *gin.Context) {
 	var input loginInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_input")})
 		return
 	}
 
 	if !(IsValidUserInput(input.Password) && IsValidUserInput(input.Username)) {
-		c.String(http.StatusUnauthorized, "Invalid username or password")
+		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_username_or_password")})
 		return
 	}
 
 	if !UserExistsInDB(input.Username) {
-		c.String(http.StatusUnauthorized, "User does not exist")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": viper.GetString("invalid_username_or_password")})
 		return
 	}
 
 	hashedPassword := GetUserHashedPasswordFromDB(input.Username)
 	salt := GetUserSaltFromDB(input.Username)
 	if !VerifyPassword(hashedPassword, input.Password, salt) {
-		c.String(http.StatusUnauthorized, "Invalid username or password")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": viper.GetString("error.invalid_password")})
 		return
 	}
 
 	token, err := GenerateToken(input.Username, GetUserRoleFromDB(input.Username), []byte(os.Getenv("SECRET")))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to create token",
+			"error": viper.GetString("error.failed_generate_token"),
 		})
 		return
 	}
@@ -56,16 +56,17 @@ func HandleLogin(c *gin.Context) {
 		MaxAge:   1800,
 	})
 
-	c.String(http.StatusOK, "Login successful")
+	c.JSON(http.StatusOK, gin.H{"success": viper.GetString("success.login_success")})
 }
 
-func CreateNewHashedPassword(password string) (string, string) {
-	salt := GenerateSalt()
-	hashedPassword := HashPassword(password, salt)
-	return hashedPassword, salt
-}
-
-func IsValidUserInput(input string) bool {
-	var inputLen int = len(input)
-	return inputLen >= 8 && inputLen <= 30 && !strings.ContainsAny(input, " \t\n\r\f\v\b\a\"'")
+func IsValidUserInput(s string) bool {
+	/*
+		TODO:
+		1. learn regex
+		2. Const
+		3. learn how to make this regex beutiful (seperate url)
+		4. regex tutorial. (1)
+	*/
+	re := regexp.MustCompile(`^[a-zA-Z0-9!@#\$%\^&\*\-_=+]{8,30}$`)
+	return re.MatchString(s)
 }

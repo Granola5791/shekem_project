@@ -8,9 +8,10 @@ import (
 	"os"
 )
 
+var db *sql.DB
+
+// TODO : make one global db connection
 func InsertUserToDB(username string, hashedPassword string, salt string) {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `CALL create_user($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, username, hashedPassword, salt)
 	if err != nil {
@@ -19,8 +20,6 @@ func InsertUserToDB(username string, hashedPassword string, salt string) {
 }
 
 func DeleteUserFromDB(username string) {
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `CALL delete_user($1);`
 	_, err := db.Exec(sqlStatement, username)
 	if err != nil {
@@ -30,8 +29,6 @@ func DeleteUserFromDB(username string) {
 
 func UserExistsInDB(username string) bool {
 	var exists bool
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `SELECT user_exists($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
@@ -49,8 +46,6 @@ func UserExistsInDB(username string) bool {
 
 func GetUserRoleFromDB(username string) string {
 	var userRole string
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `SELECT get_user_role($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
@@ -68,8 +63,6 @@ func GetUserRoleFromDB(username string) string {
 
 func GetUserHashedPasswordFromDB(username string) string {
 	var hashedPassword string
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `SELECT get_hashed_password($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
@@ -87,8 +80,6 @@ func GetUserHashedPasswordFromDB(username string) string {
 
 func GetUserSaltFromDB(username string) string {
 	var salt string
-	db := OpenSQLConnection(viper.GetString("database.host"), viper.GetInt("database.port"), viper.GetString("database.user"), os.Getenv("SQL_PASSWORD"), viper.GetString("database.dbname"))
-	defer db.Close()
 	sqlStatement := `SELECT get_salt($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
@@ -104,13 +95,18 @@ func GetUserSaltFromDB(username string) string {
 	return salt
 }
 
-func OpenSQLConnection(host string, port int, user string, password string, dbname string) *sql.DB {
+func OpenSQLConnection() {
+	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		viper.GetString("database.host"),
+		viper.GetInt("database.port"),
+		viper.GetString("database.user"),
+		os.Getenv("SQL_PASSWORD"),
+		viper.GetString("database.dbname"),
+	)
 
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-	return db
 }

@@ -4,7 +4,6 @@ export default async function HomeLoader() {
     credentials: 'include'
   });
   if (res.status === 401) {
-    console.log('Unauthorized');
     throw new Response('Unauthorized', {
       status: 302,
       headers: { Location: '/login' },

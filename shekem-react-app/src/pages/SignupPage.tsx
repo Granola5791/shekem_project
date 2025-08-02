@@ -15,6 +15,7 @@ const SignupPage = () => {
 
     const [response, setResponse] = React.useState<React.ReactNode>('');
 
+    // TODO: put string constants in a yaml file
     const handleSignup = async (username: string, password: string, repeatedPassword: string) => {
         setResponse('רגע...');
         if (password !== repeatedPassword) {
@@ -26,7 +27,6 @@ const SignupPage = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
-                credentials: 'include',
             });
             switch (res.status) {
                 case 201:

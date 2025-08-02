@@ -13,6 +13,8 @@ database:
 
 server:
   listen_addr: "localhost:8081"
+  frontend_addr: "http://localhost:5173"
+  auth_cookie_name: "auth_token"
   api:
     login_path: "api/login"
     signup_path: "api/signup"

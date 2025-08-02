@@ -10,7 +10,7 @@ func SetRouter() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, 
+		AllowOrigins:     []string{viper.GetString("server.frontend_addr")}, 
 		AllowMethods:     []string{"POST", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type"},
 		AllowCredentials: true,

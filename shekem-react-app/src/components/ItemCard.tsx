@@ -10,32 +10,42 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 interface ItemCardProps {
+    id: number
     buttonText?: string
     image?: string
-    AddToCart?: (selectCount: number) => void
+    itemTitle: string
+    price: number
+    AddToCart?: (id : number, selectCount: number) => void
 }
 
-const ItemCard = ({ buttonText, image, AddToCart }: ItemCardProps) => {
+const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle, price}: ItemCardProps) => {
     const [selectCount, setSelectCount] = React.useState(0);
 
     return (
-        <Card sx={{ width: '180px', height: '400px', border: '2px solid yellow' }}>
+        <Card sx={{ width: '180px', height: '350px', border: '2px solid yellow', padding: '10px' }}>
             <CardMedia>
                 <img src={image} />
             </CardMedia>
+
             <CardContent>
-                <Typography>
-                    Lorem ipsum dolor sit amet consectetur sint.
+                <Typography variant="h6">
+                    {itemTitle}
+                </Typography>
+
+                <Typography variant="h6">
+                    {price}
                 </Typography>
             </CardContent>
-            <Box sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button
                     variant="contained"
                     sx={{
                         backgroundColor: 'rgb(239, 232, 26)',
-                        ':hover': { backgroundColor: 'rgba(255, 247, 0, 1)' }
+                        ':hover': { backgroundColor: 'rgba(255, 247, 0, 1)' },
+                        width: '90px'
                     }}
-                    onClick={() => AddToCart?.(selectCount)}
+                    onClick={() => AddToCart?.(id, selectCount)}
                 >
                     {buttonText}
                 </Button>

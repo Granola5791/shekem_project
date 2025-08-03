@@ -19,6 +19,7 @@ server:
     login_path: "api/login"
     signup_path: "api/signup"
     check_login_path: "api/check_login"
+    add_to_cart_path: "api/add_to_cart"
 
 error:
   user_exists: "User already exists"

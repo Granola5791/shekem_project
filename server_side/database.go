@@ -95,6 +95,14 @@ func GetUserSaltFromDB(username string) string {
 	return salt
 }
 
+func AddToCart(userID string, productID string, quantity int) {
+	sqlStatement := `CALL add_to_cart($1, $2, $3);`
+	_, err := db.Exec(sqlStatement, userID, productID, quantity)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func OpenSQLConnection() {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

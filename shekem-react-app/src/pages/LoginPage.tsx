@@ -24,7 +24,7 @@ const LoginPage = () => {
         credentials: 'include',
       });
 
-      
+
       if (res.status === 200) {
         navigate('/home');
       }

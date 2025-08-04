@@ -2,14 +2,21 @@ import React, { use, useEffect } from 'react'
 import { Container } from '@mui/material';
 import ItemCard from '../components/ItemCard';
 import { parse, stringify } from 'yaml'
+import { isUnauthorizedResponse } from '../utils/http.ts';
 
-function AddToCart(id: number, selectCount: number) {
-    fetch('http://localhost:8081/api/add_to_cart', {
+async function AddToCart(id: number, selectCount: number) {
+    const res = await fetch('http://localhost:8081/api/add_to_cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, selectCount }),
+        body: JSON.stringify({ product_id: id, quantity: selectCount }),
         credentials: 'include',
     });
+    if (isUnauthorizedResponse(res)) {
+        throw new Response('Unauthorized', {
+            status: 302,
+            headers: { Location: '/login' },
+        });
+    }
 }
 
 type config = {

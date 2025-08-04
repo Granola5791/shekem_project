@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import CardMedia from '@mui/material/CardMedia';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Divider from '@mui/material/Divider';
 
 interface ItemCardProps {
     id: number
@@ -15,29 +16,40 @@ interface ItemCardProps {
     image?: string
     itemTitle: string
     price: number
-    AddToCart?: (id : number, selectCount: number) => void
+    moneySymbol?: string
+    AddToCart?: (id: number, selectCount: number) => void
 }
 
-const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle, price}: ItemCardProps) => {
+const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle, price, moneySymbol = "$" }: ItemCardProps) => {
     const [selectCount, setSelectCount] = React.useState(0);
 
     return (
-        <Card sx={{ width: '180px', height: '350px', border: '2px solid yellow', padding: '10px' }}>
-            <CardMedia>
-                <img src={image} />
-            </CardMedia>
+        <Card sx={{ width: '180px', height: '350px', border: '2px solid rgba(255, 251, 123, 0.8)', padding: '10px', boxShadow: '10px 10px 5px 0px rgba(0, 0, 0, 0.17)' }}>
 
-            <CardContent>
-                <Typography variant="h6">
+            <CardMedia
+                component="img"
+                image={image}
+                alt="item"
+                height="150px"
+                sx={{ marginBottom: '0px' }}
+            />
+
+            <Divider sx={{ marginY: '4px' }}></Divider>
+
+            <CardContent sx={{ padding: 0, height: '130px' }}>
+                <Typography variant="body1" sx={{ height: '100px', textAlign: 'center', overflow: 'hidden' }} >
                     {itemTitle}
                 </Typography>
 
-                <Typography variant="h6">
-                    {price}
+                <Typography variant="h6" sx={{ color: 'rgb(239, 232, 26)', fontWeight: 'bold', marginTop: 'px' }}>
+                    {price} {moneySymbol}
                 </Typography>
             </CardContent>
 
+            <Divider sx={{ backgroundColor: 'rgba(255, 251, 123, 0.8)', marginY: '4px' }} />
+
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+
                 <Button
                     variant="contained"
                     sx={{

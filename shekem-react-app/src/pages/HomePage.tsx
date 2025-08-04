@@ -21,6 +21,7 @@ async function AddToCart(id: number, selectCount: number) {
 
 type config = {
     add_to_cart_button: string
+    shekel_symbol: string
 }
 
 const HomePage = () => {
@@ -38,8 +39,9 @@ const HomePage = () => {
             <Container sx={{ height: '100vh' }}>
                 <ItemCard
                     id={1}
-                    itemTitle='מוצר'
+                    itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
                     price={100}
+                    moneySymbol={config.shekel_symbol}
                     buttonText={config.add_to_cart_button}
                     image='src/assets/item_example.jpg'
                     AddToCart={AddToCart}

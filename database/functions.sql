@@ -61,3 +61,23 @@ BEGIN
    RETURN ret_user_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION search_users(search_term VARCHAR(50))
+RETURNS TABLE(user_id INT, username VARCHAR(50), user_role VARCHAR(255)) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT u.user_id, u.username, u.user_role
+   FROM users u
+   WHERE u.username ILIKE '%' || search_term || '%';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION search_items(search_term VARCHAR(50))
+RETURNS TABLE(item_id INT) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT i.item_id
+   FROM items i
+   WHERE i.item_name ILIKE '%' || search_term || '%';
+END;
+$$ LANGUAGE plpgsql;

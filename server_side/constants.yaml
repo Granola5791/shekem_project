@@ -10,6 +10,7 @@ database:
   port: 5432
   user: "postgres"
   dbname: "postgres"
+  search_page_size: 10
 
 server:
   listen_addr: "localhost:8081"

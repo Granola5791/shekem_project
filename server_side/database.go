@@ -119,6 +119,30 @@ func AddToCart(userID int, productID int, quantity int) {
 	}
 }
 
+func SearchItems(searchTerm string, page int) []int {
+	pageSize := viper.GetInt("search.page_size")
+	itemIDs := make([]int, pageSize)
+	offset := (page - 1) * pageSize
+	sqlStatement := `CALL search_items($1)`
+	rows, err := db.Query(sqlStatement, searchTerm)
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < offset && rows.Next(); i++ {
+		rows.Next()
+	}
+	if !rows.Next() {
+		return nil
+	}
+	for i := 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&itemIDs[i])
+		if err != nil {
+			panic(err)
+		}
+	}
+	return itemIDs
+}
+
 func OpenSQLConnection() {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

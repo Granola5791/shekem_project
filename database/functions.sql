@@ -48,3 +48,16 @@ BEGIN
    RETURN ret_user_exists;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION get_user_id(username_param VARCHAR(50)) 
+RETURNS INT AS $$
+DECLARE
+   ret_user_id INT;
+BEGIN
+   SELECT user_id INTO ret_user_id 
+   FROM users 
+   WHERE username = username_param;
+
+   RETURN ret_user_id;
+END;
+$$ LANGUAGE plpgsql;

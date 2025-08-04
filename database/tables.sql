@@ -17,7 +17,7 @@ CREATE TABLE orders (
 
 CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
+  item_name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE order_items (

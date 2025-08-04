@@ -10,7 +10,23 @@ import (
 
 var db *sql.DB
 
-// TODO : make one global db connection
+func GetUserIDFromDB(username string) (int, error) {
+	var userID int
+	sqlStatement := `SELECT get_user_id($1)`
+	rows, err := db.Query(sqlStatement, username)
+	if err != nil {
+		return 0, err
+	}
+	if !rows.Next() {
+		return 0, sql.ErrNoRows
+	}
+	err = rows.Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
 func InsertUserToDB(username string, hashedPassword string, salt string) {
 	sqlStatement := `CALL create_user($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, username, hashedPassword, salt)
@@ -95,7 +111,7 @@ func GetUserSaltFromDB(username string) string {
 	return salt
 }
 
-func AddToCart(userID string, productID string, quantity int) {
+func AddToCart(userID int, productID int, quantity int) {
 	sqlStatement := `CALL add_to_cart($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, userID, productID, quantity)
 	if err != nil {

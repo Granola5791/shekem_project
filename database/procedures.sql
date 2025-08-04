@@ -16,16 +16,16 @@ BEGIN
 END;
 $$
 
-CREATE PROCEDURE add_to_cart(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
+CREATE OR REPLACE PROCEDURE add_to_cart(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF EXISTS (SELECT * FROM cart WHERE user_id = user_id_param AND item_id = item_id_param) THEN
-        UPDATE cart
+    IF EXISTS (SELECT * FROM cart_items WHERE user_id = user_id_param AND item_id = item_id_param) THEN
+        UPDATE cart_items
         SET quantity = quantity + quantity_param
         WHERE user_id = user_id_param AND item_id = item_id_param;
     ELSE
-        INSERT INTO cart (user_id, item_id, quantity)
+        INSERT INTO cart_items (user_id, item_id, quantity)
         VALUES (user_id_param, item_id_param, quantity_param);
     END IF;
 END;

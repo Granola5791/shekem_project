@@ -5,16 +5,21 @@ import (
 	"os"
 	"strings"
 	"time"
-	"github.com/spf13/viper"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 )
 
 func GenerateToken(username string, role string, jwtKey []byte) (string, error) {
+	userID, err := GetUserIDFromDB(username)
+	if err != nil {
+		return "", err
+	}
 	claims := jwt.MapClaims{
-		"username": username,
-		"role":     role,
-		"exp":      time.Now().Add(time.Minute * 30).Unix(),
+		"userID": userID,
+		"role":   role,
+		"exp":    time.Now().Add(time.Minute * 30).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtKey)
@@ -32,6 +37,7 @@ func ParseToken(tokenString string, jwtKey []byte) (*jwt.Token, error) {
 }
 
 func RequireAuthentication(c *gin.Context) {
+
 	// get cookie
 	tokenString, err := c.Cookie(viper.GetString("server.auth_cookie_name"))
 	if err != nil {
@@ -60,7 +66,7 @@ func RequireAuthentication(c *gin.Context) {
 		return
 	}
 
-	c.Set("username", claims["username"].(string))
+	c.Set("userID", int(claims["userID"].(float64)))
 	c.Set("role", claims["role"].(string))
 
 	c.Next()
@@ -73,7 +79,7 @@ func RequireAdmin(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
-	if !strings.Contains(roleString, "admin"){
+	if !strings.Contains(roleString, "admin") {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}

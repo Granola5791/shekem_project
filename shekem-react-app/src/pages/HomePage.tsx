@@ -9,7 +9,8 @@ import { parse, stringify } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
 import { useNavigate } from 'react-router-dom';
-
+import CategoryList from '../components/CategoryList.tsx';
+import type { Category } from '../components/CategoryList.tsx';
 
 
 type Config = {
@@ -55,6 +56,21 @@ const fetchItem = async () => {
     return data.recommendedItems;
 };
 
+const fetchItems = async () => {
+    // to implement: get items by category
+}
+
+const fetchCategories = async () => {
+    const res = await fetch('http://localhost:8081/api/get_categories', {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error("Failed to fetch categories");
+    const data = await res.json();
+    console.log(data);
+    return data.categories;
+}
+
 const fetchConfig = async () => {
     const res = await fetch('src/constants/hebrew.yaml');
     const text = await res.text();
@@ -68,11 +84,15 @@ const HomePage = () => {
     const [recommendedItems, setRecommendedItems] = useState<Item[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null);
+    const [currentItems, setCurrentItems] = useState<Item[] | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [items, config] = await Promise.all([fetchItem(), fetchConfig()]);
+                const [items, config, myCategories] = await Promise.all([fetchItem(), fetchConfig(), fetchCategories()]);
+                setCategories(myCategories);
+                console.log(myCategories);
                 setRecommendedItems(items);
                 setConfig(config);
             } catch (err: any) {
@@ -92,7 +112,6 @@ const HomePage = () => {
     }
 
 
-
     return (
         <>
             <AppBar position='fixed' sx={{ height: '15vh', bgcolor: 'rgba(255, 235, 19, 1)' }}>
@@ -107,9 +126,13 @@ const HomePage = () => {
                     </Grid>
                 </Grid>
             </AppBar>
-            <Container sx={{ height: '80vh', marginTop: '20vh' }}>
-                <Box sx={{ height: 'fit-content', padding: '15px', borderBottom: '2px dotted rgba(255, 235, 19, 1)', borderTop: '2px dotted rgba(255, 235, 19, 1)'}}>
-                    <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '10px'}} >{config.recommended_items_title}</Typography>
+
+            <Container sx={{ height: '80vh', marginTop: '17vh' }}>
+
+                <CategoryList infos={categories ?? []} />
+
+                <Box sx={{ height: 'fit-content', padding: '15px', marginRight: '15vw', borderBottom: '2px dotted rgba(255, 235, 19, 1)', borderTop: '2px dotted rgba(255, 235, 19, 1)' }}>
+                    <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '10px' }} >{config.recommended_items_title}</Typography>
                     <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
                         {recommendedItems.map((item) => <ItemCard
                             key={item.id}

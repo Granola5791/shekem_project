@@ -10,6 +10,7 @@ import (
 
 var db *sql.DB
 
+
 func GetUserIDFromDB(username string) (int, error) {
 	var userID int
 	sqlStatement := `SELECT get_user_id($1)`
@@ -161,6 +162,24 @@ func GetRecommendedItems() []Item {
 		}
 	}
 	return items
+}
+
+func GetCategories() []Category {
+	amount := GetIntFromConfig("database.categories_amount")
+	categories := make([]Category, amount)
+	sqlStatement := `SELECT * FROM categories;`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	for i := 0; i < amount && rows.Next(); i++ {
+		err = rows.Scan(&categories[i].ID, &categories[i].Name)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return categories
 }
 
 func OpenSQLConnection() {

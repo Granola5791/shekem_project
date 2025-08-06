@@ -6,25 +6,25 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import InboxIcon from '@mui/icons-material/Inbox'
 
-export type CategoryInfo = {
-    names: string
-    IDs: number
+export type Category = {
+    name: string
+    id: number
 }
 
 interface CategoryListProps {
-    infos: CategoryInfo[]
+    infos: Category[]
 }
 
 
 const CategoryList = ({ infos }: CategoryListProps) => {
     return (
         <>
-            <List sx={{ width: '15%', right: 0, position: 'fixed' }}>
+            <List sx={{ width: '15%', height: '100%', right: 0, position: 'fixed', bgcolor: 'rgba(255, 190, 13, 0.82)'}}>
                 {infos.map((info) => {
                     return (
-                        <ListItem disablePadding key={info.IDs}>
+                        <ListItem disablePadding key={info.id}>
                             <ListItemButton sx={{ textAlign: 'right', display: 'flex', gap: 1 }}>
-                                <ListItemText primary={info.names} sx={{ margin: 0 }} />
+                                <ListItemText primary={info.name} sx={{ margin: 0 }} />
                             </ListItemButton>
                         </ListItem>
                     )

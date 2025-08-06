@@ -11,6 +11,7 @@ database:
   user: "postgres"
   dbname: "postgres"
   search_page_size: 10
+  recommended_items_amount: 2
 
 server:
   listen_addr: "localhost:8081"
@@ -21,6 +22,7 @@ server:
     signup_path: "api/signup"
     check_login_path: "api/check_login"
     add_to_cart_path: "api/add_to_cart"
+    get_recommended_items_path: "api/get_recommended_items"
 
 error:
   user_exists: "User already exists"
@@ -28,6 +30,7 @@ error:
   invalid_useraname_or_password: "Invalid username or password"
   Invalid_input: "Invalid input"
   failed_generate_token: "Failed to generate token"
+  missing_config: "Missing configuration for key: "
 
 success:
   login_success: "Login successful"

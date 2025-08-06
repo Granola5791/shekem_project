@@ -143,6 +143,23 @@ func SearchItems(searchTerm string, page int) []int {
 	return itemIDs
 }
 
+func GetRecommendedItems() []Item {
+	amount := GetIntFromConfig("database.recommended_items_amount")
+	items := make([]Item, amount)
+	sqlStatement := `SELECT * FROM recommended_items;`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < amount && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].PhotoPath, &items[i].Price)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return items
+}
+
 func OpenSQLConnection() {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

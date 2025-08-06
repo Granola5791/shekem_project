@@ -40,8 +40,15 @@ CREATE TABLE cart_items (
   FOREIGN KEY (item_id) REFERENCES items(item_id)
 );
 
-INSERT INTO items (item_name, price, photo_path) VALUES
-('JBL רמקול אלחוטי FLIP 6 שחור', 299.00, src\assets\item_example.jpg);
+CREATE TABLE categories (
+  category_id SERIAL PRIMARY KEY,
+  category_name VARCHAR(255) NOT NULL
+);
 
-ALTER TABLE items
-ADD COLUMN price DECIMAL(10, 2) NOT NULL;
+CREATE TABLE cat_to_item (
+  cat_to_item_id SERIAL PRIMARY KEY,
+  category_id INT NOT NULL,
+  item_id INT NOT NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(category_id),
+  FOREIGN KEY (item_id) REFERENCES items(item_id)
+);

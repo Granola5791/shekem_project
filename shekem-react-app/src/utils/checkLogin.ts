@@ -9,9 +9,5 @@ export default async function HomeLoader() {
       headers: { Location: '/login' },
     });
   }
-  else {
-    console.log('Authorized');
-  }
-
   return null;
 }

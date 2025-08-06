@@ -1,4 +1,4 @@
-import React, { use, useEffect } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { AppBar, Container, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -6,6 +6,21 @@ import ItemCard from '../components/ItemCard';
 import { parse, stringify } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
+
+
+
+type Config = {
+    add_to_cart_button: string
+    shekel_symbol: string
+    search_bar_text: string
+}
+
+type Item = {
+    id: number;
+    name: string;
+    photoPath: string;
+    price: number;
+};
 
 async function AddToCart(id: number, selectCount: number) {
     const res = await fetch('http://localhost:8081/api/add_to_cart', {
@@ -22,25 +37,60 @@ async function AddToCart(id: number, selectCount: number) {
     }
 }
 
+const fetchItem = async () => {
+    const res = await fetch('http://localhost:8081/api/get_recommended_items', {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error("Failed to fetch item");
+    const data = await res.json();
+    return data.recommendedItems;
+};
+
+const fetchConfig = async () => {
+    const res = await fetch('src/constants/hebrew.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
 function Search(searchInput: string) {
 
 }
 
-type config = {
-    add_to_cart_button: string
-    shekel_symbol: string
-    search_bar_text: string
-}
 
 const HomePage = () => {
-    const [config, setConfig] = React.useState<config | null>(null);
+    const [config, setConfig] = React.useState<Config | null>(null);
+    const [ReccomendedItems, setReccomendedItems] = useState<Item[] | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [items, config] = await Promise.all([fetchItem(), fetchConfig()]);
+                setReccomendedItems(items);
+                setConfig(config);
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         fetch('src/constants/hebrew.yaml')
             .then(response => response.text())
             .then(text => setConfig(parse(text)));
     }, []);
-    if (!config) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
+    if (!config || loading || !ReccomendedItems) return <p>Loading...</p>;
+
+
+
+
+
 
     return (
         <>
@@ -58,97 +108,16 @@ const HomePage = () => {
             </AppBar>
             <Container sx={{ height: '80vh', marginTop: '20vh' }}>
                 <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
+                    {ReccomendedItems.map((item) => <ItemCard
+                        key={item.id}
+                        id={item.id}
+                        itemTitle={item.name}
+                        price={item.price}
                         moneySymbol={config.shekel_symbol}
                         buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
+                        image={item.photoPath}
                         AddToCart={AddToCart}
-                    />
-                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />
-                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />                    <ItemCard
-                        id={1}
-                        itemTitle={"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"}
-                        price={100}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image='src/assets/item_example.jpg'
-                        AddToCart={AddToCart}
-                    />
+                    />)}
                 </Grid>
             </Container >
         </>

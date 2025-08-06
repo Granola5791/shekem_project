@@ -15,11 +15,15 @@ func HandleAddToCart(c *gin.Context) {
 	var input cartItem
 	userID, _ := c.Get("userID")
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil || input.Quantity <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_input")})
 		return
 	}
 
-	AddToCart(userID.(int), input.ProductID, input.Quantity)
+	if err := AddToCart(userID.(int), input.ProductID, input.Quantity); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": "Item added to cart successfully"})
 }

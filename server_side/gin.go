@@ -20,7 +20,7 @@ func SetRouter() {
 	router.POST(viper.GetString("server.api.signup_path"), HandleSignup)
 	router.POST(viper.GetString("server.api.add_to_cart_path"), RequireAuthentication, HandleAddToCart)
 	router.GET(viper.GetString("server.api.check_login_path"), RequireAuthentication)
-	router.GET(viper.GetString("server.api.get_recommended_items_path"), HandleGetRecommendedItems)
+	router.GET(viper.GetString("server.api.get_recommended_items_path"), RequireAuthentication, HandleGetRecommendedItems)
 
 	router.Run(viper.GetString("server.listen_addr"))
 }

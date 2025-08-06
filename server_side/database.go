@@ -111,12 +111,13 @@ func GetUserSaltFromDB(username string) string {
 	return salt
 }
 
-func AddToCart(userID int, productID int, quantity int) {
+func AddToCart(userID int, productID int, quantity int) error {
 	sqlStatement := `CALL add_to_cart($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, userID, productID, quantity)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func SearchItems(searchTerm string, page int) []int {

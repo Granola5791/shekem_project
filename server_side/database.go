@@ -129,6 +129,7 @@ func SearchItems(searchTerm string, page int) []int {
 	if err != nil {
 		panic(err)
 	}
+	defer rows.Close()
 	for i := 0; i < offset && rows.Next(); i++ {
 		rows.Next()
 	}
@@ -152,6 +153,7 @@ func GetRecommendedItems() []Item {
 	if err != nil {
 		panic(err)
 	}
+	defer rows.Close()
 	for i := 0; i < amount && rows.Next(); i++ {
 		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].PhotoPath, &items[i].Price)
 		if err != nil {

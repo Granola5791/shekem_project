@@ -8,7 +8,6 @@ import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
 
 
-
 type Config = {
     add_to_cart_button: string
     shekel_symbol: string
@@ -42,7 +41,7 @@ const fetchItem = async () => {
         method: 'GET',
         credentials: 'include'
     });
-    if (!res.ok) throw new Error("Failed to fetch item");
+    if (!res.ok) throw new Error("Failed to fetch items");
     const data = await res.json();
     return data.recommendedItems;
 };
@@ -60,7 +59,7 @@ function Search(searchInput: string) {
 
 const HomePage = () => {
     const [config, setConfig] = React.useState<Config | null>(null);
-    const [ReccomendedItems, setReccomendedItems] = useState<Item[] | null>(null);
+    const [recommendedItems, setRecommendedItems] = useState<Item[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -68,7 +67,7 @@ const HomePage = () => {
         const fetchData = async () => {
             try {
                 const [items, config] = await Promise.all([fetchItem(), fetchConfig()]);
-                setReccomendedItems(items);
+                setRecommendedItems(items);
                 setConfig(config);
             } catch (err: any) {
                 setError(err.message);
@@ -78,14 +77,8 @@ const HomePage = () => {
         };
         fetchData();
     }, []);
-
-    useEffect(() => {
-        fetch('src/constants/hebrew.yaml')
-            .then(response => response.text())
-            .then(text => setConfig(parse(text)));
-    }, []);
     if (error) return <p>{error}</p>;
-    if (!config || loading || !ReccomendedItems) return <p>Loading...</p>;
+    if (!config || loading || !recommendedItems) return <p>Loading...</p>;
 
 
 
@@ -108,7 +101,7 @@ const HomePage = () => {
             </AppBar>
             <Container sx={{ height: '80vh', marginTop: '20vh' }}>
                 <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                    {ReccomendedItems.map((item) => <ItemCard
+                    {recommendedItems.map((item) => <ItemCard
                         key={item.id}
                         id={item.id}
                         itemTitle={item.name}

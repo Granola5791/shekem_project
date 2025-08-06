@@ -18,6 +18,8 @@ CREATE TABLE orders (
 CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
   item_name VARCHAR(255) NOT NULL
+  price DECIMAL(10, 2) NOT NULL,
+  photo_path VARCHAR(255)
 );
 
 CREATE TABLE order_items (
@@ -37,3 +39,9 @@ CREATE TABLE cart_items (
   FOREIGN KEY (user_id) REFERENCES users(user_id),
   FOREIGN KEY (item_id) REFERENCES items(item_id)
 );
+
+INSERT INTO items (item_name, price, photo_path) VALUES
+('JBL רמקול אלחוטי FLIP 6 שחור', 299.00, src\assets\item_example.jpg);
+
+ALTER TABLE items
+ADD COLUMN price DECIMAL(10, 2) NOT NULL;

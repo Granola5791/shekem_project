@@ -1,17 +1,22 @@
 import React, { use, useEffect, useState } from 'react'
-import { AppBar, Container, IconButton } from '@mui/material';
+import { AppBar, Box, Container, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import ItemCard from '../components/ItemCard';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import { parse, stringify } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
+import { useNavigate } from 'react-router-dom';
+
 
 
 type Config = {
     add_to_cart_button: string
     shekel_symbol: string
     search_bar_text: string
+    recommended_items_title: string
 }
 
 type Item = {
@@ -21,7 +26,11 @@ type Item = {
     price: number;
 };
 
+
 async function AddToCart(id: number, selectCount: number) {
+    if (selectCount <= 0) {
+        return;
+    }
     const res = await fetch('http://localhost:8081/api/add_to_cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,12 +61,9 @@ const fetchConfig = async () => {
     return parse(text);
 };
 
-function Search(searchInput: string) {
-
-}
-
 
 const HomePage = () => {
+    const navigate = useNavigate();
     const [config, setConfig] = React.useState<Config | null>(null);
     const [recommendedItems, setRecommendedItems] = useState<Item[] | null>(null);
     const [loading, setLoading] = useState(true);
@@ -81,37 +87,42 @@ const HomePage = () => {
     if (!config || loading || !recommendedItems) return <p>Loading...</p>;
 
 
-
+    function SearchItems(searchInput: string) {
+        navigate(`/search/?q=${searchInput}`);
+    }
 
 
 
     return (
         <>
             <AppBar position='fixed' sx={{ height: '15vh', bgcolor: 'rgba(255, 235, 19, 1)' }}>
-                <Grid container spacing={0} >
+                <Grid container spacing={14} >
                     <Grid container direction="row" alignItems={"center"}>
                         <img
                             src="./src/assets/caveret-logo.svg"
                             alt="caveret-logo"
                             style={{ height: '15vh', width: 'fit-content' }}
                         />
-                        <SearchBar onSearch={Search} />
+                        <SearchBar onSearch={SearchItems} />
                     </Grid>
                 </Grid>
             </AppBar>
             <Container sx={{ height: '80vh', marginTop: '20vh' }}>
-                <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                    {recommendedItems.map((item) => <ItemCard
-                        key={item.id}
-                        id={item.id}
-                        itemTitle={item.name}
-                        price={item.price}
-                        moneySymbol={config.shekel_symbol}
-                        buttonText={config.add_to_cart_button}
-                        image={item.photoPath}
-                        AddToCart={AddToCart}
-                    />)}
-                </Grid>
+                <Box sx={{ height: 'fit-content', padding: '15px', borderBottom: '2px dotted rgba(255, 235, 19, 1)', borderTop: '2px dotted rgba(255, 235, 19, 1)'}}>
+                    <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '10px'}} >{config.recommended_items_title}</Typography>
+                    <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
+                        {recommendedItems.map((item) => <ItemCard
+                            key={item.id}
+                            id={item.id}
+                            itemTitle={item.name}
+                            price={item.price}
+                            moneySymbol={config.shekel_symbol}
+                            buttonText={config.add_to_cart_button}
+                            image={item.photoPath}
+                            AddToCart={AddToCart}
+                        />)}
+                    </Grid>
+                </Box>
             </Container >
         </>
     )

@@ -10,7 +10,7 @@ interface SearchBarProps {
 }
 
 
-const SearchBar = ( { onSearch }: SearchBarProps ) => {
+const SearchBar = ({ onSearch }: SearchBarProps) => {
     const [searchInput, setSearchInput] = React.useState('');
     return (
         <Grid direction={'row'} sx={{ width: 'fit-content', height: 'fit-content', border: '1px solid black' }}>
@@ -19,8 +19,13 @@ const SearchBar = ( { onSearch }: SearchBarProps ) => {
                 placeholder="Search"
                 type="search"
                 size="small"
-                onChange={(e) => setSearchInput(e.target.value)}
                 sx={{ width: '30vw', '& .MuiOutlinedInput-root': { '& fieldset': { border: 'none' } } }}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        onSearch(searchInput)
+                    }
+                }}
             />
             <IconButton type="submit" aria-label="search" onClick={() => onSearch(searchInput)}>
                 <SearchIcon />

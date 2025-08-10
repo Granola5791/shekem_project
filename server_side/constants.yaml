@@ -12,7 +12,7 @@ database:
   dbname: "postgres"
   search_page_size: 10
   recommended_items_amount: 2
-  categories_amount: 8
+  categories_buffer_size: 20
 
 server:
   listen_addr: "localhost:8081"

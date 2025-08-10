@@ -1,23 +1,20 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AppBar, Box, Container, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import ItemCard from '../components/ItemCard';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { parse, stringify } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
 import { useNavigate } from 'react-router-dom';
-import CategoryList from '../components/CategoryList.tsx';
-import type { Category } from '../components/CategoryList.tsx';
+import MyCategory from '../components/CategoryCard.tsx';
 
 
 type Config = {
     add_to_cart_button: string
     shekel_symbol: string
     search_bar_text: string
-    recommended_items_title: string
+    category_list_title: string
 }
 
 type Item = {
@@ -26,6 +23,12 @@ type Item = {
     photoPath: string;
     price: number;
 };
+
+type Category = {
+    id: number;
+    name: string;
+    photosPaths: string[];
+}
 
 
 async function AddToCart(id: number, selectCount: number) {
@@ -46,28 +49,13 @@ async function AddToCart(id: number, selectCount: number) {
     }
 }
 
-const fetchItem = async () => {
-    const res = await fetch('http://localhost:8081/api/get_recommended_items', {
-        method: 'GET',
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error("Failed to fetch items");
-    const data = await res.json();
-    return data.recommendedItems;
-};
-
-const fetchItems = async () => {
-    // to implement: get items by category
-}
-
-const fetchCategories = async () => {
+const FetchCategories = async () => {
     const res = await fetch('http://localhost:8081/api/get_categories', {
         method: 'GET',
         credentials: 'include'
     });
     if (!res.ok) throw new Error("Failed to fetch categories");
     const data = await res.json();
-    console.log(data);
     return data.categories;
 }
 
@@ -81,19 +69,16 @@ const fetchConfig = async () => {
 const HomePage = () => {
     const navigate = useNavigate();
     const [config, setConfig] = React.useState<Config | null>(null);
-    const [recommendedItems, setRecommendedItems] = useState<Item[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [categories, setCategories] = useState<Category[] | null>(null);
-    const [currentItems, setCurrentItems] = useState<Item[] | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [items, config, myCategories] = await Promise.all([fetchItem(), fetchConfig(), fetchCategories()]);
-                setCategories(myCategories);
-                console.log(myCategories);
-                setRecommendedItems(items);
+                const [config, categories] = await Promise.all([fetchConfig(), FetchCategories()]);
+                setCategories(categories);
                 setConfig(config);
             } catch (err: any) {
                 setError(err.message);
@@ -104,7 +89,7 @@ const HomePage = () => {
         fetchData();
     }, []);
     if (error) return <p>{error}</p>;
-    if (!config || loading || !recommendedItems) return <p>Loading...</p>;
+    if (!config || loading) return <p>Loading...</p>;
 
 
     function SearchItems(searchInput: string) {
@@ -127,26 +112,31 @@ const HomePage = () => {
                 </Grid>
             </AppBar>
 
-            <Container sx={{ height: '80vh', marginTop: '17vh' }}>
+            <Container
+                sx={{
+                    height: '80vh',
+                    marginTop: '17vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center', // for centering horizontally
+                }}
+            >
+                <Typography variant="h4" sx={{ marginBottom: '20px', color: 'black' }}>
+                    {config.category_list_title}
+                </Typography>
 
-                <CategoryList infos={categories ?? []} />
-
-                <Box sx={{ height: 'fit-content', padding: '15px', marginRight: '15vw', borderBottom: '2px dotted rgba(255, 235, 19, 1)', borderTop: '2px dotted rgba(255, 235, 19, 1)' }}>
-                    <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: '10px' }} >{config.recommended_items_title}</Typography>
-                    <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                        {recommendedItems.map((item) => <ItemCard
-                            key={item.id}
-                            id={item.id}
-                            itemTitle={item.name}
-                            price={item.price}
-                            moneySymbol={config.shekel_symbol}
-                            buttonText={config.add_to_cart_button}
-                            image={item.photoPath}
-                            AddToCart={AddToCart}
-                        />)}
-                    </Grid>
-                </Box>
-            </Container >
+                <Grid container spacing={2} columns={2} sx={{ justifyContent: 'center', width: '1000px' }}>
+                    {categories.map((category) => (
+                        <Grid key={category.id}>
+                            <MyCategory
+                                id={category.id}
+                                name={category.name}
+                                photosPaths={category.photosPaths}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
         </>
     )
 }

@@ -49,6 +49,8 @@ async function AddToCart(id: number, selectCount: number) {
     }
 }
 
+
+
 const FetchCategories = async () => {
     const res = await fetch('http://localhost:8081/api/get_categories', {
         method: 'GET',
@@ -96,6 +98,10 @@ const HomePage = () => {
         navigate(`/search/?q=${searchInput}`);
     }
 
+    function GoToCategory(id: number) {
+        navigate(`/category/${id}`);
+    }
+
 
     return (
         <>
@@ -132,6 +138,7 @@ const HomePage = () => {
                                 id={category.id}
                                 name={category.name}
                                 photosPaths={category.photosPaths}
+                                onClick={GoToCategory}
                             />
                         </Grid>
                     ))}

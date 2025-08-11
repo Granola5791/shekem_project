@@ -8,14 +8,15 @@ interface CategoryProps {
     photosPaths: string[]
     name: string
     id: number
+    onClick?: (id: number) => void
 }
 
-const Category = ({ photosPaths = [], name, id }: CategoryProps) => {
+const Category = ({ photosPaths = [], name, id, onClick }: CategoryProps) => {
     return (
-        <Button sx={{ padding: '0px' }}>
+        <Button onClick={() => onClick?.(id)}  sx={{ padding: '0px' }}>
             <Box
                 sx={{
-                    bgcolor: 'rgba(255, 251, 123, 0.8)',
+                    bgcolor: 'rgba(255, 249, 205, 1)',
                     width: '350px',
                     height: '400px',
                     overflow: 'hidden',
@@ -32,7 +33,7 @@ const Category = ({ photosPaths = [], name, id }: CategoryProps) => {
                 <Box sx={{ flexGrow: 1 }} />
 
                 {/* Image Grid */}
-                <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center" sx={{ border: '1px solid black' }}>
+                <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
                     {[...Array(4)].map((_, idx) => (
                         <Grid key={idx}>
                             <img

@@ -8,6 +8,7 @@ import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
 import { useNavigate } from 'react-router-dom';
 import MyCategory from '../components/CategoryCard.tsx';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 type Config = {
@@ -102,18 +103,29 @@ const HomePage = () => {
         navigate(`/category/${id}`);
     }
 
+    function GoToCart() {
+        navigate('/cart');
+    }
+
 
     return (
         <>
             <AppBar position='fixed' sx={{ height: '15vh', bgcolor: 'rgba(255, 235, 19, 1)' }}>
                 <Grid container spacing={14} >
-                    <Grid container direction="row" alignItems={"center"}>
+                    <Grid container direction="row" alignItems={"center"} sx={{ border: '1px solid black', width: '100%' }}>
                         <img
                             src="./src/assets/caveret-logo.svg"
                             alt="caveret-logo"
                             style={{ height: '15vh', width: 'fit-content' }}
                         />
                         <SearchBar onSearch={SearchItems} />
+                        <Box sx={{ flexGrow: 1 }} />
+                        <IconButton
+                            onClick={GoToCart}
+                            sx={{ left: '30px', color: 'black', height: '50px', width: 'fit-content' }}
+                        >
+                            <ShoppingCartIcon sx={{ height: '35px', width: 'fit-content' }} />
+                        </IconButton>
                     </Grid>
                 </Grid>
             </AppBar>

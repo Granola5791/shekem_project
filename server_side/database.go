@@ -3,13 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 	"github.com/spf13/viper"
 	"os"
 )
 
 var db *sql.DB
-
 
 func GetUserIDFromDB(username string) (int, error) {
 	var userID int
@@ -146,6 +145,36 @@ func SearchItems(searchTerm string, page int) []int {
 	return itemIDs
 }
 
+func UpdateItemPhoto(itemID int, photoPath string) error {
+	sqlStatement := `UPDATE items SET photo = $2 WHERE item_id = $1;`
+	fileBytes, err := os.ReadFile(photoPath)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(sqlStatement, itemID, fileBytes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
+	sqlStatement := `UPDATE categories SET photos = $2 WHERE category_id = $1;`
+	photos := make([][]byte, len(photoPaths))
+	for i, path := range photoPaths {
+		fileBytes, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		photos[i] = fileBytes
+	}
+	_, err := db.Exec(sqlStatement, categoryID, pq.ByteaArray(photos))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetRecommendedItems() []Item {
 	amount := GetIntFromConfig("database.recommended_items_amount")
 	items := make([]Item, amount)
@@ -175,12 +204,30 @@ func GetCategories() ([]Category, error) {
 	}
 	defer rows.Close()
 	for i = 0; i < bufferSize && rows.Next(); i++ {
-		err = rows.Scan(&categories[i].ID, &categories[i].Name, &categories[i].Photos_paths)
+		err = rows.Scan(&categories[i].ID, &categories[i].Name, &categories[i].Photos)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return categories[0: i], nil
+	return categories[0:i], nil
+}
+
+func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
+	var photo []byte
+	sqlStatement := `SELECT get_category_photo($1, $2);`
+	rows, err := db.Query(sqlStatement, categoryID, photoIndex)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, sql.ErrNoRows
+	}
+	err = rows.Scan(&photo)
+	if err != nil {
+		return nil, err
+	}
+	return photo, nil
 }
 
 func OpenSQLConnection() {

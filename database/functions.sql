@@ -81,3 +81,15 @@ BEGIN
    WHERE i.item_name ILIKE '%' || search_term || '%';
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_category_photo(category_id_param INT, photo_index INT)
+RETURNS BYTEA AS $$
+DECLARE
+   ret_photo BYTEA;
+BEGIN
+   SELECT photos[photo_index] INTO ret_photo
+   FROM categories
+   WHERE category_id = category_id_param;
+   RETURN ret_photo;
+END;
+$$ LANGUAGE plpgsql;

@@ -19,7 +19,7 @@ CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
   item_name VARCHAR(255) NOT NULL
   price DECIMAL(10, 2) NOT NULL,
-  photo_path VARCHAR(255)
+  photo BYTEA
 );
 
 CREATE TABLE order_items (
@@ -43,7 +43,7 @@ CREATE TABLE cart_items (
 CREATE TABLE categories (
   category_id SERIAL PRIMARY KEY,
   category_name VARCHAR(255) NOT NULL,
-  photos_paths TEXT[] DEFAULT ARRAY[]::TEXT[]
+  photos BYTEA[4] DEFAULT ARRAY[]::BYTEA[]
 );
 
 CREATE TABLE cat_to_item (

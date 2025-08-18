@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { AppBar, Box, Container, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import { parse, stringify } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import SearchBar from '../components/SearchBar.tsx';
@@ -11,11 +10,20 @@ import MyCategory from '../components/CategoryCard.tsx';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
-type Config = {
+
+
+type HebrewConfig = {
     add_to_cart_button: string
     shekel_symbol: string
     search_bar_text: string
     category_list_title: string
+}
+
+type BackendConfig = {
+    backend_address: string
+    add_to_cart_api: string
+    get_categories_api: string
+    get_category_photo_api: string
 }
 
 type Item = {
@@ -28,32 +36,16 @@ type Item = {
 type Category = {
     id: number;
     name: string;
-    photosPaths: string[];
+
 }
 
 
-async function AddToCart(id: number, selectCount: number) {
-    if (selectCount <= 0) {
-        return;
+const FetchCategories = async (backendConfig: BackendConfig) => {
+    if (!backendConfig) {
+        console.error("Backend configuration is not loaded.");
+        return [];
     }
-    const res = await fetch('http://localhost:8081/api/add_to_cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product_id: id, quantity: selectCount }),
-        credentials: 'include',
-    });
-    if (isUnauthorizedResponse(res)) {
-        throw new Response('Unauthorized', {
-            status: 302,
-            headers: { Location: '/login' },
-        });
-    }
-}
-
-
-
-const FetchCategories = async () => {
-    const res = await fetch('http://localhost:8081/api/get_categories', {
+    const res = await fetch(backendConfig.backend_address + backendConfig.get_categories_api, {
         method: 'GET',
         credentials: 'include'
     });
@@ -62,27 +54,42 @@ const FetchCategories = async () => {
     return data.categories;
 }
 
-const fetchConfig = async () => {
+
+const FetchHebrewConfig = async () => {
     const res = await fetch('src/constants/hebrew.yaml');
     const text = await res.text();
     return parse(text);
 };
 
+const FetchBackendConfig = async () => {
+    const res = await fetch('src/constants/backend_api.yaml');
+    const text = await res.text();
+    return parse(text);
+};
 
 const HomePage = () => {
     const navigate = useNavigate();
-    const [config, setConfig] = React.useState<Config | null>(null);
+    const [hebrewConfig, setHebrewConfig] = React.useState<HebrewConfig | null>(null);
+    const [backendConfig, setBackendConfig] = React.useState<BackendConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
 
 
     useEffect(() => {
+
+
         const fetchData = async () => {
             try {
-                const [config, categories] = await Promise.all([fetchConfig(), FetchCategories()]);
-                setCategories(categories);
-                setConfig(config);
+                const [thisHebrewConfig, thisBackendConfig] = await Promise.all([FetchHebrewConfig(), FetchBackendConfig()]);
+                setHebrewConfig(thisHebrewConfig);
+                setBackendConfig(thisBackendConfig);
+                if (!thisHebrewConfig || !thisBackendConfig) {
+                    throw new Error("Failed to load configurations");
+                }
+
+                const thisCategories = await FetchCategories(thisBackendConfig);
+                setCategories(thisCategories);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -92,7 +99,7 @@ const HomePage = () => {
         fetchData();
     }, []);
     if (error) return <p>{error}</p>;
-    if (!config || loading) return <p>Loading...</p>;
+    if (!hebrewConfig || loading) return <p>Loading...</p>;
 
 
     function SearchItems(searchInput: string) {
@@ -107,6 +114,27 @@ const HomePage = () => {
         navigate('/cart');
     }
 
+    async function AddToCart(id: number, selectCount: number) {
+        if (selectCount <= 0) {
+            return;
+        }
+        if (!backendConfig) {
+            console.error("Backend configuration is not loaded.");
+            return;
+        }
+        const res = await fetch(backendConfig.backend_address + backendConfig.add_to_cart_api, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id: id, quantity: selectCount }),
+            credentials: 'include',
+        });
+        if (isUnauthorizedResponse(res)) {
+            throw new Response('Unauthorized', {
+                status: 302,
+                headers: { Location: '/login' },
+            });
+        }
+    }
 
     return (
         <>
@@ -140,7 +168,7 @@ const HomePage = () => {
                 }}
             >
                 <Typography variant="h4" sx={{ marginBottom: '20px', color: 'black' }}>
-                    {config.category_list_title}
+                    {hebrewConfig.category_list_title}
                 </Typography>
 
                 <Grid container spacing={2} columns={2} sx={{ justifyContent: 'center', width: '1000px' }}>
@@ -149,7 +177,7 @@ const HomePage = () => {
                             <MyCategory
                                 id={category.id}
                                 name={category.name}
-                                photosPaths={category.photosPaths}
+                                photosPaths={ backendConfig ? backendConfig.backend_address + backendConfig.get_category_photo_api : ''}
                                 onClick={GoToCategory}
                             />
                         </Grid>

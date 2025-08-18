@@ -19,5 +19,4 @@ sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/react
 
-*.yaml
 server_side/.env

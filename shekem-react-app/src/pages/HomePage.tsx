@@ -4,10 +4,9 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { parse } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
-import { useNavigate } from 'react-router-dom';
 import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
-
+import { useNavigation } from '../utils/navigation.ts';
 
 
 type HebrewConfig = {
@@ -59,12 +58,17 @@ const FetchBackendConfig = async () => {
 };
 
 const HomePage = () => {
-    const navigate = useNavigate();
     const [hebrewConfig, setHebrewConfig] = React.useState<HebrewConfig | null>(null);
     const [backendConfig, setBackendConfig] = React.useState<BackendConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
+    const {
+        searchItems: SearchItems,
+        goToCategory: GoToCategory,
+        goToCart: GoToCart,
+        goToHome: GoToHome
+    } = useNavigation();
 
 
     useEffect(() => {
@@ -92,22 +96,6 @@ const HomePage = () => {
     if (error) return <p>{error}</p>;
     if (!hebrewConfig || loading) return <p>Loading...</p>;
 
-
-    function SearchItems(searchInput: string) {
-        navigate(`/search/?q=${searchInput}`);
-    }
-
-    function GoToCategory(id: number) {
-        navigate(`/category/${id}`);
-    }
-
-    function GoToCart() {
-        navigate('/cart');
-    }
-
-    function GoToHome() {
-        navigate('/home');
-    }
 
     async function AddToCart(id: number, selectCount: number) {
         if (selectCount <= 0) {

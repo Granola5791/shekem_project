@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { AppBar, Box, Container, IconButton } from '@mui/material';
+import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { parse, stringify } from 'yaml'
+import { parse } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
-import SearchBar from '../components/SearchBar.tsx';
 import { useNavigate } from 'react-router-dom';
 import MyCategory from '../components/CategoryCard.tsx';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NavBar from '../components/NavBar.tsx';
 
 
@@ -25,13 +23,6 @@ type BackendConfig = {
     get_categories_api: string
     get_category_photo_api: string
 }
-
-type Item = {
-    id: number;
-    name: string;
-    photoPath: string;
-    price: number;
-};
 
 type Category = {
     id: number;

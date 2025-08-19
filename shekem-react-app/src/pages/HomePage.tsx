@@ -105,6 +105,10 @@ const HomePage = () => {
         navigate('/cart');
     }
 
+    function GoToHome() {
+        navigate('/home');
+    }
+
     async function AddToCart(id: number, selectCount: number) {
         if (selectCount <= 0) {
             return;
@@ -133,6 +137,7 @@ const HomePage = () => {
                 onSearch={SearchItems}
                 goToCart={GoToCart}
                 logoSrc="./src/assets/caveret-logo.svg"
+                logoClick={GoToHome}
             />
 
 
@@ -142,7 +147,7 @@ const HomePage = () => {
                     marginTop: '17vh',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center', // for centering horizontally
+                    alignItems: 'center',
                 }}
             >
                 <Typography variant="h4" sx={{ marginBottom: '20px', color: 'black' }}>

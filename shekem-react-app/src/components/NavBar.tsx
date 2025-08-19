@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchBar from './SearchBar.tsx';
 import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
 
 
 
@@ -13,15 +14,17 @@ interface NavBarProps {
     onSearch: (query: string) => void;
     goToCart: () => void;
     logoSrc?: string;
+    logoClick?: () => void;
 }
 
-const NavBar = ({ onSearch, goToCart, logoSrc }: NavBarProps) => {
+const NavBar = ({ onSearch, goToCart, logoSrc, logoClick }: NavBarProps) => {
 
     return (
         <AppBar position="fixed" sx={{ bgcolor: 'rgba(255, 235, 19, 1)' }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <img src={logoSrc} alt="logo" style={{ height: '15vh' }} />
-
+                <Button disableRipple onClick={logoClick} sx={{ ':hover': { backgroundColor: 'transparent' }, padding: '0px' }} >
+                    <img src={logoSrc} alt="logo" style={{ height: '15vh' }} />
+                </Button>
                 <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', minWidth: 0, maxHeight: '50%' }}>
                     <SearchBar onSearch={onSearch} />
                 </Box>

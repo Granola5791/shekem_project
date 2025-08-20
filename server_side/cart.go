@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -16,7 +15,7 @@ func HandleAddToCart(c *gin.Context) {
 	userID, _ := c.Get("userID")
 
 	if err := c.ShouldBindJSON(&input); err != nil || input.Quantity <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_input")})
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
 	}
 

@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/spf13/viper"
 )
 
 func GenerateToken(username string, role string, jwtKey []byte) (string, error) {
@@ -39,7 +38,7 @@ func ParseToken(tokenString string, jwtKey []byte) (*jwt.Token, error) {
 func RequireAuthentication(c *gin.Context) {
 
 	// get cookie
-	tokenString, err := c.Cookie(viper.GetString("server.auth_cookie_name"))
+	tokenString, err := c.Cookie(GetStringFromConfig("server.auth_cookie_name"))
 	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return

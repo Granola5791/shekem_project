@@ -43,3 +43,17 @@ func GetFloat64FromConfig(key string) float64 {
 	}
 	panic(viper.GetString("error.missing_config") + key)
 }
+
+func GetUint32FromConfig(key string) uint32 {
+	if viper.IsSet(key) {
+		return viper.GetUint32(key)
+	}
+	panic(viper.GetString("error.missing_config") + key)
+}
+
+func GetUint8FromConfig(key string) uint8 {
+	if viper.IsSet(key) {
+		return viper.GetUint8(key)
+	}
+	panic(viper.GetString("error.missing_config") + key)
+}

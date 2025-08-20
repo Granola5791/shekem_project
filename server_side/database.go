@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/lib/pq"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -121,7 +120,7 @@ func AddToCart(userID int, productID int, quantity int) error {
 }
 
 func SearchItems(searchTerm string, page int) []int {
-	pageSize := viper.GetInt("search.page_size")
+	pageSize := GetIntFromConfig("search.page_size")
 	itemIDs := make([]int, pageSize)
 	offset := (page - 1) * pageSize
 	sqlStatement := `CALL search_items($1)`
@@ -233,11 +232,11 @@ func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
 func OpenSQLConnection() {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		viper.GetString("database.host"),
-		viper.GetInt("database.port"),
-		viper.GetString("database.user"),
+		GetStringFromConfig("database.host"),
+		GetIntFromConfig("database.port"),
+		GetStringFromConfig("database.user"),
 		os.Getenv("SQL_PASSWORD"),
-		viper.GetString("database.dbname"),
+		GetStringFromConfig("database.dbname"),
 	)
 
 	db, err = sql.Open("postgres", psqlInfo)

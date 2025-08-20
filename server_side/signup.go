@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 func CreateNewHashedPassword(password string) (string, string) {
@@ -16,17 +15,17 @@ func HandleSignup(c *gin.Context) {
 	var input loginInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_input")})
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
 	}
 
 	if !(IsValidUserInput(input.Password) && IsValidUserInput(input.Username)) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": viper.GetString("error.invalid_username_or_password")})
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_username_or_password")})
 		return
 	}
 
 	if UserExistsInDB(input.Username) {
-		c.JSON(http.StatusConflict, gin.H{"error": viper.GetString("error.user_exists")})
+		c.JSON(http.StatusConflict, gin.H{"error": GetStringFromConfig("error.user_exists")})
 		return
 	}
 

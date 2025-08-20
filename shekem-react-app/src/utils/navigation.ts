@@ -8,5 +8,6 @@ export function useNavigation() {
     goToCategory: (id: number) => navigate(`/category/${id}`),
     goToCart: () => navigate('/cart'),
     goToHome: () => navigate('/home'),
+    goToLogin: () => navigate('/login'),
   };
 }

@@ -21,25 +21,47 @@ type BackendConfig = {
     add_to_cart_api: string
     get_categories_api: string
     get_category_photo_api: string
+
+    statuses: {
+        ok: string
+        unauthorized: string
+        not_found: string
+        internal_server_error: string
+    }
+
+    status_codes: {
+        ok: number
+        unauthorized: number
+        not_found: number
+        internal_server_error: number
+    }
+}
+
+type GeneralConstants = {
+    errors: {
+        config_load_fail: string
+        config_not_found: string
+        category_load_fail: string
+        category_load_not_found: string
+    }
 }
 
 type Category = {
     id: number;
     name: string;
-
 }
 
 
-const FetchCategories = async (backendConfig: BackendConfig) => {
+const FetchCategories = async (backendConfig: BackendConfig, generalConstants: GeneralConstants) => {
     if (!backendConfig) {
-        console.error("Backend configuration is not loaded.");
+        console.error(generalConstants.errors.config_not_found);
         return [];
     }
     const res = await fetch(backendConfig.backend_address + backendConfig.get_categories_api, {
         method: 'GET',
         credentials: 'include'
     });
-    if (!res.ok) throw new Error("Failed to fetch categories");
+    if (!res.ok) throw new Error(generalConstants.errors.category_load_fail);
     const data = await res.json();
     return data.categories;
 }
@@ -57,17 +79,31 @@ const FetchBackendConfig = async () => {
     return parse(text);
 };
 
+const FetchGeneralConstants = async () => {
+    const res = await fetch('src/constants/general_constants.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
 const HomePage = () => {
+    // configs
     const [hebrewConfig, setHebrewConfig] = React.useState<HebrewConfig | null>(null);
     const [backendConfig, setBackendConfig] = React.useState<BackendConfig | null>(null);
+    const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
+
+    // loading and error states
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
     const [categories, setCategories] = useState<Category[]>([]);
+
+    // navigation functions
     const {
         searchItems: SearchItems,
         goToCategory: GoToCategory,
         goToCart: GoToCart,
-        goToHome: GoToHome
+        goToHome: GoToHome,
+        goToLogin: GoToLogin
     } = useNavigation();
 
 
@@ -76,14 +112,15 @@ const HomePage = () => {
 
         const fetchData = async () => {
             try {
-                const [thisHebrewConfig, thisBackendConfig] = await Promise.all([FetchHebrewConfig(), FetchBackendConfig()]);
+                const [thisHebrewConfig, thisBackendConfig, thisGeneralConstants] = await Promise.all([FetchHebrewConfig(), FetchBackendConfig(), FetchGeneralConstants()]);
                 setHebrewConfig(thisHebrewConfig);
                 setBackendConfig(thisBackendConfig);
-                if (!thisHebrewConfig || !thisBackendConfig) {
+                setGeneralConstants(thisGeneralConstants);
+                if (!thisHebrewConfig || !thisBackendConfig || !thisGeneralConstants) {
                     throw new Error("Failed to load configurations");
                 }
 
-                const thisCategories = await FetchCategories(thisBackendConfig);
+                const thisCategories = await FetchCategories(thisBackendConfig, thisGeneralConstants);
                 setCategories(thisCategories);
             } catch (err: any) {
                 setError(err.message);
@@ -93,8 +130,8 @@ const HomePage = () => {
         };
         fetchData();
     }, []);
-    if (error) return <p>{error}</p>;
-    if (!hebrewConfig || loading) return <p>Loading...</p>;
+    if (error) return <p>{'Something went wrong, try again later'}</p>;
+    if (!hebrewConfig || !backendConfig || !generalConstants || loading) return <p>Loading...</p>;
 
 
     async function AddToCart(id: number, selectCount: number) {
@@ -102,7 +139,7 @@ const HomePage = () => {
             return;
         }
         if (!backendConfig) {
-            console.error("Backend configuration is not loaded.");
+            console.error(generalConstants?.errors.config_not_found);
             return;
         }
         const res = await fetch(backendConfig.backend_address + backendConfig.add_to_cart_api, {
@@ -112,10 +149,8 @@ const HomePage = () => {
             credentials: 'include',
         });
         if (isUnauthorizedResponse(res)) {
-            throw new Response('Unauthorized', {
-                status: 302,
-                headers: { Location: '/login' },
-            });
+            GoToLogin();
+            return;
         }
     }
 

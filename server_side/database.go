@@ -26,88 +26,90 @@ func GetUserIDFromDB(username string) (int, error) {
 	return userID, nil
 }
 
-func InsertUserToDB(username string, hashedPassword string, salt string) {
+func InsertUserToDB(username string, hashedPassword string, salt string) error {
 	sqlStatement := `CALL create_user($1, $2, $3);`
 	_, err := db.Exec(sqlStatement, username, hashedPassword, salt)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func DeleteUserFromDB(username string) {
+func DeleteUserFromDB(username string) error {
 	sqlStatement := `CALL delete_user($1);`
 	_, err := db.Exec(sqlStatement, username)
 	if err != nil {
-		panic(err)
+		return  err
 	}
+	return nil
 }
 
-func UserExistsInDB(username string) bool {
+func UserExistsInDB(username string) (bool, error) {
 	var exists bool
 	sqlStatement := `SELECT user_exists($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 	if !rows.Next() {
-		return false
+		return false, nil
 	}
 	err = rows.Scan(&exists)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return exists
+	return exists, nil
 }
 
-func GetUserRoleFromDB(username string) string {
+func GetUserRoleFromDB(username string) (string, error) {
 	var userRole string
 	sqlStatement := `SELECT get_user_role($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	if !rows.Next() {
-		return ""
+		return "", sql.ErrNoRows
 	}
 	err = rows.Scan(&userRole)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return userRole
+	return userRole, nil
 }
 
-func GetUserHashedPasswordFromDB(username string) string {
+func GetUserHashedPasswordFromDB(username string) (string, error) {
 	var hashedPassword string
 	sqlStatement := `SELECT get_hashed_password($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	if !rows.Next() {
-		return ""
+		return "", sql.ErrNoRows
 	}
 	err = rows.Scan(&hashedPassword)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return hashedPassword
+	return hashedPassword, nil
 }
 
-func GetUserSaltFromDB(username string) string {
+func GetUserSaltFromDB(username string) (string, error) {
 	var salt string
 	sqlStatement := `SELECT get_salt($1)`
 	rows, err := db.Query(sqlStatement, username)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	if !rows.Next() {
-		return ""
+		return "", sql.ErrNoRows
 	}
 	err = rows.Scan(&salt)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return salt
+	return salt, nil
 }
 
 func AddToCart(userID int, productID int, quantity int) error {
@@ -119,29 +121,29 @@ func AddToCart(userID int, productID int, quantity int) error {
 	return nil
 }
 
-func SearchItems(searchTerm string, page int) []int {
+func SearchItems(searchTerm string, page int) ([]int, error) {
 	pageSize := GetIntFromConfig("search.page_size")
 	itemIDs := make([]int, pageSize)
 	offset := (page - 1) * pageSize
 	sqlStatement := `CALL search_items($1)`
 	rows, err := db.Query(sqlStatement, searchTerm)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer rows.Close()
 	for i := 0; i < offset && rows.Next(); i++ {
 		rows.Next()
 	}
 	if !rows.Next() {
-		return nil
+		return nil, sql.ErrNoRows
 	}
 	for i := 0; i < pageSize && rows.Next(); i++ {
 		err = rows.Scan(&itemIDs[i])
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
-	return itemIDs
+	return itemIDs, nil
 }
 
 func UpdateItemPhoto(itemID int, photoPath string) error {
@@ -174,22 +176,22 @@ func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
 	return nil
 }
 
-func GetRecommendedItems() []Item {
+func GetRecommendedItems() ([]Item, error) {
 	amount := GetIntFromConfig("database.recommended_items_amount")
 	items := make([]Item, amount)
 	sqlStatement := `SELECT * FROM recommended_items;`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer rows.Close()
 	for i := 0; i < amount && rows.Next(); i++ {
 		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].PhotoPath, &items[i].Price)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
-	return items
+	return items, nil
 }
 
 func GetCategories() ([]Category, error) {
@@ -229,7 +231,7 @@ func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
 	return photo, nil
 }
 
-func OpenSQLConnection() {
+func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		GetStringFromConfig("database.host"),
@@ -241,6 +243,7 @@ func OpenSQLConnection() {
 
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return  nil
 }

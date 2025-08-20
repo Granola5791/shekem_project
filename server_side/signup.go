@@ -13,6 +13,7 @@ func CreateNewHashedPassword(password string) (string, string) {
 
 func HandleSignup(c *gin.Context) {
 	var input loginInput
+	var userExists bool
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
@@ -24,7 +25,12 @@ func HandleSignup(c *gin.Context) {
 		return
 	}
 
-	if UserExistsInDB(input.Username) {
+	userExists, err := UserExistsInDB(input.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if userExists {
 		c.JSON(http.StatusConflict, gin.H{"error": GetStringFromConfig("error.user_exists")})
 		return
 	}

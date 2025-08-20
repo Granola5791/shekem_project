@@ -14,6 +14,9 @@ type loginInput struct {
 
 func HandleLogin(c *gin.Context) {
 	var input loginInput
+	var salt, hashedPassword, token, role string
+	var userExists bool
+	var err error
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
@@ -25,19 +28,37 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 
-	if !UserExistsInDB(input.Username) {
+	userExists, err = UserExistsInDB(input.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !userExists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("invalid_username_or_password")})
 		return
 	}
 
-	hashedPassword := GetUserHashedPasswordFromDB(input.Username)
-	salt := GetUserSaltFromDB(input.Username)
+	hashedPassword, err = GetUserHashedPasswordFromDB(input.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	salt, err = GetUserSaltFromDB(input.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	if !VerifyPassword(hashedPassword, input.Password, salt) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("error.invalid_password")})
 		return
 	}
 
-	token, err := GenerateToken(input.Username, GetUserRoleFromDB(input.Username), []byte(os.Getenv("JWT_SECRET")))
+	role, err = GetUserRoleFromDB(input.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	token, err = GenerateToken(input.Username, role, []byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": GetStringFromConfig("error.failed_generate_token"),

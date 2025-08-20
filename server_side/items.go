@@ -14,7 +14,11 @@ type Item struct {
 
 
 func HandleGetRecommendedItems(c *gin.Context) {
-	recommendeditems := GetRecommendedItems()
+	recommendeditems, err := GetRecommendedItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"recommendedItems": recommendeditems,
 	})

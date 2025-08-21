@@ -6,6 +6,8 @@ export type HebrewConstants = {
     user_errors: {
         page_not_found: string;
     };
+    go_to_login: string;
+    go_to_home: string;
 };
 
 export type BackendConstants = {

@@ -5,4 +5,6 @@ category_list_title: "קטגוריות"
 
 user_errors:
   page_not_found: "נראה שנדדת רחוק מדי"
-  
+
+go_to_login: "להתחברות"
+go_to_home: "לעמוד הבית"

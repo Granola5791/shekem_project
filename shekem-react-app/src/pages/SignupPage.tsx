@@ -68,7 +68,9 @@ const SignupPage = () => {
                     rePasswordPlaceholder='הכנס סיסמה שוב'
                 />
             </Box>
-            <p className='signup-response'>{response}</p>
+            <Typography variant="body1" align="center" sx={{ color: 'red', marginTop: '20px' }}>
+                {response}
+            </Typography>
         </>
     )
 }

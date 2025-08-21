@@ -7,6 +7,7 @@ import SignupPage from './pages/SignupPage.tsx'
 import ErrorPage from './pages/ErrorPage.tsx'
 import {createBrowserRouter, RouterProvider } from "react-router-dom";
 import checkLogin from './utils/checkLogin.ts';
+import NotFound from './pages/NotFoundPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     element: <HomePage />,
     errorElement: <ErrorPage />,
     loader: checkLogin,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

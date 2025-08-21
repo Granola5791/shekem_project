@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import SignupInput from '../components/SignupInput.tsx'
-import './SignupPage.css';
 import { Link } from 'react-router-dom';
-
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 
 const SignupPage = () => {
@@ -47,19 +47,27 @@ const SignupPage = () => {
     }
     return (
         <>
-            <img src="./src/assets/caveret-logo.svg" alt="caveret-logo" className='caveret-logo' />
-            <h1 className='signup-title'>הרשמה לחשבון</h1>
+            <img src="./src/assets/caveret-logo.svg" alt="caveret-logo" style={{ width: '350px' }} />
+            <Typography variant="h4" align="center" sx={{ color: 'rgb(9, 191, 9)', fontWeight: 'bold' }}>הרשמה לחשבון</Typography>
 
-            <div className='signup-input-container'>
-                <p>כבר יש לכם חשבון? <Link to="/login">להתחברות!</Link></p>
-                <p><b>שימו לב:</b> שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*).</p>
+            <Box sx={{
+                margin: 'auto',
+                width: '300px',
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '30px',
+                marginTop: '20px'
+            }} >
+                <Typography variant='body1'>כבר יש לכם חשבון? <Link to="/login">להתחברות!</Link></Typography>
+                <Typography variant='body1' sx={{ lineHeight: '15px' }}><b>שימו לב:</b> שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*).</Typography>
                 <SignupInput
                     onSignup={handleSignup}
                     usernamePlaceholder='הכנס שם משתמש'
                     passwordPlaceholder='הכנס סיסמה'
                     rePasswordPlaceholder='הכנס סיסמה שוב'
                 />
-            </div>
+            </Box>
             <p className='signup-response'>{response}</p>
         </>
     )

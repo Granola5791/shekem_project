@@ -1,10 +1,25 @@
+import { parse } from 'yaml';
+
 export type HebrewConstants = {
     add_to_cart_button: string;
     shekel_symbol: string;
     search_bar_text: string;
     category_list_title: string;
     user_errors: {
+        generic_error: string;
         page_not_found: string;
+        password_mismatch: string;
+        invalid_username_or_password: string;
+        username_taken: string;
+        server_error: string;
+    };
+    signup_texts: {
+        signup_title: string;
+        username_placeholder: string;
+        password_placeholder: string;
+        re_password_placeholder: string;
+        signup_button: string;
+        login_link_text: string;
     };
 };
 
@@ -54,3 +69,21 @@ export function insertValuesToConstantStr(configString: string, ...values: numbe
     }
     return result;
 }
+
+export async function FetchHebrewConstants() {
+    const res = await fetch('src/constants/hebrew.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
+export async function FetchBackendConstants() {
+    const res = await fetch('src/constants/backend_api.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
+export async function FetchGeneralConstants() {
+    const res = await fetch('src/constants/general_constants.yaml');
+    const text = await res.text();
+    return parse(text);
+};

@@ -3,6 +3,8 @@ import SignupInput from '../components/SignupInput.tsx'
 import { Link } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import type { HebrewConstants } from '../utils/constants.ts';
+import { FetchHebrewConstants } from '../utils/constants.ts';
 
 
 const SignupPage = () => {
@@ -12,6 +14,7 @@ const SignupPage = () => {
             document.body.style.backgroundColor = ''; // Clean up
         };
     }, []);
+
 
     const [response, setResponse] = React.useState<React.ReactNode>('');
 

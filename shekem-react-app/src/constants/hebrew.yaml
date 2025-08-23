@@ -4,5 +4,17 @@ search_bar_text: "מה בא לנו היום?"
 category_list_title: "קטגוריות"
 
 user_errors:
+  generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"
   page_not_found: "נראה שנדדת רחוק מדי"
-  
+  password_mismatch: "הסיסמאות לא תואמות"
+  unvalid_username_or_password: "שם המשתמש או הסיסמה לא תקינים"
+  username_taken: "שם המשתמש כבר קיים"
+  server_error: "שגיאה בהתחברות לשרת, אנא נסה שוב במועד מאוחר יותר"
+
+signup_texts:
+  signup_title: "הרשמה"
+  username_placeholder: "הכנס שם משתמש"
+  password_placeholder: "הכנס סיסמה"
+  re_password_placeholder: "הכנס סיסמה שוב"
+  signup_button_text: "הרשמה"
+  login_link_text: "כבר יש לי חשבון"

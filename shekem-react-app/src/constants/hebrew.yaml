@@ -2,7 +2,25 @@ add_to_cart_button: "הוסף לסל"
 shekel_symbol: "₪"
 search_bar_text: "מה בא לנו היום?"
 category_list_title: "קטגוריות"
+wait_text: "רגע..."
 
 user_errors:
+  generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"
   page_not_found: "נראה שנדדת רחוק מדי"
-  
+  password_mismatch: "הסיסמאות לא תואמות"
+  unvalid_username_or_password: "שם המשתמש או הסיסמה לא תקינים"
+  username_taken: "שם המשתמש כבר קיים"
+  server_error: "שגיאה בהתחברות לשרת, אנא נסה שוב במועד מאוחר יותר"
+
+signup_texts:
+  signup_title: "הרשמה"
+  username_placeholder: "הכנס שם משתמש"
+  password_placeholder: "הכנס סיסמה"
+  re_password_placeholder: "הכנס סיסמה שוב"
+  signup_button_text: "הרשמה"
+  login_link:
+    text: "כבר יש לכם חשבון? "
+    link_text: "להתחברות!"
+  input_requirements_msg:
+    strong: "שימו לב:"
+    text: " שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*)."

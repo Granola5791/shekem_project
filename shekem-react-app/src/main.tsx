@@ -8,6 +8,7 @@ import ErrorPage from './pages/ErrorPage.tsx'
 import {createBrowserRouter, RouterProvider } from "react-router-dom";
 import checkLogin from './utils/checkLogin.ts';
 import NotFound from './pages/NotFoundPage.tsx';
+import CartPage from './pages/CartPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,12 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <HomePage />,
+    errorElement: <ErrorPage />,
+    loader: checkLogin,
+  },
+  {
+    path: "/cart",
+    element: <CartPage />,
     errorElement: <ErrorPage />,
     loader: checkLogin,
   },

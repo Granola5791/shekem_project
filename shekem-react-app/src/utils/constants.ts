@@ -5,6 +5,7 @@ export type HebrewConstants = {
     shekel_symbol: string;
     search_bar_text: string;
     category_list_title: string;
+    wait_text: string;
     user_errors: {
         generic_error: string;
         page_not_found: string;
@@ -18,8 +19,15 @@ export type HebrewConstants = {
         username_placeholder: string;
         password_placeholder: string;
         re_password_placeholder: string;
-        signup_button: string;
-        login_link_text: string;
+        signup_button_text: string;
+        login_link: {
+            text: string;
+            link_text: string;
+        };
+        input_requirements_msg: {
+            strong: string;
+            text: string;
+        }
     };
 };
 
@@ -28,6 +36,7 @@ export type BackendConstants = {
     add_to_cart_api: string;
     get_categories_api: string;
     get_category_photo_api: string;
+    signup_api: string;
 
     statuses: {
         ok: string;
@@ -38,8 +47,11 @@ export type BackendConstants = {
 
     status_codes: {
         ok: number;
+        created: number;
+        bad_request: number;
         unauthorized: number;
         not_found: number;
+        conflict: number;
         internal_server_error: number;
     };
 };

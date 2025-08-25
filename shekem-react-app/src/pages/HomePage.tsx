@@ -8,6 +8,7 @@ import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
+import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
 
 
 type Category = {
@@ -29,25 +30,6 @@ const FetchCategories = async (backendConstants: BackendConstants, generalConsta
     const data = await res.json();
     return data.categories;
 }
-
-
-const FetchHebrewConstants = async () => {
-    const res = await fetch('src/constants/hebrew.yaml');
-    const text = await res.text();
-    return parse(text);
-};
-
-const FetchBackendConstants = async () => {
-    const res = await fetch('src/constants/backend_api.yaml');
-    const text = await res.text();
-    return parse(text);
-};
-
-const FetchGeneralConstants = async () => {
-    const res = await fetch('src/constants/general_constants.yaml');
-    const text = await res.text();
-    return parse(text);
-};
 
 const HomePage = () => {
     // configs

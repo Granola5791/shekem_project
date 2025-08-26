@@ -8,50 +8,63 @@ import Typography from '@mui/material/Typography'
 import DeleteIcon from '@mui/icons-material/Delete'
 import React from 'react'
 
-const CartItem = () => {
 
-  const [selectCount, setSelectCount] = React.useState(0);
+interface CartItemProps {
+    id: number,
+    photoPath: string,
+    onDelete: () => void,
+    itemTitle: string,
+    price: number,
+    quantity: number,
+    quantityLabel: string,
+    moneySymbol?: string
+}
 
-  return (
-    <>
-      <Card sx={{ display: 'flex', position: 'relative', gap: 3 }}>
-        <CardMedia
-          component="img"
-          sx={{ width: 151, height: 151 }}
-          image="src/assets/item_example.jpg"
-          alt="Item"
-        />
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '10px' }}>
-          <Typography>
-            JBL רמקול אלחוטי FLIP 6 שחור
-          </Typography>
-          <Typography fontWeight={'bold'}>
-            100₪
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Typography>
-              כמות:
-            </Typography>
 
-            <IconButton onClick={() => { setSelectCount(selectCount + 1) }}>
-              <AddIcon />
-            </IconButton>
+const CartItem = ( { id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "" }: CartItemProps) => {
 
-            {selectCount}
+    const [selectCount, setSelectCount] = React.useState(quantity);
 
-            <IconButton onClick={() => { selectCount && setSelectCount(selectCount - 1) /*can't go below 0*/ }}>
-              <RemoveIcon />
-            </IconButton>
-          </Box>
-        </Box>
+    return (
+        <>
+            <Card sx={{ display: 'flex', position: 'relative', gap: 3, padding: '10px' }}>
+                <CardMedia
+                    component="img"
+                    sx={{ width: '100px', height: '100px' }}
+                    image={photoPath}
+                    alt="Item"
+                />
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 'calc(100% - 150px)' }}>
+                    <Typography sx={{ height: '1.5em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom: '10px' }}>
+                        {itemTitle}
+                    </Typography>
+                    <Typography fontWeight={'bold'}>
+                        {price} {moneySymbol}
+                    </Typography>
+                    <Box className='select-count-container' sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <Typography>
+                            {quantityLabel}
+                        </Typography>
 
-        <IconButton sx={{ position: 'absolute', top: 0, left: 0 }}>
-          <DeleteIcon />
-        </IconButton>
+                        <IconButton onClick={() => { setSelectCount(selectCount + 1) }}>
+                            <AddIcon />
+                        </IconButton>
 
-      </Card>
-    </>
-  )
+                        {selectCount}
+
+                        <IconButton onClick={() => { (selectCount - 1) && setSelectCount(selectCount - 1) /*can't go below 1*/ }}>
+                            <RemoveIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+
+                <IconButton onClick={onDelete} sx={{ position: 'absolute', top: 0, left: 0 }}>
+                    <DeleteIcon />
+                </IconButton>
+
+            </Card>
+        </>
+    )
 }
 
 export default CartItem

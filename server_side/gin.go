@@ -10,7 +10,7 @@ func SetRouter() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{GetStringFromConfig("server.frontend_addr")},
-		AllowMethods:     []string{"POST", "OPTIONS", "GET", "DELETE"},
+		AllowMethods:     []string{"POST", "OPTIONS", "GET", "DELETE", "PATCH"},
 		AllowHeaders:     []string{"Content-Type"},
 		AllowCredentials: true,
 	}))
@@ -25,6 +25,7 @@ func SetRouter() {
 	router.GET(GetStringFromConfig("server.api.get_item_photo_path"), RequireAuthentication, HandleGetItemPhoto)
 	router.GET(GetStringFromConfig("server.api.get_cart_path"), RequireAuthentication, HandleGetCart)
 	router.DELETE(GetStringFromConfig("server.api.delete_from_cart_path"), RequireAuthentication, HandleDeleteFromCart)
+	router.PATCH(GetStringFromConfig("server.api.update_cart_item_quantity_path"), RequireAuthentication, HandleUpdateCartItemQuantity)
 
 	router.Run(GetStringFromConfig("server.listen_addr"))
 }

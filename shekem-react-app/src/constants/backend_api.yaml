@@ -5,6 +5,7 @@ get_category_photo_api: "/api/category/{category_id}/photo/{photo_id}"
 get_cart_api: "/api/get_cart"
 get_item_photo_api: "/api/item/{item_id}/photo"
 delete_from_cart_api: "/api/cart/delete"
+update_cart_item_quantity_api: "/api/cart/update_quantity"
 signup_api: "/api/signup"
 
 statuses:

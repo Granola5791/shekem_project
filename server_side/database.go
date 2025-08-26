@@ -278,6 +278,15 @@ func DeleteFromCart(userID int, itemID int) error {
 	return nil
 }
 
+func UpdateCartItemQuantity(userID int, itemID int, quantity int) error {
+	sqlStatement := `CALL update_cart_item_quantity($1, $2, $3);`
+	_, err := db.Exec(sqlStatement, userID, itemID, quantity)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

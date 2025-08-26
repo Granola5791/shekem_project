@@ -13,6 +13,7 @@ interface CartItemProps {
     id: number,
     photoPath: string,
     onDelete: (id: number) => void,
+    onChangeQuantity: (id: number, selectCount: number) => void,
     itemTitle: string,
     price: number,
     quantity: number,
@@ -21,9 +22,28 @@ interface CartItemProps {
 }
 
 
-const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "" }: CartItemProps) => {
+const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "", onChangeQuantity }: CartItemProps) => {
+
+    const OnMinus = async () => {
+        if (selectCount - 1) {
+            setButtonDisabled(true);
+            await onChangeQuantity(id, selectCount - 1);
+            setSelectCount(selectCount - 1);
+            setButtonDisabled(false);
+        }
+    }
+
+    const OnPlus = async () => {
+        if (selectCount - 1) {
+            setButtonDisabled(true);
+            await onChangeQuantity(id, selectCount + 1);
+            setSelectCount(selectCount + 1);
+            setButtonDisabled(false);
+        }
+    }
 
     const [selectCount, setSelectCount] = React.useState(quantity);
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
 
     return (
         <>
@@ -46,19 +66,19 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
                             {quantityLabel}
                         </Typography>
 
-                        <IconButton onClick={() => { setSelectCount(selectCount + 1) }}>
+                        <IconButton disabled={buttonDisabled} onClick={OnPlus}>
                             <AddIcon />
                         </IconButton>
 
                         {selectCount}
 
-                        <IconButton onClick={() => { (selectCount - 1) && setSelectCount(selectCount - 1) /*can't go below 1*/ }}>
+                        <IconButton disabled={buttonDisabled} onClick={OnMinus}>
                             <RemoveIcon />
                         </IconButton>
                     </Box>
                 </Box>
 
-                <IconButton onClick={() => onDelete(id)} sx={{ position: 'absolute', top: 0, left: 0 }}>
+                <IconButton disabled={buttonDisabled} onClick={() => onDelete(id)} sx={{ position: 'absolute', top: 0, left: 0 }}>
                     <DeleteIcon />
                 </IconButton>
 

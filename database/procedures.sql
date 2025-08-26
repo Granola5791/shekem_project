@@ -35,3 +35,13 @@ BEGIN
     WHERE user_id = user_id_param AND item_id = item_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE update_cart_item_quantity(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE cart_items
+    SET quantity = quantity_param
+    WHERE user_id = user_id_param AND item_id = item_id_param;
+END;
+$$

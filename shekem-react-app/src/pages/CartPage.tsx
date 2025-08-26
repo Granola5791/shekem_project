@@ -1,6 +1,5 @@
 import React, { use, useEffect, useState } from 'react'
 import CartItem from '../components/CartItemCard'
-import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'
 import { FetchGeneralConstants, FetchBackendConstants, FetchHebrewConstants, insertValuesToConstantStr } from '../utils/constants'
@@ -14,6 +13,9 @@ type CartItem = {
     title: string,
     price: number
 }
+
+
+
 
 
 const FetchCartItems = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
@@ -69,6 +71,18 @@ const CartPage = () => {
         DeleteFromFrontend();
     };
 
+    const UpdateQuantity = async (itemID: number, quantity: number) => {
+        if (!backendConstants) {
+            return;
+        }
+        const res = await fetch(backendConstants.backend_address + backendConstants.update_cart_item_quantity_api, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: itemID, quantity: quantity }),
+            credentials: 'include',
+        });
+    }
+
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
@@ -92,6 +106,7 @@ const CartPage = () => {
                             price={item.price}
                             moneySymbol={hebrewConstants.items.money_symbol}
                             onDelete={DeleteItem}
+                            onChangeQuantity={UpdateQuantity}
                             photoPath={
                                 backendConstants.backend_address +
                                 insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)

@@ -44,6 +44,7 @@ export type BackendConstants = {
     get_cart_api: string;
     get_item_photo_api: string;
     delete_from_cart_api: string;
+    update_cart_item_quantity_api: string;
     signup_api: string;
 
     statuses: {

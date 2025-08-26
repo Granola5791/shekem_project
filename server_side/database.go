@@ -39,7 +39,7 @@ func DeleteUserFromDB(username string) error {
 	sqlStatement := `CALL delete_user($1);`
 	_, err := db.Exec(sqlStatement, username)
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
@@ -213,7 +213,7 @@ func GetCategories() ([]Category, error) {
 	return categories[0:i], nil
 }
 
-func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
+func GetCategoryPhoto(categoryID int, photoIndex int) ([]byte, error) {
 	var photo []byte
 	sqlStatement := `SELECT get_category_photo($1, $2);`
 	rows, err := db.Query(sqlStatement, categoryID, photoIndex)
@@ -231,10 +231,10 @@ func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
 	return photo, nil
 }
 
-func GetCart(userID int) ([]cartItem, error) {
+func GetCart(userID int) ([]FullCartItem, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.cart_buffer_size")
-	cart := make([]cartItem, bufferSize)
+	cart := make([]FullCartItem, bufferSize)
 	sqlStatement := `SELECT get_cart($1);`
 	rows, err := db.Query(sqlStatement, userID)
 	if err != nil {
@@ -242,7 +242,7 @@ func GetCart(userID int) ([]cartItem, error) {
 	}
 	defer rows.Close()
 	for i = 0; i < bufferSize && rows.Next(); i++ {
-		err = rows.Scan(&cart[i].ItemID, &cart[i].Quantity)
+		err = rows.Scan(&cart[i].ItemID, &cart[i].Quantity, &cart[i].Title, &cart[i].Price)
 		if err != nil {
 			return nil, err
 		}
@@ -264,5 +264,5 @@ func OpenSQLConnection() error {
 	if err != nil {
 		return err
 	}
-	return  nil
+	return nil
 }

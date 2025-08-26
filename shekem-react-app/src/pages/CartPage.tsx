@@ -9,7 +9,10 @@ import { FetchGeneralConstants, FetchBackendConstants } from '../utils/constants
 type CartItem = {
     itemID: number, 
     quantity: number
+    title: string,
+    price: number
 }
+
 
 const FetchCartItems = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch( backendConstants.backend_address + backendConstants.get_cart_api, {
@@ -44,7 +47,7 @@ const CartPage = () => {
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
 
-    
+
     if (!backendConstants || !generalConstants) return <div>Loading...</div>;
     return (
 

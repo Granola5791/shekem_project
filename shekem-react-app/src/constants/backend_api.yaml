@@ -2,6 +2,7 @@ backend_address: "http://localhost:8081"
 add_to_cart_api: "/api/cart/add"
 get_categories_api: "/api/get_categories"
 get_category_photo_api: "/api/category/{category_id}/photo/{photo_id}"
+signup_api: "/api/signup"
 
 statuses:
   ok: "ok"
@@ -11,6 +12,9 @@ statuses:
 
 status_codes:
   ok: 200
+  created: 201
+  bad_request: 400
   unauthorized: 401
   not_found: 404
+  conflict: 409
   internal_server_error: 500

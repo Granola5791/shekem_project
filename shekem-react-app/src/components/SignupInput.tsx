@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import './SignupInput.css';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 interface LoginInputProps {
     onSignup: (username: string, password: string, repeatedPassword: string) => void;
@@ -17,12 +19,37 @@ const SignupInput = ({ onSignup, buttonText = 'Signup', usernamePlaceholder = 'E
     const [repeatedPassword, setRepeatedPassword] = useState('');
     return (
         <>
-            <div className="signup-input-container">
-                <input className="username-input" type="text" placeholder={usernamePlaceholder} onChange={(e) => setUsername(e.target.value)} />
-                <input className="password-input" type="password" placeholder={passwordPlaceholder} onChange={(e) => setPassword(e.target.value)} />
-                <input className="password-input" type="password" placeholder={rePasswordPlaceholder} onChange={(e) => setRepeatedPassword(e.target.value)} />
-                <button className="signup-button" type="submit" onClick={() => onSignup(username, password, repeatedPassword)}>{buttonText}</button>
-            </div>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '300px',
+                borderRadius: '5px',
+                columnGap: '10px',
+                rowGap: '5px',
+            }}>
+                <TextField
+                    type="text"
+                    placeholder={usernamePlaceholder}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <TextField
+                    type="password"
+                    placeholder={passwordPlaceholder}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <TextField
+                    type="password"
+                    placeholder={rePasswordPlaceholder}
+                    onChange={(e) => setRepeatedPassword(e.target.value)}
+                />
+                <Button
+                    type="submit"
+                    onClick={() => onSignup(username, password, repeatedPassword)}
+                    sx={{marginTop: '10px', backgroundColor: 'rgb(9, 191, 9)', color: 'white', height: '50px'}}
+                >
+                    {buttonText}
+                </Button>
+            </Box>
         </>
     )
 }

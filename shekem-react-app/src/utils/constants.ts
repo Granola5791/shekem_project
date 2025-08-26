@@ -1,10 +1,33 @@
+import { parse } from 'yaml';
+
 export type HebrewConstants = {
     add_to_cart_button: string;
     shekel_symbol: string;
     search_bar_text: string;
     category_list_title: string;
+    wait_text: string;
     user_errors: {
+        generic_error: string;
         page_not_found: string;
+        password_mismatch: string;
+        invalid_username_or_password: string;
+        username_taken: string;
+        server_error: string;
+    };
+    signup_texts: {
+        signup_title: string;
+        username_placeholder: string;
+        password_placeholder: string;
+        re_password_placeholder: string;
+        signup_button_text: string;
+        login_link: {
+            text: string;
+            link_text: string;
+        };
+        input_requirements_msg: {
+            strong: string;
+            text: string;
+        }
     };
 };
 
@@ -13,6 +36,7 @@ export type BackendConstants = {
     add_to_cart_api: string;
     get_categories_api: string;
     get_category_photo_api: string;
+    signup_api: string;
 
     statuses: {
         ok: string;
@@ -23,8 +47,11 @@ export type BackendConstants = {
 
     status_codes: {
         ok: number;
+        created: number;
+        bad_request: number;
         unauthorized: number;
         not_found: number;
+        conflict: number;
         internal_server_error: number;
     };
 };
@@ -54,3 +81,21 @@ export function insertValuesToConstantStr(configString: string, ...values: numbe
     }
     return result;
 }
+
+export async function FetchHebrewConstants() {
+    const res = await fetch('src/constants/hebrew.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
+export async function FetchBackendConstants() {
+    const res = await fetch('src/constants/backend_api.yaml');
+    const text = await res.text();
+    return parse(text);
+};
+
+export async function FetchGeneralConstants() {
+    const res = await fetch('src/constants/general_constants.yaml');
+    const text = await res.text();
+    return parse(text);
+};

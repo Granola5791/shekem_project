@@ -269,6 +269,15 @@ func GetItemPhoto(itemID int) ([]byte, error) {
 	return photo, nil
 }
 
+func DeleteFromCart(userID int, itemID int) error {
+	sqlStatement := `CALL delete_from_cart($1, $2);`
+	_, err := db.Exec(sqlStatement, userID, itemID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

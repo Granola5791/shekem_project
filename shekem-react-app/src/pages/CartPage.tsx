@@ -46,6 +46,29 @@ const CartPage = () => {
         fetchData();
     }, []);
 
+    const DeleteItem = (itemID: number) => {
+        const DeleteFromBackend = async () => {
+            if (!backendConstants) {
+                return;
+            }
+            const res = await fetch(backendConstants.backend_address + backendConstants.delete_from_cart_api, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item_id: itemID }),
+                credentials: 'include',
+            });
+        }
+
+        const DeleteFromFrontend = async () => {
+            const newCartItems = cartItems.filter((item) => item.itemID !== itemID);
+            setCartItems(newCartItems);
+        }
+
+
+        DeleteFromBackend();
+        DeleteFromFrontend();
+    };
+
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
@@ -55,7 +78,8 @@ const CartPage = () => {
     if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
     return (
 
-        <Container disableGutters maxWidth="md" sx={{ height: '100vh', border: '1px solid black', padding: '10px' }}>
+        <Container disableGutters maxWidth="md" sx={{ display: 'flex', height: '100vh', border: '1px solid black', padding: '10px' }}>
+
             <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
                 <Stack spacing={2}>
                     {cartItems.map((item) => (
@@ -67,7 +91,7 @@ const CartPage = () => {
                             itemTitle={item.title}
                             price={item.price}
                             moneySymbol={hebrewConstants.items.money_symbol}
-                            onDelete={() => { }}
+                            onDelete={DeleteItem}
                             photoPath={
                                 backendConstants.backend_address +
                                 insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)

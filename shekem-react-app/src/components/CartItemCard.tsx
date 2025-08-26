@@ -12,7 +12,7 @@ import React from 'react'
 interface CartItemProps {
     id: number,
     photoPath: string,
-    onDelete: () => void,
+    onDelete: (id: number) => void,
     itemTitle: string,
     price: number,
     quantity: number,
@@ -21,7 +21,7 @@ interface CartItemProps {
 }
 
 
-const CartItem = ( { id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "" }: CartItemProps) => {
+const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "" }: CartItemProps) => {
 
     const [selectCount, setSelectCount] = React.useState(quantity);
 
@@ -58,7 +58,7 @@ const CartItem = ( { id, photoPath, onDelete, itemTitle, price, quantity, quanti
                     </Box>
                 </Box>
 
-                <IconButton onClick={onDelete} sx={{ position: 'absolute', top: 0, left: 0 }}>
+                <IconButton onClick={() => onDelete(id)} sx={{ position: 'absolute', top: 0, left: 0 }}>
                     <DeleteIcon />
                 </IconButton>
 

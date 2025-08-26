@@ -231,6 +231,25 @@ func GetCategoryPhoto(categoryID int, photoIndex int) ( []byte, error) {
 	return photo, nil
 }
 
+func GetCart(userID int) ([]cartItem, error) {
+	var i int
+	bufferSize := GetIntFromConfig("database.cart_buffer_size")
+	cart := make([]cartItem, bufferSize)
+	sqlStatement := `SELECT get_cart($1);`
+	rows, err := db.Query(sqlStatement, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < bufferSize && rows.Next(); i++ {
+		err = rows.Scan(&cart[i].ItemID, &cart[i].Quantity)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return cart[0:i], nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

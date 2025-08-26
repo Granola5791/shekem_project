@@ -13,6 +13,7 @@ database:
   search_page_size: 10
   recommended_items_amount: 2
   categories_buffer_size: 20
+  cart_buffer_size: 50
 
 server:
   listen_addr: "localhost:8081"
@@ -26,6 +27,7 @@ server:
     get_recommended_items_path: "api/get_recommended_items"
     get_categories_path: "api/get_categories"
     get_category_photo_path: "api/category/:category_id/photo/:photo_index"
+    get_cart_path: "api/cart/get"
 
 error:
   user_exists: "User already exists"

@@ -2,6 +2,7 @@ backend_address: "http://localhost:8081"
 add_to_cart_api: "/api/cart/add"
 get_categories_api: "/api/get_categories"
 get_category_photo_api: "/api/category/{category_id}/photo/{photo_id}"
+get_cart_api: "/api/get_cart"
 signup_api: "/api/signup"
 
 statuses:

@@ -6,7 +6,7 @@ import (
 )
 
 type cartItem struct {
-	ProductID int `json:"product_id"`
+	ItemID    int `json:"item_id"`
 	Quantity  int `json:"quantity"`
 }
 
@@ -19,10 +19,22 @@ func HandleAddToCart(c *gin.Context) {
 		return
 	}
 
-	if err := AddToCart(userID.(int), input.ProductID, input.Quantity); err != nil {
+	if err := AddToCart(userID.(int), input.ItemID, input.Quantity); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Item added to cart successfully"})
+}
+
+func HandleGetCart(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	cart, err := GetCart(userID.(int))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"cart": cart,
+	})
 }

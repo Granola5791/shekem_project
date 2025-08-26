@@ -93,3 +93,13 @@ BEGIN
    RETURN ret_photo;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_cart(user_id_param INT)
+RETURNS TABLE(item_id INT, quantity INT) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT item_id, quantity
+   FROM cart_items
+   WHERE user_id = user_id_param;
+END;
+$$ LANGUAGE plpgsql;

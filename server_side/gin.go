@@ -22,6 +22,7 @@ func SetRouter() {
 	router.GET(GetStringFromConfig("server.api.get_recommended_items_path"), RequireAuthentication, HandleGetRecommendedItems)
 	router.GET(GetStringFromConfig("server.api.get_categories_path"), RequireAuthentication, HandleGetCategories)
 	router.GET(GetStringFromConfig("server.api.get_category_photo_path"), RequireAuthentication, HandleGetCategoryPhoto)
+	router.GET(GetStringFromConfig("server.api.get_cart_path"), RequireAuthentication, HandleGetCart)
 
 	router.Run(GetStringFromConfig("server.listen_addr"))
 }

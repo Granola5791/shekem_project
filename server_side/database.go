@@ -235,7 +235,7 @@ func GetCart(userID int) ([]FullCartItem, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.cart_buffer_size")
 	cart := make([]FullCartItem, bufferSize)
-	sqlStatement := `SELECT get_cart($1);`
+	sqlStatement := `SELECT * FROM get_cart($1);`
 	rows, err := db.Query(sqlStatement, userID)
 	if err != nil {
 		return nil, err

@@ -95,7 +95,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_cart(user_id_param INT)
-RETURNS TABLE(item_id INT, quantity INT) AS $$
+RETURNS TABLE(item_id INT, quantity INT, item_name VARCHAR(255), price DECIMAL(10, 2)) AS $$
 BEGIN
    RETURN QUERY
    SELECT c.item_id, c.quantity, i.item_name, i.price

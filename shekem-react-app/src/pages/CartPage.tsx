@@ -5,6 +5,8 @@ import type { BackendConstants, GeneralConstants, HebrewConstants } from '../uti
 import { FetchGeneralConstants, FetchBackendConstants, FetchHebrewConstants, insertValuesToConstantStr } from '../utils/constants'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
+import NavBar from '../components/NavBar'
+import { useNavigation } from '../utils/navigation'
 
 
 type CartItem = {
@@ -87,36 +89,59 @@ const CartPage = () => {
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
+    const {
+        searchItems: SearchItems,
+        goToLogin: GoToLogin,
+        goToCart: GoToCart,
+        goToHome: GoToHome
+    } = useNavigation();
 
 
     if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
     return (
+        <>
+            <NavBar
+                logoSrc='/src/assets/caveret-logo.svg'
+                onSearch={SearchItems}
+                logoClick={GoToHome}
+                goToCart={GoToCart}
+            />
 
-        <Container disableGutters maxWidth="md" sx={{ display: 'flex', height: '100vh', border: '1px solid black', padding: '10px' }}>
+            <Container
+                disableGutters
+                maxWidth="md"
+                sx={{
+                    display: 'flex',
+                    height: '100vh',
+                    border: '1px solid black',
+                    padding: '10px',
+                    marginTop: '15vh'
+                }}
+            >
 
-            <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
-                <Stack spacing={2}>
-                    {cartItems.map((item) => (
-                        <CartItem
-                            key={item.itemID}
-                            id={item.itemID}
-                            quantity={item.quantity}
-                            quantityLabel={hebrewConstants.items.quantity_label}
-                            itemTitle={item.title}
-                            price={item.price}
-                            moneySymbol={hebrewConstants.items.money_symbol}
-                            onDelete={DeleteItem}
-                            onChangeQuantity={UpdateQuantity}
-                            photoPath={
-                                backendConstants.backend_address +
-                                insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
-                            }
-                        />
-                    ))}
-                </Stack>
-            </Box>
-        </Container>
-
+                <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
+                    <Stack spacing={2}>
+                        {cartItems.map((item) => (
+                            <CartItem
+                                key={item.itemID}
+                                id={item.itemID}
+                                quantity={item.quantity}
+                                quantityLabel={hebrewConstants.items.quantity_label}
+                                itemTitle={item.title}
+                                price={item.price}
+                                moneySymbol={hebrewConstants.items.money_symbol}
+                                onDelete={DeleteItem}
+                                onChangeQuantity={UpdateQuantity}
+                                photoPath={
+                                    backendConstants.backend_address +
+                                    insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
+                                }
+                            />
+                        ))}
+                    </Stack>
+                </Box>
+            </Container>
+        </>
     )
 }
 

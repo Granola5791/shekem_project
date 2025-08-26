@@ -37,7 +37,8 @@ CREATE TABLE cart_items (
   item_id INT NOT NULL,
   quantity INT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(user_id),
-  FOREIGN KEY (item_id) REFERENCES items(item_id)
+  FOREIGN KEY (item_id) REFERENCES items(item_id),
+  UNIQUE (user_id, item_id)
 );
 
 CREATE TABLE categories (

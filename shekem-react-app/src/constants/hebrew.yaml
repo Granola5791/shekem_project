@@ -24,3 +24,7 @@ signup_texts:
   input_requirements_msg:
     strong: "שימו לב:"
     text: " שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*)."
+
+items:
+  quantity_label: "כמות: "
+  money_symbol: "₪"

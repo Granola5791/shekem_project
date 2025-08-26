@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Item struct {
@@ -22,4 +24,20 @@ func HandleGetRecommendedItems(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"recommendedItems": recommendeditems,
 	})
+}
+
+func HandleGetItemPhoto(c *gin.Context){
+	itemID, err := strconv.Atoi(c.Param("item_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+
+	photo, err := GetItemPhoto(itemID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Data(http.StatusOK, "image/jpeg", []byte(photo))
+	
 }

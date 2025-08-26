@@ -176,6 +176,7 @@ func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
 	return nil
 }
 
+
 func GetRecommendedItems() ([]Item, error) {
 	amount := GetIntFromConfig("database.recommended_items_amount")
 	items := make([]Item, amount)
@@ -248,6 +249,24 @@ func GetCart(userID int) ([]FullCartItem, error) {
 		}
 	}
 	return cart[0:i], nil
+}
+
+func GetItemPhoto(itemID int) ([]byte, error) {
+	var photo []byte
+	sqlStatement := `SELECT get_item_photo($1);`
+	rows, err := db.Query(sqlStatement, itemID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, sql.ErrNoRows
+	}
+	err = rows.Scan(&photo)
+	if err != nil {
+		return nil, err
+	}
+	return photo, nil
 }
 
 func OpenSQLConnection() error {

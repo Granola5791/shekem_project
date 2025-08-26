@@ -29,6 +29,11 @@ export type HebrewConstants = {
             text: string;
         }
     };
+
+    items: {
+        quantity_label: string;
+        money_symbol: string;
+    };
 };
 
 export type BackendConstants = {
@@ -37,6 +42,7 @@ export type BackendConstants = {
     get_categories_api: string;
     get_category_photo_api: string;
     get_cart_api: string;
+    get_item_photo_api: string;
     signup_api: string;
 
     statuses: {

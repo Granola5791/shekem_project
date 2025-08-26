@@ -104,3 +104,15 @@ BEGIN
    WHERE user_id = user_id_param;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_item_photo(item_id_param INT)
+RETURNS BYTEA AS $$
+DECLARE
+   ret_photo BYTEA;
+BEGIN
+   SELECT photo INTO ret_photo
+   FROM items
+   WHERE item_id = item_id_param;
+   RETURN ret_photo;
+END;
+$$ LANGUAGE plpgsql;

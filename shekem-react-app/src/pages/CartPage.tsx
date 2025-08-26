@@ -2,12 +2,14 @@ import React, { use, useEffect, useState } from 'react'
 import CartItem from '../components/CartItemCard'
 import Grid from '@mui/material/Grid'
 import Container from '@mui/material/Container'
-import type { BackendConstants, GeneralConstants } from '../utils/constants'
-import { FetchGeneralConstants, FetchBackendConstants } from '../utils/constants'
+import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'
+import { FetchGeneralConstants, FetchBackendConstants, FetchHebrewConstants, insertValuesToConstantStr } from '../utils/constants'
+import Stack from '@mui/material/Stack'
+import Box from '@mui/material/Box'
 
 
 type CartItem = {
-    itemID: number, 
+    itemID: number,
     quantity: number
     title: string,
     price: number
@@ -15,7 +17,7 @@ type CartItem = {
 
 
 const FetchCartItems = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    const res = await fetch( backendConstants.backend_address + backendConstants.get_cart_api, {
+    const res = await fetch(backendConstants.backend_address + backendConstants.get_cart_api, {
         method: 'GET',
         credentials: 'include'
     });
@@ -28,9 +30,10 @@ const CartPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [thisBackendConstants, thisGeneralConstants] = await Promise.all([FetchBackendConstants(), FetchGeneralConstants()]);
+                const [thisBackendConstants, thisGeneralConstants, thisHebrewConstants] = await Promise.all([FetchBackendConstants(), FetchGeneralConstants(), FetchHebrewConstants()]);
                 setBackendConstants(thisBackendConstants);
                 setGeneralConstants(thisGeneralConstants);
+                setHebrewConstants(thisHebrewConstants);
                 if (!thisBackendConstants || !thisGeneralConstants) {
                     throw new Error("Failed to load configurations");
                 }
@@ -46,14 +49,33 @@ const CartPage = () => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
+    const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
 
 
-    if (!backendConstants || !generalConstants) return <div>Loading...</div>;
+    if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
     return (
 
         <Container disableGutters maxWidth="md" sx={{ height: '100vh', border: '1px solid black', padding: '10px' }}>
-            <Grid >
-            </Grid>
+            <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
+                <Stack spacing={2}>
+                    {cartItems.map((item) => (
+                        <CartItem
+                            key={item.itemID}
+                            id={item.itemID}
+                            quantity={item.quantity}
+                            quantityLabel={hebrewConstants.items.quantity_label}
+                            itemTitle={item.title}
+                            price={item.price}
+                            moneySymbol={hebrewConstants.items.money_symbol}
+                            onDelete={() => { }}
+                            photoPath={
+                                backendConstants.backend_address +
+                                insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
+                            }
+                        />
+                    ))}
+                </Stack>
+            </Box>
         </Container>
 
     )

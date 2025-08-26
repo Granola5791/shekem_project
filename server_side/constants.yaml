@@ -27,6 +27,7 @@ server:
     get_recommended_items_path: "api/get_recommended_items"
     get_categories_path: "api/get_categories"
     get_category_photo_path: "api/category/:category_id/photo/:photo_index"
+    get_item_photo_path: "api/item/:item_id/photo"
     get_cart_path: "api/get_cart"
 
 error:

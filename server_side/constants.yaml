@@ -31,6 +31,7 @@ server:
     get_cart_path: "api/get_cart"
     delete_from_cart_path: "api/cart/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"
+    order_submit_path: "api/cart/submit_order"
 
 error:
   user_exists: "User already exists"
@@ -45,3 +46,4 @@ success:
   signup_success: "Signup successful"
   delete_from_cart: "Item deleted from cart"
   update_cart_item_quantity: "Item quantity updated"
+  order_submitted: "Order submitted"

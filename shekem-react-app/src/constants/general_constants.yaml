@@ -4,3 +4,4 @@ errors:
   category_load_fail: "Failed to load categories"
   category_load_not_found: "Categories not found"
   cart_load_fail: "Failed to load cart"
+  order_submit_fail: "Failed to submit order"

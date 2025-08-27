@@ -52,6 +52,7 @@ export type BackendConstants = {
     get_item_photo_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
+    submit_order_api: string;
     signup_api: string;
 
     statuses: {
@@ -79,6 +80,7 @@ export type GeneralConstants = {
         category_load_fail: string;
         category_load_not_found: string;
         cart_load_fail: string;
+        order_submit_fail: string;
     };
 };
 

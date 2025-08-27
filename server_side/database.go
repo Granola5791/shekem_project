@@ -287,6 +287,15 @@ func UpdateCartItemQuantity(userID int, itemID int, quantity int) error {
 	return nil
 }
 
+func SubmitOrderToDB(userID int) error {
+	sqlStatement := `CALL create_order_from_cart($1);`
+	_, err := db.Exec(sqlStatement, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

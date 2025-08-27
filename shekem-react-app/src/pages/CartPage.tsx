@@ -33,6 +33,14 @@ const FetchCartItems = async (backendConstants: BackendConstants, generalConstan
     return data.cart;
 }
 
+const SubmitOrder = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
+    const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
+        method: 'POST',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail + res.json());
+}
+
 
 const CartPage = () => {
     useEffect(() => {
@@ -100,6 +108,18 @@ const CartPage = () => {
         );
 
     }
+
+    const SubmitOrder = async () => {
+        if (!backendConstants || !generalConstants) {
+            return;
+        }
+        const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail);
+    }
+
 
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
@@ -172,6 +192,7 @@ const CartPage = () => {
                         price={totalPrice}
                         moneySymbol={hebrewConstants.items.money_symbol}
                         buttonText={hebrewConstants.checkout.button_text}
+                        onSubmit={SubmitOrder}
                     />
                 </Box>
             </Container>

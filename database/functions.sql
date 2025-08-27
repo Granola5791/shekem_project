@@ -116,3 +116,16 @@ BEGIN
    RETURN ret_photo;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_total_cart_price(user_id_param INT)
+RETURNS DECIMAL(10, 2) AS $$
+DECLARE
+   ret_total_price DECIMAL(10, 2);
+BEGIN
+   SELECT SUM(i.price * c.quantity) INTO ret_total_price
+   FROM cart_items c JOIN items i
+   ON c.item_id = i.item_id
+   WHERE user_id = user_id_param;
+   RETURN ret_total_price;
+END;
+$$ LANGUAGE plpgsql;

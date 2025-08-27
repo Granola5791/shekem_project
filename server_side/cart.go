@@ -85,3 +85,13 @@ func HandleUpdateCartItemQuantity(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.update_cart_item_quantity")})
 }
+
+func HandleOrderSubmit(c *gin.Context) {
+	userID, _ := c.Get("userID")
+
+	if err := SubmitOrderToDB(userID.(int)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.order_submitted")})
+}

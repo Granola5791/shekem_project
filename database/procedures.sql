@@ -45,3 +45,23 @@ BEGIN
     WHERE user_id = user_id_param AND item_id = item_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE create_order_from_cart(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    new_order_id INT;
+BEGIN
+    INSERT INTO orders (user_id, total_price)
+    VALUES (user_id_param, get_total_cart_price(user_id_param))
+    RETURNING order_id INTO new_order_id;
+
+    INSERT INTO order_items (order_id, item_id, quantity)
+    SELECT new_order_id, item_id, quantity
+    FROM cart_items
+    WHERE user_id = user_id_param;
+
+    DELETE FROM cart_items
+    WHERE user_id = user_id_param;
+END;
+$$

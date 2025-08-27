@@ -9,6 +9,7 @@ import {createBrowserRouter, RouterProvider } from "react-router-dom";
 import checkLogin from './utils/checkLogin.ts';
 import NotFound from './pages/NotFoundPage.tsx';
 import CartPage from './pages/CartPage.tsx';
+import CategoryPage from './pages/CategoryPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,12 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <CartPage />,
+    errorElement: <ErrorPage />,
+    loader: checkLogin,
+  },
+  {
+    path: "/category/:id",
+    element: <CategoryPage />,
     errorElement: <ErrorPage />,
     loader: checkLogin,
   },

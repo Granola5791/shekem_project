@@ -34,12 +34,10 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
     }
 
     const OnPlus = async () => {
-        if (selectCount - 1) {
-            setButtonDisabled(true);
-            await onChangeQuantity(id, selectCount + 1);
-            setSelectCount(selectCount + 1);
-            setButtonDisabled(false);
-        }
+        setButtonDisabled(true);
+        await onChangeQuantity(id, selectCount + 1);
+        setSelectCount(selectCount + 1);
+        setButtonDisabled(false);
     }
 
     const [selectCount, setSelectCount] = React.useState(quantity);

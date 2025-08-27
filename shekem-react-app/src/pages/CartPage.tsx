@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import NavBar from '../components/NavBar'
 import { useNavigation } from '../utils/navigation'
+import Checkout from '../components/Checkout'
+import Divider from '@mui/material/Divider'
 
 
 type CartItem = {
@@ -29,6 +31,7 @@ const FetchCartItems = async (backendConstants: BackendConstants, generalConstan
     const data = await res.json();
     return data.cart;
 }
+
 
 const CartPage = () => {
     useEffect(() => {
@@ -77,24 +80,41 @@ const CartPage = () => {
         if (!backendConstants) {
             return;
         }
+
         const res = await fetch(backendConstants.backend_address + backendConstants.update_cart_item_quantity_api, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ item_id: itemID, quantity: quantity }),
             credentials: 'include',
         });
+
+        if (!res.ok) {
+            throw new Error('Failed to update quantity');
+        }
+
+        setCartItems(prev =>
+            prev.map(item =>
+                item.itemID === itemID ? { ...item, quantity } : item
+            )
+        );
+
     }
 
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
+    const [totalPrice, setTotalPrice] = useState(0);
     const {
         searchItems: SearchItems,
-        goToLogin: GoToLogin,
         goToCart: GoToCart,
         goToHome: GoToHome
     } = useNavigation();
+
+
+    useEffect(() => {
+        setTotalPrice(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
+    }, [cartItems]);
 
 
     if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
@@ -111,14 +131,13 @@ const CartPage = () => {
                 disableGutters
                 maxWidth="md"
                 sx={{
+                    bgcolor: 'rgba(250, 250, 250, 1)',
                     display: 'flex',
                     height: '100vh',
-                    border: '1px solid black',
                     padding: '10px',
                     marginTop: '15vh'
                 }}
             >
-
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
                     <Stack spacing={2}>
                         {cartItems.map((item) => (
@@ -130,15 +149,27 @@ const CartPage = () => {
                                 itemTitle={item.title}
                                 price={item.price}
                                 moneySymbol={hebrewConstants.items.money_symbol}
-                                onDelete={DeleteItem}
-                                onChangeQuantity={UpdateQuantity}
                                 photoPath={
                                     backendConstants.backend_address +
                                     insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
                                 }
+                                onDelete={DeleteItem}
+                                onChangeQuantity={UpdateQuantity}
                             />
                         ))}
                     </Stack>
+                </Box>
+
+                <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255, 247, 0, 0.2)' }} />
+
+                <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
+                    <Checkout
+                        title={hebrewConstants.checkout.title}
+                        priceLabel={hebrewConstants.checkout.price_label}
+                        price={totalPrice}
+                        moneySymbol={hebrewConstants.items.money_symbol}
+                        buttonText={hebrewConstants.checkout.button_text}
+                    />
                 </Box>
             </Container>
         </>

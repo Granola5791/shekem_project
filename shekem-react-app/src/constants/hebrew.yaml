@@ -28,3 +28,8 @@ signup_texts:
 items:
   quantity_label: "כמות: "
   money_symbol: "₪"
+
+checkout:
+  title: "סיכום תשלום"
+  button_text: "קחו את הכסף שלי"
+  price_label: "מחיר"

@@ -34,6 +34,12 @@ export type HebrewConstants = {
         quantity_label: string;
         money_symbol: string;
     };
+
+    checkout: {
+        title: string;
+        price_label: string;
+        button_text: string;
+    };
 };
 
 export type BackendConstants = {

@@ -15,7 +15,8 @@ type CartItem = {
     itemID: number,
     quantity: number
     title: string,
-    price: number
+    price: number,
+    stock: number
 }
 
 
@@ -155,6 +156,8 @@ const CartPage = () => {
                                 }
                                 onDelete={DeleteItem}
                                 onChangeQuantity={UpdateQuantity}
+                                stock={item.stock}
+                                stockLabel={hebrewConstants.items.stock_label}
                             />
                         ))}
                     </Stack>

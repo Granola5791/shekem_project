@@ -28,6 +28,7 @@ signup_texts:
 items:
   quantity_label: "כמות: "
   money_symbol: "₪"
+  stock_label: "מלאי"
 
 checkout:
   title: "סיכום תשלום"

@@ -20,6 +20,7 @@ CREATE TABLE items (
   item_name VARCHAR(255) NOT NULL
   price DECIMAL(10, 2) NOT NULL,
   photo BYTEA
+  stock INT NOT NULL
 );
 
 CREATE TABLE order_items (

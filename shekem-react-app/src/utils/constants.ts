@@ -33,6 +33,7 @@ export type HebrewConstants = {
     items: {
         quantity_label: string;
         money_symbol: string;
+        stock_label: string;
     };
 
     checkout: {

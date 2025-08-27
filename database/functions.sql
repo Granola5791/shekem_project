@@ -95,10 +95,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_cart(user_id_param INT)
-RETURNS TABLE(item_id INT, quantity INT, item_name VARCHAR(255), price DECIMAL(10, 2)) AS $$
+RETURNS TABLE(item_id INT, quantity INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
 BEGIN
    RETURN QUERY
-   SELECT c.item_id, c.quantity, i.item_name, i.price
+   SELECT c.item_id, c.quantity, i.item_name, i.price, i.stock
    FROM cart_items c JOIN items i
    ON c.item_id = i.item_id
    WHERE user_id = user_id_param;

@@ -18,11 +18,13 @@ interface CartItemProps {
     price: number,
     quantity: number,
     quantityLabel: string,
+    stock: number,
+    stockLabel: string,
     moneySymbol?: string
 }
 
 
-const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "", onChangeQuantity }: CartItemProps) => {
+const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantityLabel, moneySymbol = "", onChangeQuantity, stock, stockLabel }: CartItemProps) => {
 
     const OnMinus = async () => {
         if (selectCount - 1) {
@@ -34,10 +36,12 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
     }
 
     const OnPlus = async () => {
-        setButtonDisabled(true);
-        await onChangeQuantity(id, selectCount + 1);
-        setSelectCount(selectCount + 1);
-        setButtonDisabled(false);
+        if (selectCount < stock) {
+            setButtonDisabled(true);
+            await onChangeQuantity(id, selectCount + 1);
+            setSelectCount(selectCount + 1);
+            setButtonDisabled(false);
+        }
     }
 
     const [selectCount, setSelectCount] = React.useState(quantity);
@@ -74,6 +78,10 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
                             <RemoveIcon />
                         </IconButton>
                     </Box>
+
+                    <Typography variant='caption'>
+                        {stockLabel}: {stock}
+                    </Typography>
                 </Box>
 
                 <IconButton disabled={buttonDisabled} onClick={() => onDelete(id)} sx={{ position: 'absolute', top: 0, left: 0 }}>

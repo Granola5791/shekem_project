@@ -20,6 +20,7 @@ type FullCartItem struct {
 	Quantity int     `json:"quantity"`
 	Title    string  `json:"title"`
 	Price    float64 `json:"price"`
+	Stock    int     `json:"stock"`
 }
 
 func HandleAddToCart(c *gin.Context) {
@@ -41,7 +42,7 @@ func HandleAddToCart(c *gin.Context) {
 
 func HandleGetCart(c *gin.Context) {
 	userID, _ := c.Get("userID")
-	cart, err := GetCart(userID.(int))
+	cart, err := GetCartFromDB(userID.(int))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

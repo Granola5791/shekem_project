@@ -3,8 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/lib/pq"
 	"os"
+
+	"github.com/lib/pq"
 )
 
 var db *sql.DB
@@ -176,7 +177,6 @@ func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
 	return nil
 }
 
-
 func GetRecommendedItems() ([]Item, error) {
 	amount := GetIntFromConfig("database.recommended_items_amount")
 	items := make([]Item, amount)
@@ -232,7 +232,7 @@ func GetCategoryPhoto(categoryID int, photoIndex int) ([]byte, error) {
 	return photo, nil
 }
 
-func GetCart(userID int) ([]FullCartItem, error) {
+func GetCartFromDB(userID int) ([]FullCartItem, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.cart_buffer_size")
 	cart := make([]FullCartItem, bufferSize)
@@ -243,7 +243,7 @@ func GetCart(userID int) ([]FullCartItem, error) {
 	}
 	defer rows.Close()
 	for i = 0; i < bufferSize && rows.Next(); i++ {
-		err = rows.Scan(&cart[i].ItemID, &cart[i].Quantity, &cart[i].Title, &cart[i].Price)
+		err = rows.Scan(&cart[i].ItemID, &cart[i].Quantity, &cart[i].Title, &cart[i].Price, &cart[i].Stock)
 		if err != nil {
 			return nil, err
 		}

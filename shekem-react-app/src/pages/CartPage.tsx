@@ -9,6 +9,7 @@ import NavBar from '../components/NavBar'
 import { useNavigation } from '../utils/navigation'
 import Checkout from '../components/Checkout'
 import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
 
 
 type CartItem = {
@@ -118,6 +119,7 @@ const CartPage = () => {
             credentials: 'include'
         });
         if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail);
+        window.location.reload();
     }
 
 
@@ -186,14 +188,18 @@ const CartPage = () => {
                 <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255, 247, 0, 0.2)' }} />
 
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
-                    <Checkout
-                        title={hebrewConstants.checkout.title}
-                        priceLabel={hebrewConstants.checkout.price_label}
-                        price={totalPrice}
-                        moneySymbol={hebrewConstants.items.money_symbol}
-                        buttonText={hebrewConstants.checkout.button_text}
-                        onSubmit={SubmitOrder}
-                    />
+                    {cartItems.length > 0 ? (
+                        <Checkout
+                            title={hebrewConstants.checkout.title}
+                            priceLabel={hebrewConstants.checkout.price_label}
+                            price={totalPrice}
+                            moneySymbol={hebrewConstants.items.money_symbol}
+                            buttonText={hebrewConstants.checkout.button_text}
+                            onSubmit={SubmitOrder}
+                        />)
+                        :
+                        <Typography variant="h4">{hebrewConstants.checkout.empty_cart_text}</Typography>
+                    }
                 </Box>
             </Container>
         </>

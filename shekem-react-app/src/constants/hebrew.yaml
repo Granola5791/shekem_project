@@ -34,3 +34,4 @@ checkout:
   title: "סיכום תשלום"
   button_text: "קחו את הכסף שלי"
   price_label: "מחיר"
+  empty_cart_text: "נראה שעוד לא הוספת שום דבר לסל... לך תקנה משהו!"

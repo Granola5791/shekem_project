@@ -14,6 +14,15 @@ interface CheckoutProps {
 }
 
 const Checkout = ({ title, priceLabel, price, moneySymbol, buttonText, onSubmit }: CheckoutProps) => {
+
+    const [disabled, setDisabled] = React.useState(false)
+
+    const handleClick = async () => {
+        setDisabled(true)
+        await onSubmit?.()
+        setDisabled(false)
+    }
+
     return (
         <Box sx={{
             display: 'flex',
@@ -41,7 +50,8 @@ const Checkout = ({ title, priceLabel, price, moneySymbol, buttonText, onSubmit 
                     width: '150px',
                     height: '50px'
                 }}
-                onClick={onSubmit}
+                onClick={handleClick}
+                disabled={disabled}
             >
                 {buttonText}
             </Button>

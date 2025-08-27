@@ -37,6 +37,7 @@ export type HebrewConstants = {
     };
 
     checkout: {
+        empty_cart_text: string;
         title: string;
         price_label: string;
         button_text: string;

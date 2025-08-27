@@ -148,7 +148,7 @@ const CartPage = () => {
                                 quantity={item.quantity}
                                 quantityLabel={hebrewConstants.items.quantity_label}
                                 itemTitle={item.title}
-                                price={item.price}
+                                price={item.price * item.quantity}
                                 moneySymbol={hebrewConstants.items.money_symbol}
                                 photoPath={
                                     backendConstants.backend_address +

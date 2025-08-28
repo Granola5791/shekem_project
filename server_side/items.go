@@ -15,17 +15,6 @@ type Item struct {
 }
 
 
-func HandleGetRecommendedItems(c *gin.Context) {
-	recommendeditems, err := GetRecommendedItems()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"recommendedItems": recommendeditems,
-	})
-}
-
 func HandleGetItemPhoto(c *gin.Context){
 	itemID, err := strconv.Atoi(c.Param("item_id"))
 	if err != nil {

@@ -177,24 +177,6 @@ func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
 	return nil
 }
 
-func GetRecommendedItems() ([]Item, error) {
-	amount := GetIntFromConfig("database.recommended_items_amount")
-	items := make([]Item, amount)
-	sqlStatement := `SELECT * FROM recommended_items;`
-	rows, err := db.Query(sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for i := 0; i < amount && rows.Next(); i++ {
-		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].PhotoPath, &items[i].Price)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return items, nil
-}
-
 func GetCategories() ([]Category, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.categories_buffer_size")

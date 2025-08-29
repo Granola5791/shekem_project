@@ -24,6 +24,8 @@ func SetRouter() {
 	router.GET(GetStringFromConfig("server.api.get_category_photo_path"), RequireAuthentication, HandleGetCategoryPhoto)
 	router.GET(GetStringFromConfig("server.api.get_item_photo_path"), RequireAuthentication, HandleGetItemPhoto)
 	router.GET(GetStringFromConfig("server.api.get_cart_path"), RequireAuthentication, HandleGetCart)
+	router.GET(GetStringFromConfig("server.api.get_category_items_path"), RequireAuthentication, HandleInitialGetCategoryItems)
+	router.GET(GetStringFromConfig("server.api.get_category_items_page_path"), RequireAuthentication, HandleGetCategoryItemsPage)
 	router.DELETE(GetStringFromConfig("server.api.delete_from_cart_path"), RequireAuthentication, HandleDeleteFromCart)
 	router.PATCH(GetStringFromConfig("server.api.update_cart_item_quantity_path"), RequireAuthentication, HandleUpdateCartItemQuantity)
 

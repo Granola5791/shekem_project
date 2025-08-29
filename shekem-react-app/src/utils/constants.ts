@@ -1,7 +1,6 @@
 import { parse } from 'yaml';
 
 export type HebrewConstants = {
-    add_to_cart_button: string;
     shekel_symbol: string;
     search_bar_text: string;
     category_list_title: string;
@@ -34,6 +33,7 @@ export type HebrewConstants = {
         quantity_label: string;
         money_symbol: string;
         stock_label: string;
+        add_to_cart_button: string;
     };
 
     checkout: {

@@ -86,11 +86,15 @@ const CategoryPage = () => {
                 <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
                     {items.map((item: Item) => (
                         <ItemCard
-                            key={item.itemID}
-                            id={item.itemID}
+                            key={item.id}
+                            id={item.id}
                             itemTitle={item.title}
                             price={item.price}
                             stock={item.stock}
+                            buttonText={hebrewConstants.items.add_to_cart_button}
+                            moneySymbol={hebrewConstants.items.money_symbol}
+                            stockLabel={hebrewConstants.items.stock_label}
+                            image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
                         />
                     ))}
                 </Grid>

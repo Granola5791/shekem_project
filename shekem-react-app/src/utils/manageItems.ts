@@ -3,4 +3,4 @@ export type Item = {
     title: string;
     price: number;
     stock: number;
-} 
+}

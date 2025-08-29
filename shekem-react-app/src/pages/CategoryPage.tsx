@@ -9,6 +9,7 @@ import type { Item } from '../utils/manageItems'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
 import { useParams } from 'react-router-dom'
+import { isUnauthorizedResponse } from '../utils/http'
 
 const FetchCategoryItems = async (categoryID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_api, categoryID), {
@@ -32,7 +33,8 @@ const CategoryPage = () => {
     const {
         goToHome: GoToHome,
         goToCart: GoToCart,
-        searchItems: SearchItems
+        searchItems: SearchItems,
+        goToLogin: GoToLogin
     } = useNavigation()
 
 
@@ -57,6 +59,26 @@ const CategoryPage = () => {
         }
         fetchData();
     }, [id])
+
+    async function AddToCart(id: number, selectCount: number) {
+        if (selectCount <= 0) {
+            return;
+        }
+        if (!backendConstants) {
+            console.error(generalConstants?.errors.config_not_found);
+            return;
+        }
+        const res = await fetch(backendConstants.backend_address + backendConstants.add_to_cart_api, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: id, quantity: selectCount }),
+            credentials: 'include',
+        });
+        if (isUnauthorizedResponse(res)) {
+            GoToLogin();
+            return;
+        }
+    }
 
     if (!hebrewConstants || !backendConstants || !generalConstants) {
         return <>loading</>
@@ -95,6 +117,7 @@ const CategoryPage = () => {
                             moneySymbol={hebrewConstants.items.money_symbol}
                             stockLabel={hebrewConstants.items.stock_label}
                             image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
+                            AddToCart={AddToCart}
                         />
                     ))}
                 </Grid>

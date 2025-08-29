@@ -1,4 +1,3 @@
-add_to_cart_button: "הוסף לסל"
 shekel_symbol: "₪"
 search_bar_text: "מה בא לנו היום?"
 category_list_title: "קטגוריות"
@@ -29,6 +28,7 @@ items:
   quantity_label: "כמות: "
   money_symbol: "₪"
   stock_label: "מלאי"
+  add_to_cart_button: "הוסף לסל"
 
 checkout:
   title: "סיכום תשלום"

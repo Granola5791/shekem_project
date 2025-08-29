@@ -51,6 +51,7 @@ export type BackendConstants = {
     get_category_photo_api: string;
     get_cart_api: string;
     get_item_photo_api: string;
+    get_category_items_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
     submit_order_api: string;
@@ -103,19 +104,19 @@ export function insertValuesToConstantStr(configString: string, ...values: numbe
 }
 
 export async function FetchHebrewConstants() {
-    const res = await fetch('src/constants/hebrew.yaml');
+    const res = await fetch('/constants/hebrew.yaml');
     const text = await res.text();
     return parse(text);
 };
 
 export async function FetchBackendConstants() {
-    const res = await fetch('src/constants/backend_api.yaml');
+    const res = await fetch('/constants/backend_api.yaml');
     const text = await res.text();
     return parse(text);
 };
 
 export async function FetchGeneralConstants() {
-    const res = await fetch('src/constants/general_constants.yaml');
+    const res = await fetch('/constants/general_constants.yaml');
     const text = await res.text();
     return parse(text);
 };

@@ -35,6 +35,13 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
             setSelectCount(selectCount + 1);
         }
     }
+
+    const OnAddToCart = () => {
+        setSelectCount(0);
+        if (AddToCart) {
+            AddToCart(id, selectCount);
+        }
+    }
     
 
     const [selectCount, setSelectCount] = React.useState(0);
@@ -79,7 +86,7 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
                         ':hover': { backgroundColor: 'rgba(255, 247, 0, 1)' },
                         width: '90px'
                     }}
-                    onClick={() => AddToCart?.(id, selectCount)}
+                    onClick={OnAddToCart}
                 >
                     {buttonText}
                 </Button>

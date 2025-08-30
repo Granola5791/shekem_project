@@ -87,6 +87,7 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
                         width: '90px'
                     }}
                     onClick={OnAddToCart}
+                    disabled={!selectCount}
                 >
                     {buttonText}
                 </Button>

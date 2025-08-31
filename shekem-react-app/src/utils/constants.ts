@@ -29,6 +29,17 @@ export type HebrewConstants = {
         }
     };
 
+    login_texts: {
+        login_title: string;
+        username_placeholder: string;
+        password_placeholder: string;
+        login_button_text: string;
+        signup_link: {
+            text: string;
+            link_text: string;
+        };
+    };
+
     items: {
         quantity_label: string;
         money_symbol: string;
@@ -57,6 +68,7 @@ export type BackendConstants = {
     update_cart_item_quantity_api: string;
     submit_order_api: string;
     signup_api: string;
+    login_api: string;
 
     statuses: {
         ok: string;

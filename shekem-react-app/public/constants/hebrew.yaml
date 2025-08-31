@@ -7,7 +7,7 @@ user_errors:
   generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"
   page_not_found: "נראה שנדדת רחוק מדי"
   password_mismatch: "הסיסמאות לא תואמות"
-  unvalid_username_or_password: "שם המשתמש או הסיסמה לא תקינים"
+  invalid_username_or_password: "שם המשתמש או הסיסמה לא תקינים"
   username_taken: "שם המשתמש כבר קיים"
   server_error: "שגיאה בהתחברות לשרת, אנא נסה שוב במועד מאוחר יותר"
 
@@ -23,6 +23,15 @@ signup_texts:
   input_requirements_msg:
     strong: "שימו לב:"
     text: " שם המשתמש והסיסמה חייבים להיות באורך של 8–30 תווים, ויכולים להכיל רק תווים באנגלית, מספרים ותווים מיוחדים (!,@,#,$,%,^,&,*)."
+
+login_texts:
+  login_title: "התחברות"
+  username_placeholder: "הכנס שם משתמש"
+  password_placeholder: "הכנס סיסמה"
+  login_button_text: "נו תן כבר להיכנס"
+  signup_link:
+    text: "אין לכם חשבון? "
+    link_text: "להרשמה!"
 
 items:
   quantity_label: "כמות: "

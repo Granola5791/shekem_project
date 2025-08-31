@@ -39,7 +39,7 @@ server:
 error:
   user_exists: "User already exists"
   user_not_exists: "User does not exist"
-  invalid_useraname_or_password: "Invalid username or password"
+  invalid_username_or_password: "Invalid username or password"
   Invalid_input: "Invalid input"
   failed_generate_token: "Failed to generate token"
   missing_config: "Missing configuration for key: "

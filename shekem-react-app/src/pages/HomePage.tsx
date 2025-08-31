@@ -7,44 +7,9 @@ import { isUnauthorizedResponse } from '../utils/http.ts';
 import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
+import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
+import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
 
-
-type HebrewConfig = {
-    add_to_cart_button: string
-    shekel_symbol: string
-    search_bar_text: string
-    category_list_title: string
-}
-
-type BackendConfig = {
-    backend_address: string
-    add_to_cart_api: string
-    get_categories_api: string
-    get_category_photo_api: string
-
-    statuses: {
-        ok: string
-        unauthorized: string
-        not_found: string
-        internal_server_error: string
-    }
-
-    status_codes: {
-        ok: number
-        unauthorized: number
-        not_found: number
-        internal_server_error: number
-    }
-}
-
-type GeneralConstants = {
-    errors: {
-        config_load_fail: string
-        config_not_found: string
-        category_load_fail: string
-        category_load_not_found: string
-    }
-}
 
 type Category = {
     id: number;
@@ -52,12 +17,12 @@ type Category = {
 }
 
 
-const FetchCategories = async (backendConfig: BackendConfig, generalConstants: GeneralConstants) => {
-    if (!backendConfig) {
+const FetchCategories = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
+    if (!backendConstants) {
         console.error(generalConstants.errors.config_not_found);
         return [];
     }
-    const res = await fetch(backendConfig.backend_address + backendConfig.get_categories_api, {
+    const res = await fetch(backendConstants.backend_address + backendConstants.get_categories_api, {
         method: 'GET',
         credentials: 'include'
     });
@@ -66,29 +31,10 @@ const FetchCategories = async (backendConfig: BackendConfig, generalConstants: G
     return data.categories;
 }
 
-
-const FetchHebrewConfig = async () => {
-    const res = await fetch('src/constants/hebrew.yaml');
-    const text = await res.text();
-    return parse(text);
-};
-
-const FetchBackendConfig = async () => {
-    const res = await fetch('src/constants/backend_api.yaml');
-    const text = await res.text();
-    return parse(text);
-};
-
-const FetchGeneralConstants = async () => {
-    const res = await fetch('src/constants/general_constants.yaml');
-    const text = await res.text();
-    return parse(text);
-};
-
 const HomePage = () => {
     // configs
-    const [hebrewConfig, setHebrewConfig] = React.useState<HebrewConfig | null>(null);
-    const [backendConfig, setBackendConfig] = React.useState<BackendConfig | null>(null);
+    const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
+    const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
 
     // loading and error states
@@ -112,15 +58,15 @@ const HomePage = () => {
 
         const fetchData = async () => {
             try {
-                const [thisHebrewConfig, thisBackendConfig, thisGeneralConstants] = await Promise.all([FetchHebrewConfig(), FetchBackendConfig(), FetchGeneralConstants()]);
-                setHebrewConfig(thisHebrewConfig);
-                setBackendConfig(thisBackendConfig);
+                const [thisHebrewConstants, thisBackendConstants, thisGeneralConstants] = await Promise.all([FetchHebrewConstants(), FetchBackendConstants(), FetchGeneralConstants()]);
+                setHebrewConstants(thisHebrewConstants);
+                setBackendConstants(thisBackendConstants);
                 setGeneralConstants(thisGeneralConstants);
-                if (!thisHebrewConfig || !thisBackendConfig || !thisGeneralConstants) {
+                if (!thisHebrewConstants || !thisBackendConstants || !thisGeneralConstants) {
                     throw new Error("Failed to load configurations");
                 }
 
-                const thisCategories = await FetchCategories(thisBackendConfig, thisGeneralConstants);
+                const thisCategories = await FetchCategories(thisBackendConstants, thisGeneralConstants);
                 setCategories(thisCategories);
             } catch (err: any) {
                 setError(err.message);
@@ -131,18 +77,18 @@ const HomePage = () => {
         fetchData();
     }, []);
     if (error) return <p>{'Something went wrong, try again later'}</p>;
-    if (!hebrewConfig || !backendConfig || !generalConstants || loading) return <p>Loading...</p>;
+    if (!hebrewConstants || !backendConstants || !generalConstants || loading) return <p>Loading...</p>;
 
 
     async function AddToCart(id: number, selectCount: number) {
         if (selectCount <= 0) {
             return;
         }
-        if (!backendConfig) {
+        if (!backendConstants) {
             console.error(generalConstants?.errors.config_not_found);
             return;
         }
-        const res = await fetch(backendConfig.backend_address + backendConfig.add_to_cart_api, {
+        const res = await fetch(backendConstants.backend_address + backendConstants.add_to_cart_api, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ product_id: id, quantity: selectCount }),
@@ -174,7 +120,7 @@ const HomePage = () => {
                 }}
             >
                 <Typography variant="h4" sx={{ marginBottom: '20px', color: 'black' }}>
-                    {hebrewConfig.category_list_title}
+                    {hebrewConstants.category_list_title}
                 </Typography>
 
                 <Grid container spacing={2} columns={2} sx={{ justifyContent: 'center', width: '1000px' }}>
@@ -183,7 +129,7 @@ const HomePage = () => {
                             <MyCategory
                                 id={category.id}
                                 name={category.name}
-                                photosPaths={backendConfig ? backendConfig.backend_address + backendConfig.get_category_photo_api : ''}
+                                photosPaths={backendConstants ? backendConstants.backend_address + backendConstants.get_category_photo_api : ''}
                                 onClick={GoToCategory}
                             />
                         </Grid>

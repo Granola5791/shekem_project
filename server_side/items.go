@@ -30,31 +30,6 @@ func HandleGetItemPhoto(c *gin.Context) {
 
 }
 
-func HandleInitialGetCategoryItems(c *gin.Context) {
-	categoryID, err := strconv.Atoi(c.Param("category_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
-		return
-	}
-
-	totalCount, err := GetCategoryItemsCount(categoryID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	items, err := GetCategoryItemsPage(categoryID, 1)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"items":       items,
-		"total_count": totalCount,
-	})
-}
-
 func HandleGetCategoryItemsPage(c *gin.Context) {
 	categoryID, err := strconv.Atoi(c.Param("category_id"))
 	if err != nil {
@@ -62,7 +37,7 @@ func HandleGetCategoryItemsPage(c *gin.Context) {
 		return
 	}
 
-	page, err := strconv.Atoi(c.Param("page"))
+	page, err := strconv.Atoi(c.DefaultQuery("p", "1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
@@ -74,4 +49,20 @@ func HandleGetCategoryItemsPage(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"items": items})
+}
+
+func HandleGetCategoryItemsCount (c *gin.Context) {
+	categoryID, err := strconv.Atoi(c.Param("category_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+
+	count, err := GetCategoryItemsCount(categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
 }

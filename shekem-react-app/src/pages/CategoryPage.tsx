@@ -8,11 +8,12 @@ import ItemCard from '../components/ItemCard'
 import type { Item } from '../utils/manageItems'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
+import PaginationControls from '../components/PaginationControls'
 
-const FetchCategoryItems = async (categoryID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_api, categoryID), {
+const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
         method: 'GET',
         credentials: 'include'
     });
@@ -21,14 +22,27 @@ const FetchCategoryItems = async (categoryID: number, backendConstants: BackendC
     return data.items;
 }
 
+const FetchCategoryItemsCount = async (categoryID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_count_api, categoryID), {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error(generalConstants.errors.category_load_fail);
+    const data = await res.json();
+    return data.count;
+}
+
 const CategoryPage = () => {
 
 
     const { id } = useParams();
-    const [items, setItems] = React.useState<Item[]>([])
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [page, setPage] = React.useState<string>(searchParams.get('p') || '1');
+    const [items, setItems] = React.useState<Item[]>([]);
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
+    const [itemCount, setItemCount] = React.useState(0);
 
     const {
         goToHome: GoToHome,
@@ -37,12 +51,12 @@ const CategoryPage = () => {
         goToLogin: GoToLogin
     } = useNavigation()
 
-
     useEffect(() => {
         const fetchData = async () => {
             if (!id) {
                 throw new Error("Failed to load category");
             }
+
             try {
                 const [thisBackendConstants, thisGeneralConstants, thisHebrewConstants] = await Promise.all([FetchBackendConstants(), FetchGeneralConstants(), FetchHebrewConstants()]);
                 setBackendConstants(thisBackendConstants);
@@ -51,14 +65,22 @@ const CategoryPage = () => {
                 if (!thisBackendConstants || !thisGeneralConstants) {
                     throw new Error("Failed to load configurations");
                 }
-                const thisItems = await FetchCategoryItems(parseInt(id), thisBackendConstants, thisGeneralConstants);
+                const thisItemCount = await FetchCategoryItemsCount(parseInt(id), thisBackendConstants, thisGeneralConstants);
+                const thisItems = await FetchCategoryItemsPage(parseInt(id), parseInt(page), thisBackendConstants, thisGeneralConstants);
+                setItemCount(thisItemCount);
                 setItems(thisItems);
+
             } catch (err: any) {
                 console.error(err.message);
             }
         }
         fetchData();
-    }, [id])
+    }, [page])
+
+    const GoToPage = (page: number) => {
+        setSearchParams({ p: (page + 1).toString() });
+        setPage((page + 1).toString());
+    }
 
     async function AddToCart(id: number, selectCount: number) {
         if (selectCount <= 0) {
@@ -80,7 +102,7 @@ const CategoryPage = () => {
         }
     }
 
-    if (!hebrewConstants || !backendConstants || !generalConstants) {
+    if (!hebrewConstants || !backendConstants || !generalConstants || !items) {
         return <>loading</>
     }
 
@@ -121,6 +143,15 @@ const CategoryPage = () => {
                         />
                     ))}
                 </Grid>
+
+                {
+                    itemCount > generalConstants.items_per_page &&
+                    <PaginationControls
+                        pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
+                        currentPage={parseInt(page) - 1}
+                        goToPage={GoToPage}
+                    />
+                }
             </Container>
         </>
     )

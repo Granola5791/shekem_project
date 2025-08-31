@@ -51,7 +51,8 @@ export type BackendConstants = {
     get_category_photo_api: string;
     get_cart_api: string;
     get_item_photo_api: string;
-    get_category_items_api: string;
+    get_category_items_page_api: string;
+    get_category_items_count_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
     submit_order_api: string;
@@ -84,6 +85,7 @@ export type GeneralConstants = {
         cart_load_fail: string;
         order_submit_fail: string;
     };
+    items_per_page: number;
 };
 
 export function insertValuesToConstantStr(configString: string, ...values: number[]): string {

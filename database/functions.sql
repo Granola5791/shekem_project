@@ -129,3 +129,29 @@ BEGIN
    RETURN ret_total_price;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_category_items_count(category_id_param int)
+RETURNS INT AS $$
+DECLARE 
+    cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO cnt
+    FROM cat_to_item
+    WHERE category_id = category_id_param;
+    RETURN cnt;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_category_items_page(category_id_param INT, offset_param INT, limit_param INT)
+RETURNS TABLE (item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT i.item_id, i.item_name, i.price, i.stock
+    FROM items i
+    JOIN cat_to_item ctoi
+    ON i.item_id = ctoi.item_id
+    WHERE ctoi.category_id = category_id_param
+    ORDER BY item_id
+    LIMIT limit_param OFFSET offset_param;
+END;
+$$ LANGUAGE plpgsql;

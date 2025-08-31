@@ -18,9 +18,32 @@ interface ItemCardProps {
     price: number
     moneySymbol?: string
     AddToCart?: (id: number, selectCount: number) => void
+    stock: number
+    stockLabel?: string
 }
 
-const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle, price, moneySymbol = "$" }: ItemCardProps) => {
+const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle, price, moneySymbol = "$", stock, stockLabel }: ItemCardProps) => {
+
+    const OnMinus = () => {
+        if (selectCount > 0) {
+            setSelectCount(selectCount - 1);
+        }
+    }
+
+    const OnPlus = () => {
+        if (selectCount < stock) {
+            setSelectCount(selectCount + 1);
+        }
+    }
+
+    const OnAddToCart = () => {
+        setSelectCount(0);
+        if (AddToCart) {
+            AddToCart(id, selectCount);
+        }
+    }
+    
+
     const [selectCount, setSelectCount] = React.useState(0);
 
     return (
@@ -41,9 +64,15 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
                     {itemTitle}
                 </Typography>
 
-                <Typography variant="h6" sx={{ color: 'rgb(239, 232, 26)', fontWeight: 'bold', marginTop: 'px' }}>
-                    {price} {moneySymbol}
-                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', height: 'fit-content' }}>
+                    <Typography variant="h6" sx={{ color: 'rgb(239, 232, 26)', fontWeight: 'bold' }}>
+                        {price} {moneySymbol}
+                    </Typography>
+
+                    <Typography variant="body2">
+                        {stockLabel}: {stock}
+                    </Typography>
+                </Box>
             </CardContent>
 
             <Divider sx={{ backgroundColor: 'rgba(255, 251, 123, 0.8)', marginY: '4px' }} />
@@ -57,18 +86,19 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
                         ':hover': { backgroundColor: 'rgba(255, 247, 0, 1)' },
                         width: '90px'
                     }}
-                    onClick={() => AddToCart?.(id, selectCount)}
+                    onClick={OnAddToCart}
+                    disabled={!selectCount}
                 >
                     {buttonText}
                 </Button>
 
-                <IconButton onClick={() => { setSelectCount(selectCount + 1) }}>
+                <IconButton onClick={OnPlus}>
                     <AddIcon />
                 </IconButton>
 
                 {selectCount}
 
-                <IconButton onClick={() => { selectCount && setSelectCount(selectCount - 1) /*can't go below 0*/ }}>
+                <IconButton onClick={OnMinus}>
                     <RemoveIcon />
                 </IconButton>
             </Box>

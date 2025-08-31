@@ -177,24 +177,6 @@ func UpdateCategoryPhotos(categoryID int, photoPaths []string) error {
 	return nil
 }
 
-func GetRecommendedItems() ([]Item, error) {
-	amount := GetIntFromConfig("database.recommended_items_amount")
-	items := make([]Item, amount)
-	sqlStatement := `SELECT * FROM recommended_items;`
-	rows, err := db.Query(sqlStatement)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for i := 0; i < amount && rows.Next(); i++ {
-		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].PhotoPath, &items[i].Price)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return items, nil
-}
-
 func GetCategories() ([]Category, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.categories_buffer_size")
@@ -294,6 +276,45 @@ func SubmitOrderToDB(userID int) error {
 		return err
 	}
 	return nil
+}
+
+func GetCategoryItemsCount(categoryID int) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_category_items_count($1);`
+	rows, err := db.Query(sqlStatement, categoryID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return 0, sql.ErrNoRows
+	}
+	err = rows.Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	offset := (page - 1) * pageSize
+
+	sqlStatement := `SELECT * FROM get_category_items_page($1, $2, $3)`
+	rows, err := db.Query(sqlStatement, categoryID, offset, offset + pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return items[0:i], nil
 }
 
 func OpenSQLConnection() error {

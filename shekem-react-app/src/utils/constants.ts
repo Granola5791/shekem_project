@@ -1,7 +1,6 @@
 import { parse } from 'yaml';
 
 export type HebrewConstants = {
-    add_to_cart_button: string;
     shekel_symbol: string;
     search_bar_text: string;
     category_list_title: string;
@@ -34,6 +33,7 @@ export type HebrewConstants = {
         quantity_label: string;
         money_symbol: string;
         stock_label: string;
+        add_to_cart_button: string;
     };
 
     checkout: {
@@ -51,6 +51,8 @@ export type BackendConstants = {
     get_category_photo_api: string;
     get_cart_api: string;
     get_item_photo_api: string;
+    get_category_items_page_api: string;
+    get_category_items_count_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
     submit_order_api: string;
@@ -83,6 +85,7 @@ export type GeneralConstants = {
         cart_load_fail: string;
         order_submit_fail: string;
     };
+    items_per_page: number;
 };
 
 export function insertValuesToConstantStr(configString: string, ...values: number[]): string {
@@ -103,19 +106,19 @@ export function insertValuesToConstantStr(configString: string, ...values: numbe
 }
 
 export async function FetchHebrewConstants() {
-    const res = await fetch('src/constants/hebrew.yaml');
+    const res = await fetch('/constants/hebrew.yaml');
     const text = await res.text();
     return parse(text);
 };
 
 export async function FetchBackendConstants() {
-    const res = await fetch('src/constants/backend_api.yaml');
+    const res = await fetch('/constants/backend_api.yaml');
     const text = await res.text();
     return parse(text);
 };
 
 export async function FetchGeneralConstants() {
-    const res = await fetch('src/constants/general_constants.yaml');
+    const res = await fetch('/constants/general_constants.yaml');
     const text = await res.text();
     return parse(text);
 };

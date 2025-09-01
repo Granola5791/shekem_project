@@ -53,6 +53,8 @@ export type HebrewConstants = {
         price_label: string;
         button_text: string;
     };
+    go_to_login: string;
+    go_to_home: string;
 };
 
 export type BackendConstants = {

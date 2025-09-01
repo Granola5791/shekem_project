@@ -2,6 +2,8 @@ shekel_symbol: "₪"
 search_bar_text: "מה בא לנו היום?"
 category_list_title: "קטגוריות"
 wait_text: "רגע..."
+go_to_login: "להתחברות"
+go_to_home: "לעמוד הבית"
 
 user_errors:
   generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"
@@ -44,3 +46,4 @@ checkout:
   button_text: "קחו את הכסף שלי"
   price_label: "מחיר"
   empty_cart_text: "נראה שעוד לא הוספת שום דבר לסל... לך תקנה משהו!"
+

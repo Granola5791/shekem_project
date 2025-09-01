@@ -6,15 +6,10 @@ import Box from '@mui/material/Box';
 import type { HebrewConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants } from '../utils/constants.ts';
 import { useNavigation } from '../utils/navigation.ts';
+import Container from '@mui/material/Container';
 
 
 const SignupPage = () => {
-    useEffect(() => {
-        document.body.style.backgroundColor = 'rgba(222, 255, 140, 1)';
-        return () => {
-            document.body.style.backgroundColor = ''; // Clean up
-        };
-    }, []);
 
     useEffect(() => {
         const fetchConstants = async () => {
@@ -70,7 +65,7 @@ const SignupPage = () => {
     if (!hebrewConstants || !backendConstants) return <div>Loading...</div>;
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ width: '100%', height: '100%', bgcolor: 'rgba(222, 255, 140, 1)' }}>
             <img src="./src/assets/caveret-logo.svg" alt="caveret-logo" style={{ width: '350px' }} />
             <Typography variant="h4" align="center" sx={{ color: 'rgb(9, 191, 9)', fontWeight: 'bold' }}>
                 {hebrewConstants.signup_texts.signup_title}
@@ -104,7 +99,7 @@ const SignupPage = () => {
             <Typography variant="body1" align="center" sx={{ color: 'red', marginTop: '20px' }}>
                 {response}
             </Typography>
-        </>
+        </Container>
     )
 }
 export default SignupPage

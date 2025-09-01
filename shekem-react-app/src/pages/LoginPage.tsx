@@ -6,14 +6,11 @@ import type { HebrewConstants, BackendConstants, GeneralConstants } from '../uti
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants';
 import { isGenericOKResponse } from '../utils/http';
 import { useNavigation } from '../utils/navigation';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const LoginPage = () => {
-    useEffect(() => {
-        document.body.style.backgroundColor = 'rgba(255, 255, 157, 1)';
-        return () => {
-            document.body.style.backgroundColor = ''; // Clean up
-        };
-    }, []);
 
     useEffect(() => {
         const fetchConstants = async () => {
@@ -33,11 +30,10 @@ const LoginPage = () => {
     const [response, setResponse] = React.useState('');
     const { goToHome: GoToHome } = useNavigation();
 
-    if (!hebrewConstants || !backendConstants || !generalConstants) {
-        return <div>loading...</div>
-    }
-
     const handleLogin = async (username: string, password: string) => {
+        if (!hebrewConstants || !backendConstants) {
+            return;
+        }
         setResponse(hebrewConstants.wait_text);
         try {
             const res = await fetch(backendConstants.backend_address + backendConstants.login_api, {
@@ -60,19 +56,27 @@ const LoginPage = () => {
         }
     };
 
+    if (!hebrewConstants || !backendConstants || !generalConstants) {
+        return <div>loading...</div>
+    }
+
     return (
-        <>
-            <img src="photos/caveret-logo.svg" alt="caveret-logo" className='caveret-logo' />
-            <h1 className='login-title'>{hebrewConstants.login_texts.login_title}</h1>
-            <div className='login-input-container'>
-                <p>
+        <Container maxWidth={false} sx={{ width: '100%', height: '100%', bgcolor: 'rgba(255, 255, 157, 1)' }}>
+            <img src="photos/caveret-logo.svg" alt="caveret-logo" style={{ width: '350px' }} />
+            <Typography variant="h4" fontWeight={"bold"} textAlign={"center"} sx={{ color: '#ff198c' }}>
+                {hebrewConstants.login_texts.login_title}
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                <Typography variant="body1" sx={{ marginY: '15px' }}>
                     {hebrewConstants.login_texts.signup_link.text}
                     <Link to="/signup">{hebrewConstants.login_texts.signup_link.link_text}</Link>
-                </p>
+                </Typography>
                 <LoginInput onLogin={handleLogin} buttonText={hebrewConstants.login_texts.login_button_text} />
-            </div>
-            <p className='login-response'>{response}</p>
-        </>
+            </Box>
+            <Typography variant="body1" textAlign={"center"} color='red'>
+                {response}
+            </Typography>
+        </Container>
     )
 }
 

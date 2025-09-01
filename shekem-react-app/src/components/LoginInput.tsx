@@ -1,23 +1,41 @@
 import React, { useState } from 'react'
-import './LoginInput.css';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 interface LoginInputProps {
     onLogin: (username: string, password: string) => void;
     buttonText?: string
+    usernamePlaceholder?: string
+    passwordPlaceholder?: string
 }
 
 
 
-const LoginInput = ({ onLogin, buttonText = 'Login'}: LoginInputProps) => {
+const LoginInput = ({ onLogin, buttonText = 'Login', usernamePlaceholder = '', passwordPlaceholder = '' }: LoginInputProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     return (
         <>
-            <div className="login-input-container">
-                <input className="username-input" type="text" placeholder="Enter your username" onChange={(e) => setUsername(e.target.value)} />
-                <input className="password-input" type="password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} />
-                <button className="login-button" type="submit" onClick={() => onLogin(username, password)}>{buttonText}</button>
-            </div>
+            <Box sx={{ display: 'flex', flexDirection: 'column', width: '300px', rowGap: '10px' }}>
+                <TextField
+                    type="text"
+                    placeholder={usernamePlaceholder}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <TextField
+                    type="password"
+                    placeholder={passwordPlaceholder}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <Button
+                    type="submit"
+                    onClick={() => onLogin(username, password)}
+                    sx={{ bgcolor: '#ff198c', color: 'white', height: '50px' }}
+                >
+                    {buttonText}
+                </Button>
+            </Box>
         </>
     )
 }

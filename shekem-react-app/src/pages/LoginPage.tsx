@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import LoginInput from '../components/LoginInput';
 import { Link, useNavigate } from 'react-router-dom';
-import './LoginPage.css';
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants';
 import { isGenericOKResponse } from '../utils/http';
@@ -71,7 +70,12 @@ const LoginPage = () => {
                     {hebrewConstants.login_texts.signup_link.text}
                     <Link to="/signup">{hebrewConstants.login_texts.signup_link.link_text}</Link>
                 </Typography>
-                <LoginInput onLogin={handleLogin} buttonText={hebrewConstants.login_texts.login_button_text} />
+                <LoginInput
+                    onLogin={handleLogin}
+                    buttonText={hebrewConstants.login_texts.login_button_text}
+                    usernamePlaceholder={hebrewConstants.login_texts.username_placeholder}
+                    passwordPlaceholder={hebrewConstants.login_texts.password_placeholder}
+                />
             </Box>
             <Typography variant="body1" textAlign={"center"} color='red'>
                 {response}

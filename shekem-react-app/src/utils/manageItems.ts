@@ -1,6 +1,6 @@
 export type Item = {
     id: number;
-    title: string;
+    name: string;
     price: number;
     stock: number;
 }

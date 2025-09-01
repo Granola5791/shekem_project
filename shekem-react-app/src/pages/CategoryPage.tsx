@@ -132,7 +132,7 @@ const CategoryPage = () => {
                         <ItemCard
                             key={item.id}
                             id={item.id}
-                            itemTitle={item.title}
+                            itemTitle={item.name}
                             price={item.price}
                             stock={item.stock}
                             buttonText={hebrewConstants.items.add_to_cart_button}

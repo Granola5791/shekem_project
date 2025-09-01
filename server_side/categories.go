@@ -43,3 +43,19 @@ func HandleGetCategoryPhoto(c *gin.Context) {
 	}
 	c.Data(http.StatusOK, "image/jpeg", []byte(photo))
 }
+
+func HandleGetCategoryName (c *gin.Context) {
+	categoryID, err := strconv.Atoi(c.Param("category_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+
+	name, err := GetCategoryNameFromDB(categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"name": name})
+}

@@ -32,6 +32,16 @@ const FetchCategoryItemsCount = async (categoryID: number, backendConstants: Bac
     return data.count;
 }
 
+const FetchCategoryName = async (categoryID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_name_api, categoryID), {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error(generalConstants.errors.category_load_fail);
+    const data = await res.json();
+    return data.name;
+}
+
 const CategoryPage = () => {
 
 
@@ -43,6 +53,7 @@ const CategoryPage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [itemCount, setItemCount] = React.useState(0);
+    const [categoryName, setCategoryName] = React.useState('');
 
     const {
         goToHome: GoToHome,
@@ -67,6 +78,8 @@ const CategoryPage = () => {
                 }
                 const thisItemCount = await FetchCategoryItemsCount(parseInt(id), thisBackendConstants, thisGeneralConstants);
                 const thisItems = await FetchCategoryItemsPage(parseInt(id), parseInt(page), thisBackendConstants, thisGeneralConstants);
+                const thisCategoryName = await FetchCategoryName(parseInt(id), thisBackendConstants, thisGeneralConstants);
+                setCategoryName(thisCategoryName);
                 setItemCount(thisItemCount);
                 setItems(thisItems);
 
@@ -124,7 +137,7 @@ const CategoryPage = () => {
                 }}
             >
                 <Typography variant="h4" gutterBottom textAlign={'center'}>
-                    Category name
+                    {categoryName}
                 </Typography>
 
                 <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">

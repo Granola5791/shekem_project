@@ -155,3 +155,15 @@ BEGIN
     LIMIT limit_param OFFSET offset_param;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_category_name(category_id_param INT)
+RETURNS VARCHAR(255) AS $$
+DECLARE
+    ret_category_name VARCHAR(255);
+BEGIN
+    SELECT category_name INTO ret_category_name
+    FROM categories
+    WHERE category_id = category_id_param;
+    RETURN ret_category_name;
+END;
+$$ LANGUAGE plpgsql;

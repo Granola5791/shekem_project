@@ -32,6 +32,7 @@ server:
     get_cart_path: "api/get_cart"
     get_category_items_page_path: "api/category/:category_id/items"
     get_category_items_count_path: "api/category/:category_id/items_count"
+    get_category_name_path: "api/category/:category_id/name"
     delete_from_cart_path: "api/cart/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"
     order_submit_path: "api/cart/submit_order"

@@ -317,6 +317,24 @@ func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
 	return items[0:i], nil
 }
 
+func GetCategoryNameFromDB(categoryID int) (string, error) {
+	var name string
+	sqlStatement := `SELECT get_category_name($1);`
+	rows, err := db.Query(sqlStatement, categoryID)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return "", sql.ErrNoRows
+	}
+	err = rows.Scan(&name)
+	if err != nil {
+		return "", err
+	}
+	return name, nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

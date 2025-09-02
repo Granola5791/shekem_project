@@ -167,3 +167,15 @@ BEGIN
     RETURN ret_category_name;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_item_stock(item_id_param INT)
+RETURNS INT AS $$
+DECLARE
+    ret_stock INT;
+BEGIN
+    SELECT stock INTO ret_stock
+    FROM items
+    WHERE item_id = item_id_param;
+    RETURN ret_stock;
+END;
+$$ LANGUAGE plpgsql;

@@ -17,10 +17,10 @@ CREATE TABLE orders (
 
 CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
-  item_name VARCHAR(255) NOT NULL
+  item_name VARCHAR(255) NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
-  photo BYTEA
-  stock INT NOT NULL
+  photo BYTEA,
+  stock INT NOT NULL CHECK (stock >= 0)
 );
 
 CREATE TABLE order_items (
@@ -36,7 +36,7 @@ CREATE TABLE cart_items (
   cart_item_id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
   item_id INT NOT NULL,
-  quantity INT NOT NULL,
+  quantity INT NOT NULL CHECK (quantity > 0),
   FOREIGN KEY (user_id) REFERENCES users(user_id),
   FOREIGN KEY (item_id) REFERENCES items(item_id),
   UNIQUE (user_id, item_id)

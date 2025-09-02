@@ -19,11 +19,17 @@ $$
 CREATE OR REPLACE PROCEDURE add_to_cart(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    item_stock INT := get_item_stock(item_id_param);
 BEGIN
     INSERT INTO cart_items (user_id, item_id, quantity)
     VALUES (user_id_param, item_id_param, quantity_param)
     ON CONFLICT (user_id, item_id)
-    DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity;
+    DO UPDATE
+    SET quantity = LEAST(
+        cart_items.quantity + EXCLUDED.quantity,
+        item_stock
+    );
 END;
 $$
 
@@ -39,9 +45,11 @@ $$
 CREATE OR REPLACE PROCEDURE update_cart_item_quantity(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    item_stock INT := get_item_stock(item_id_param);
 BEGIN
     UPDATE cart_items
-    SET quantity = quantity_param
+    SET quantity = LEAST(quantity_param, item_stock)
     WHERE user_id = user_id_param AND item_id = item_id_param;
 END;
 $$

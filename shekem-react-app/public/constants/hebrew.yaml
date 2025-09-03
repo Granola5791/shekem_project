@@ -40,6 +40,7 @@ items:
   money_symbol: "₪"
   stock_label: "מלאי"
   add_to_cart_button: "הוסף לסל"
+  cart_title: "סל הקניות"
 
 checkout:
   title: "סיכום תשלום"

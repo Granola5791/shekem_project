@@ -45,6 +45,7 @@ export type HebrewConstants = {
         money_symbol: string;
         stock_label: string;
         add_to_cart_button: string;
+        cart_title: string;
     };
 
     checkout: {

@@ -11,6 +11,7 @@ import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, ins
 import { useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
 import PaginationControls from '../components/PaginationControls'
+import CartDrawer from '../components/CartDrawer.tsx'
 
 const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
@@ -54,10 +55,10 @@ const CategoryPage = () => {
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [itemCount, setItemCount] = React.useState(0);
     const [categoryName, setCategoryName] = React.useState('');
+    const [cartOpen, setCartOpen] = React.useState(false);
 
     const {
         goToHome: GoToHome,
-        goToCart: GoToCart,
         searchItems: SearchItems,
         goToLogin: GoToLogin
     } = useNavigation()
@@ -95,6 +96,10 @@ const CategoryPage = () => {
         setPage((page + 1).toString());
     }
 
+    const OpenCart = () => {
+        setCartOpen(true);
+    }
+
     async function AddToCart(id: number, selectCount: number) {
         if (selectCount <= 0) {
             return;
@@ -123,7 +128,7 @@ const CategoryPage = () => {
         <>
             <NavBar
                 onSearch={SearchItems}
-                goToCart={GoToCart}
+                goToCart={OpenCart}
                 logoClick={GoToHome}
                 logoSrc='\public\photos\caveret-logo.svg'
             />
@@ -165,6 +170,14 @@ const CategoryPage = () => {
                         goToPage={GoToPage}
                     />
                 }
+
+
+                <CartDrawer
+                    open={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    backendConstants={backendConstants}
+                    hebrewConstants={hebrewConstants}
+                />
             </Container>
         </>
     )

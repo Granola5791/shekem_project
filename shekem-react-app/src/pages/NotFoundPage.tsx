@@ -4,8 +4,7 @@ import { parse } from 'yaml'
 import Button from '@mui/material/Button';
 import { useNavigation } from '../utils/navigation';
 import { FetchHebrewConstants, FetchBackendConstants } from '../utils/constants';
-
-
+import CartDrawer from '../components/CartDrawer';
 
 const NotFoundPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);

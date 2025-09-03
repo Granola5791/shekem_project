@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { parse } from 'yaml'
 import { isUnauthorizedResponse } from '../utils/http.ts';
 import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
+import CartDrawer from '../components/CartDrawer.tsx';
 
 
 type Category = {
@@ -42,12 +42,12 @@ const HomePage = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [categories, setCategories] = useState<Category[]>([]);
+    const [cartOpen, setCartOpen] = React.useState(false);
 
     // navigation functions
     const {
         searchItems: SearchItems,
         goToCategory: GoToCategory,
-        goToCart: GoToCart,
         goToHome: GoToHome,
         goToLogin: GoToLogin
     } = useNavigation();
@@ -100,11 +100,15 @@ const HomePage = () => {
         }
     }
 
+    const OpenCart = () => {
+        setCartOpen(true);
+    }
+
     return (
         <>
             <NavBar
                 onSearch={SearchItems}
-                goToCart={GoToCart}
+                goToCart={OpenCart}
                 logoSrc="./src/assets/caveret-logo.svg"
                 logoClick={GoToHome}
             />
@@ -135,6 +139,12 @@ const HomePage = () => {
                         </Grid>
                     ))}
                 </Grid>
+
+                <CartDrawer
+                    open={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    backendConstants={backendConstants}
+                    hebrewConstants={hebrewConstants} />
             </Container>
         </>
     )

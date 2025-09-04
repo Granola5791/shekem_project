@@ -47,6 +47,7 @@ export type HebrewConstants = {
         add_to_cart_button: string;
         search_results_title: string;
         item_id_label: string;
+        edit_item_button: string;
     };
 
     checkout: {

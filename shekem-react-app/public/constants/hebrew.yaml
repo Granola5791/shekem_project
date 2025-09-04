@@ -42,6 +42,7 @@ items:
   add_to_cart_button: "הוסף לסל"
   search_results_title: "תוצאות חיפוש עבור"
   item_id_label: "מק״ט"
+  edit_item_button: "ערוך"
 
 checkout:
   title: "סיכום תשלום"

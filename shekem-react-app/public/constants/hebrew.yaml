@@ -41,6 +41,7 @@ items:
   stock_label: "מלאי"
   add_to_cart_button: "הוסף לסל"
   search_results_title: "תוצאות חיפוש עבור"
+  item_id_label: "מק״ט"
 
 checkout:
   title: "סיכום תשלום"

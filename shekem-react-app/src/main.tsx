@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage.tsx'
 import SignupPage from './pages/SignupPage.tsx'
 import ErrorPage from './pages/ErrorPage.tsx'
 import {createBrowserRouter, RouterProvider } from "react-router-dom";
-import checkLogin from './utils/checkLogin.ts';
+import { CheckLogin } from './utils/checkLogin.ts';
 import NotFound from './pages/NotFoundPage.tsx';
 import CartPage from './pages/CartPage.tsx';
 import CategoryPage from './pages/CategoryPage.tsx';
@@ -27,25 +27,25 @@ const router = createBrowserRouter([
     path: "/home",
     element: <HomePage />,
     errorElement: <ErrorPage />,
-    loader: checkLogin,
+    loader: CheckLogin,
   },
   {
     path: "/cart",
     element: <CartPage />,
     errorElement: <ErrorPage />,
-    loader: checkLogin,
+    loader: CheckLogin,
   },
   {
     path: "/category/:id",
     element: <CategoryPage />,
     errorElement: <ErrorPage />,
-    loader: checkLogin,
+    loader: CheckLogin,
   },
   {
     path: "/search",
     element: <SearchPage />,
     errorElement: <ErrorPage />,
-    loader: checkLogin,
+    loader: CheckLogin,
   },
   {
     path: "*",

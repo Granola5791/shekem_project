@@ -85,6 +85,7 @@ export type BackendConstants = {
     status_codes: {
         ok: number;
         created: number;
+        found: number;
         bad_request: number;
         unauthorized: number;
         not_found: number;

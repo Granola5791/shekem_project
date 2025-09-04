@@ -1,13 +1,32 @@
-export default async function HomeLoader() {
-  const res = await fetch('http://localhost:8081/api/check_login', {
-    method: 'GET',
-    credentials: 'include'
-  });
-  if (res.status === 401) {
-    throw new Response('Unauthorized', {
-      status: 302,
-      headers: { Location: '/login' },
+import { isUnauthorizedResponse } from "./http.ts";
+import { FetchBackendConstants } from "./constants.ts";
+
+export async function CheckLogin() {
+    const backendConstants = await FetchBackendConstants();
+    const res = await fetch(backendConstants.backend_address + backendConstants.check_login_api, {
+        method: 'GET',
+        credentials: 'include'
     });
-  }
-  return null;
+    if (isUnauthorizedResponse(res)) {
+        throw new Response(backendConstants.statuses.unauthorized, {
+            status: backendConstants.status_codes.found,
+            headers: { Location: '/login' },
+        });
+    }
+    return null;
+}
+
+export async function CheckAdmin() {
+    const backendConstants = await FetchBackendConstants();
+    const res = await fetch(backendConstants.backend_address + backendConstants.check_admin_api, {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (isUnauthorizedResponse(res)) {
+        throw new Response(backendConstants.statuses.unauthorized, {
+            status: backendConstants.status_codes.found,
+            headers: { Location: '/login' },
+        });
+    }
+    return null;
 }

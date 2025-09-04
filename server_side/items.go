@@ -66,3 +66,23 @@ func HandleGetCategoryItemsCount (c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"count": count})
 }
+
+func HandleGetSearchItems (c *gin.Context) {
+	query := c.DefaultQuery("q", "")
+	page, err := strconv.Atoi(c.DefaultQuery("p", "1"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	items, err := GetSearchItemsPage(query, page)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	count, err := GetSearchItemsCount(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"items": items, "count": count})
+}

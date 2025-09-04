@@ -10,6 +10,7 @@ import checkLogin from './utils/checkLogin.ts';
 import NotFound from './pages/NotFoundPage.tsx';
 import CartPage from './pages/CartPage.tsx';
 import CategoryPage from './pages/CategoryPage.tsx';
+import SearchPage from './pages/SearchPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,12 @@ const router = createBrowserRouter([
   {
     path: "/category/:id",
     element: <CategoryPage />,
+    errorElement: <ErrorPage />,
+    loader: checkLogin,
+  },
+  {
+    path: "/search",
+    element: <SearchPage />,
     errorElement: <ErrorPage />,
     loader: checkLogin,
   },

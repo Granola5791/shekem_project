@@ -45,6 +45,7 @@ export type HebrewConstants = {
         money_symbol: string;
         stock_label: string;
         add_to_cart_button: string;
+        search_results_title: string;
     };
 
     checkout: {
@@ -67,6 +68,7 @@ export type BackendConstants = {
     get_category_items_page_api: string;
     get_category_items_count_api: string;
     get_category_name_api: string;
+    get_search_items_page_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
     submit_order_api: string;
@@ -99,11 +101,12 @@ export type GeneralConstants = {
         category_load_not_found: string;
         cart_load_fail: string;
         order_submit_fail: string;
+        search_load_fail: string;
     };
     items_per_page: number;
 };
 
-export function insertValuesToConstantStr(configString: string, ...values: number[]): string {
+export function insertValuesToConstantStr(configString: string, ...values: any[]): string {
     let argsIndex = 0;
     let result = '';
     for (let i = 0; i < configString.length; i++) {

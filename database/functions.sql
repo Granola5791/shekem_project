@@ -72,13 +72,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION search_items(search_term VARCHAR(50))
-RETURNS TABLE(item_id INT) AS $$
+CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), offset_param INT, limit_param INT)
+RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
 BEGIN
    RETURN QUERY
-   SELECT i.item_id
+   SELECT i.item_id, i.item_name, i.price, i.stock
    FROM items i
-   WHERE i.item_name ILIKE '%' || search_term || '%';
+   WHERE i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term 
+   ORDER BY i.item_name
+   OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_search_items_count(search_term VARCHAR(50))
+RETURNS INT AS $$
+DECLARE 
+    cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO cnt
+    FROM items
+    WHERE item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term;
+    RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
 

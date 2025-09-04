@@ -122,29 +122,41 @@ func AddToCart(userID int, productID int, quantity int) error {
 	return nil
 }
 
-func SearchItems(searchTerm string, page int) ([]int, error) {
-	pageSize := GetIntFromConfig("search.page_size")
-	itemIDs := make([]int, pageSize)
-	offset := (page - 1) * pageSize
-	sqlStatement := `CALL search_items($1)`
-	rows, err := db.Query(sqlStatement, searchTerm)
+func GetSearchItemsPage(searchTerm string, page int) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, searchTerm, start, pageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	for i := 0; i < offset && rows.Next(); i++ {
-		rows.Next()
-	}
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	for i := 0; i < pageSize && rows.Next(); i++ {
-		err = rows.Scan(&itemIDs[i])
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return itemIDs, nil
+	return items[0:i], nil
+}
+
+func GetSearchItemsCount(searchTerm string) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_search_items_count($1);`
+	rows, err := db.Query(sqlStatement, searchTerm)
+	if err != nil {
+		return 0, err
+	}
+	if !rows.Next() {
+		return 0, sql.ErrNoRows
+	}
+	err = rows.Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func UpdateItemPhoto(itemID int, photoPath string) error {

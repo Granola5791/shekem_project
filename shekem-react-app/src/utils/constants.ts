@@ -74,6 +74,8 @@ export type BackendConstants = {
     submit_order_api: string;
     signup_api: string;
     login_api: string;
+    check_login_api: string;
+    check_admin_api: string;
 
     statuses: {
         ok: string;

@@ -13,6 +13,8 @@ update_cart_item_quantity_api: "/api/cart/update_quantity"
 submit_order_api: "/api/cart/submit_order"
 signup_api: "/api/signup"
 login_api: "/api/login"
+check_login_api: "/api/check_login"
+check_admin_api: "/api/check_admin"
 
 statuses:
   ok: "ok"

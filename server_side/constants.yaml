@@ -24,6 +24,7 @@ server:
     login_path: "api/login"
     signup_path: "api/signup"
     check_login_path: "api/check_login"
+    check_admin_path: "api/check_admin"
     add_to_cart_path: "api/cart/add"
     get_recommended_items_path: "api/get_recommended_items"
     get_categories_path: "api/get_categories"

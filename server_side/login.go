@@ -34,7 +34,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 	if !userExists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("invalid_username_or_password")})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("error.invalid_username_or_password")})
 		return
 	}
 

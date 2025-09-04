@@ -82,6 +82,14 @@ const ItemManagementPage = () => {
                     />
                 ))}
             </Grid>
+
+            <PaginationControls
+                pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
+                currentPage={parseInt(page) - 1}
+                goToPage={(page: number) => {
+                    setSearchParams({ q: query, page: (page + 1).toString() });
+                }}
+            />
         </Container>
     )
 }

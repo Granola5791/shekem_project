@@ -19,7 +19,7 @@ interface ItemEditProps {
     stockLabel: string
     imageUrl?: string
     imageLabel: string
-    onSubmit?: (itemID: number, itemTitle: string, price: number, stock: number, image: File) => void
+    onSubmit?: (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => void
     submitButtonText?: string
     onCancel?: () => void
     cancelButtonText?: string
@@ -49,19 +49,42 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
             <Stack spacing={2} padding={2}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <label htmlFor="id">{itemIDLabel}:</label>
-                    <TextField id='id' placeholder={itemIDLabel} defaultValue={itemID} />
+                    <TextField
+                        id='id'
+                        onChange={(e) => setItemIDHook(parseInt(e.target.value))}
+                        type='number'
+                        placeholder={itemIDLabel}
+                        defaultValue={itemID}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <label htmlFor="name">{itemTitleLabel}:</label>
-                    <TextField id='name' placeholder={itemTitleLabel} defaultValue={itemTitle} />
+                    <TextField
+                        id='name'
+                        onChange={(e) => setItemTitleHook(e.target.value)}
+                        placeholder={itemTitleLabel}
+                        defaultValue={itemTitle}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <label htmlFor="price">{priceLabel}:</label>
-                    <TextField id='price' placeholder={priceLabel} defaultValue={price} />
+                    <TextField
+                        id='price'
+                        type='number'
+                        onChange={(e) => setPriceHook(parseInt(e.target.value))}
+                        placeholder={priceLabel}
+                        defaultValue={price}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <label htmlFor="stock">{stockLabel}:</label>
-                    <TextField id='stock' placeholder={stockLabel} defaultValue={stock} />
+                    <TextField
+                        id='stock'
+                        onChange={(e) => setStockHook(parseInt(e.target.value))}
+                        type='number'
+                        placeholder={stockLabel}
+                        defaultValue={stock}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <label>{imageLabel}:</label>
@@ -73,7 +96,7 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
                 <Button variant='outlined' onClick={onCancel}>
                     {cancelButtonText}
                 </Button>
-                <Button variant='contained' onClick={() => onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image || new File([], ''))} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
+                <Button variant='contained' onClick={() => onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image)} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
                     {submitButtonText}
                 </Button>
             </Box>

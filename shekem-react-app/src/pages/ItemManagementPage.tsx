@@ -48,6 +48,45 @@ const ItemManagementPage = () => {
         fetchData();
     }, [query, page]);
 
+    const UpdateItem = async (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => {
+        if (!backendConstants) {
+            return;
+        }
+        const updateBackend = async () => {
+            const formData = new FormData();
+            formData.append('item_title', itemTitle);
+            formData.append('price', price.toString());
+            formData.append('stock', stock.toString());
+            if (image) {
+                formData.append('image', image);
+            }
+            const path = (image ?
+                backendConstants.backend_address + insertValuesToConstantStr(backendConstants.update_item_with_photo_api, itemID) :
+                backendConstants.backend_address + insertValuesToConstantStr(backendConstants.update_item_api, itemID)
+            );
+
+            const res = await fetch(path, {
+                method: 'PATCH',
+                body: formData,
+                credentials: 'include',
+            })
+            if (!res.ok) {
+                throw new Error('Failed to update item');
+            }
+        }
+
+        const updateFrontend = () => {
+            const item = items.get(itemID);
+            if (item) {
+                const updatedItem = { ...item, name: itemTitle, price, stock };
+                setItems(new Map(items).set(itemID, updatedItem));
+            }
+        }
+
+        await updateBackend();
+        updateFrontend();
+    };
+
     const handleOpenItemEdit = (itemID: number) => {
         setCurrItemID(itemID);
         setOpenItemEdit(true);

@@ -78,6 +78,8 @@ export type BackendConstants = {
     get_search_items_page_api: string;
     delete_from_cart_api: string;
     update_cart_item_quantity_api: string;
+    update_item_api: string;
+    update_item_with_photo_api: string;
     submit_order_api: string;
     signup_api: string;
     login_api: string;

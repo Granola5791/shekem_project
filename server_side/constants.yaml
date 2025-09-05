@@ -37,6 +37,8 @@ server:
     get_search_items_path: "api/search"
     delete_from_cart_path: "api/cart/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"
+    update_item_path: "api/item/:item_id/update"
+    update_item_with_photo_path: "api/item/:item_id/update_with_photo"
     order_submit_path: "api/cart/submit_order"
 
 error:
@@ -53,3 +55,4 @@ success:
   delete_from_cart: "Item deleted from cart"
   update_cart_item_quantity: "Item quantity updated"
   order_submitted: "Order submitted"
+  item_updated: "Item updated"

@@ -150,6 +150,7 @@ const ItemManagementPage = () => {
                     imageLabel={hebrewConstants.items.item_photo_label}
                     imageUrl={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, currItemID)}
                     onCancel={handleCloseItemEdit}
+                    onSubmit={UpdateItem}
                     cancelButtonText={hebrewConstants.items.cancel_button}
                     submitButtonText={hebrewConstants.items.submit_button}
                 />

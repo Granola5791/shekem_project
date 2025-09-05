@@ -73,3 +73,23 @@ BEGIN
     WHERE user_id = user_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE update_item(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE items
+    SET item_name = item_name_param, price = price_param, stock = stock_param
+    WHERE item_id = item_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE update_item_with_photo(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT, IN photo_param BYTEA)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE items
+    SET item_name = item_name_param, price = price_param, photo = photo_param, stock = stock_param
+    WHERE item_id = item_id_param;
+END;
+$$

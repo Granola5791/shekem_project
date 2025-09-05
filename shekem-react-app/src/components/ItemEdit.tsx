@@ -96,7 +96,7 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
                 <Button variant='outlined' onClick={onCancel}>
                     {cancelButtonText}
                 </Button>
-                <Button variant='contained' onClick={() => onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image)} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
+                <Button variant='contained' onClick={() => {onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image); onCancel?.() }} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
                     {submitButtonText}
                 </Button>
             </Box>

@@ -347,6 +347,24 @@ func GetCategoryNameFromDB(categoryID int) (string, error) {
 	return name, nil
 }
 
+func UpdateItem(ItemID int, item_title string, item_price float64, item_stock int) error {
+	sqlStatement := `CALL update_item($1, $2, $3, $4);`
+	_, err := db.Exec(sqlStatement, ItemID, item_title, item_price, item_stock)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateItemWithPhoto(ItemID int, item_title string, item_price float64, item_stock int, photo []byte) error {
+	sqlStatement := `CALL update_item_with_photo($1, $2, $3, $4, $5);`
+	_, err := db.Exec(sqlStatement, ItemID, item_title, item_price, item_stock, photo)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

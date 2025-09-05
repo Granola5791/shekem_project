@@ -42,7 +42,12 @@ items:
   add_to_cart_button: "הוסף לסל"
   search_results_title: "תוצאות חיפוש עבור"
   item_id_label: "מק״ט"
-  edit_item_button: "ערוך"
+  edit_item_button: "עריכה"
+  item_name_label: "שם המוצר"
+  price_label: "מחיר"
+  item_photo_label: "תמונה"
+  cancel_button: "ביטול"
+  submit_button: "שמור"
 
 checkout:
   title: "סיכום תשלום"

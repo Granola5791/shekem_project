@@ -9,14 +9,17 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import PaginationControls from '../components/PaginationControls';
+import ItemEdit from '../components/ItemEdit';
 
 const ItemManagementPage = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
     const page = searchParams.get('page') || '1';
-    const [items, setItems] = React.useState<Item[]>([]);
+    const [items, setItems] = React.useState<Map<number, Item>>(new Map());
     const [itemCount, setItemCount] = React.useState(0);
+    const [openItemEdit, setOpenItemEdit] = React.useState(false);
+    const [currItemID, setCurrItemID] = React.useState(-1);
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
@@ -37,12 +40,23 @@ const ItemManagementPage = () => {
 
             if (query !== '') {
                 const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
-                setItems(searchItems);
+                const itemMap = new Map<number, Item>(searchItems.map((item: Item) => [item.id, item]));
+                setItems(itemMap);
                 setItemCount(itemCount);
             }
         };
         fetchData();
     }, [query, page]);
+
+    const handleOpenItemEdit = (itemID: number) => {
+        setCurrItemID(itemID);
+        setOpenItemEdit(true);
+    };
+
+    const handleCloseItemEdit = () => {
+        setOpenItemEdit(false);
+        setCurrItemID(-1);
+    };
 
 
     if (!hebrewConstants || !backendConstants || !generalConstants) return <div>Loading...</div>;
@@ -66,7 +80,7 @@ const ItemManagementPage = () => {
 
 
             <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
-                {items.map((item: Item) => (
+                {[...items.values()].map((item: Item) => (
                     <AdminItemCard
                         key={item.id}
                         itemID={item.id}
@@ -78,10 +92,29 @@ const ItemManagementPage = () => {
                         moneySymbol={hebrewConstants.items.money_symbol}
                         stockLabel={hebrewConstants.items.stock_label}
                         image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
-                        onEdit={() => { }}
+                        onEdit={() => handleOpenItemEdit(item.id)}
                     />
                 ))}
             </Grid>
+
+            {currItemID !== -1 && (
+                <ItemEdit
+                    open={openItemEdit}
+                    itemID={currItemID}
+                    itemIDLabel={hebrewConstants.items.item_id_label}
+                    itemTitle={items.get(currItemID)?.name}
+                    itemTitleLabel={hebrewConstants.items.item_name_label}
+                    price={items.get(currItemID)?.price}
+                    priceLabel={hebrewConstants.items.price_label}
+                    stock={items.get(currItemID)?.stock}
+                    stockLabel={hebrewConstants.items.stock_label}
+                    imageLabel={hebrewConstants.items.item_photo_label}
+                    imageUrl={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, currItemID)}
+                    onCancel={handleCloseItemEdit}
+                    cancelButtonText={hebrewConstants.items.cancel_button}
+                    submitButtonText={hebrewConstants.items.submit_button}
+                />
+            )}
 
             <PaginationControls
                 pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}

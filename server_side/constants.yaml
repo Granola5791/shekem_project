@@ -40,6 +40,7 @@ server:
     update_item_path: "api/item/:item_id/update"
     update_item_with_photo_path: "api/item/:item_id/update_with_photo"
     order_submit_path: "api/cart/submit_order"
+    add_item_path: "api/item/add"
 
 error:
   user_exists: "User already exists"
@@ -56,3 +57,4 @@ success:
   update_cart_item_quantity: "Item quantity updated"
   order_submitted: "Order submitted"
   item_updated: "Item updated"
+  item_added: "Item added"

@@ -19,6 +19,7 @@ func SetRouter() {
 	router.POST(GetStringFromConfig("server.api.signup_path"), HandleSignup)
 	router.POST(GetStringFromConfig("server.api.add_to_cart_path"), RequireAuthentication, HandleAddToCart)
 	router.POST(GetStringFromConfig("server.api.order_submit_path"), RequireAuthentication, HandleOrderSubmit)
+	router.POST(GetStringFromConfig("server.api.add_item_path"), RequireAuthentication, RequireAdmin, HandleAddItem)
 	router.GET(GetStringFromConfig("server.api.check_login_path"), RequireAuthentication)
 	router.GET(GetStringFromConfig("server.api.check_admin_path"), RequireAuthentication, RequireAdmin)
 	router.GET(GetStringFromConfig("server.api.get_categories_path"), RequireAuthentication, HandleGetCategories)

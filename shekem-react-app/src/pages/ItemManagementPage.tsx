@@ -10,6 +10,9 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import PaginationControls from '../components/PaginationControls';
 import ItemEdit from '../components/ItemEdit';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import { Typography } from '@mui/material';
 
 const ItemManagementPage = () => {
 
@@ -19,6 +22,7 @@ const ItemManagementPage = () => {
     const [items, setItems] = React.useState<Map<number, Item>>(new Map());
     const [itemCount, setItemCount] = React.useState(0);
     const [openItemEdit, setOpenItemEdit] = React.useState(false);
+    const [openNewItemEdit, setOpenNewItemEdit] = React.useState(false);
     const [currItemID, setCurrItemID] = React.useState(-1);
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
@@ -87,6 +91,26 @@ const ItemManagementPage = () => {
         updateFrontend();
     };
 
+    const AddItem = async (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => {
+        if (!backendConstants) {
+            return;
+        }
+        const formData = new FormData();
+        formData.append('item_id', itemID.toString());
+        formData.append('item_title', itemTitle);
+        formData.append('price', price.toString());
+        formData.append('stock', stock.toString());
+        formData.append('image', image as Blob);
+        const res = await fetch(backendConstants.backend_address + backendConstants.add_item_api, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+        })
+        if (!res.ok) {
+            throw new Error('Failed to add item');
+        }
+    }
+
     const handleOpenItemEdit = (itemID: number) => {
         setCurrItemID(itemID);
         setOpenItemEdit(true);
@@ -95,6 +119,14 @@ const ItemManagementPage = () => {
     const handleCloseItemEdit = () => {
         setOpenItemEdit(false);
         setCurrItemID(-1);
+    };
+
+    const handleOpenNewItemEdit = () => {
+        setOpenNewItemEdit(true);
+    };
+
+    const handleCloseNewItemEdit = () => {
+        setOpenNewItemEdit(false);
     };
 
 
@@ -109,12 +141,17 @@ const ItemManagementPage = () => {
                 padding: '10px',
             }}
         >
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box gap={3} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <SearchBar
                     onSearch={(searchQuery: string) => {
                         setSearchParams({ q: searchQuery, page: '1' });
                     }}
                 />
+
+                <IconButton onClick={handleOpenNewItemEdit} sx={{ bgcolor: 'rgba(255, 235, 19, 1)', borderRadius: '10%' }}>
+                    <AddIcon />
+                    <Typography>{hebrewConstants.items.add_item}</Typography>
+                </IconButton>
             </Box>
 
 
@@ -153,8 +190,22 @@ const ItemManagementPage = () => {
                     onSubmit={UpdateItem}
                     cancelButtonText={hebrewConstants.items.cancel_button}
                     submitButtonText={hebrewConstants.items.submit_button}
+                    readonlyID
                 />
             )}
+
+            <ItemEdit
+                open={openNewItemEdit}
+                itemIDLabel={hebrewConstants.items.item_id_label}
+                itemTitleLabel={hebrewConstants.items.item_name_label}
+                priceLabel={hebrewConstants.items.price_label}
+                stockLabel={hebrewConstants.items.stock_label}
+                imageLabel={hebrewConstants.items.item_photo_label}
+                onCancel={handleCloseNewItemEdit}
+                onSubmit={AddItem}
+                cancelButtonText={hebrewConstants.items.cancel_button}
+                submitButtonText={hebrewConstants.items.submit_button}
+            />
 
             <PaginationControls
                 pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}

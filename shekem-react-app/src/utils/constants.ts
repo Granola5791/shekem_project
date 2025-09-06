@@ -53,6 +53,7 @@ export type HebrewConstants = {
         item_photo_label: string;
         cancel_button: string;
         submit_button: string;
+        add_item: string;
     };
 
     checkout: {
@@ -85,6 +86,7 @@ export type BackendConstants = {
     login_api: string;
     check_login_api: string;
     check_admin_api: string;
+    add_item_api: string;
 
     statuses: {
         ok: string;

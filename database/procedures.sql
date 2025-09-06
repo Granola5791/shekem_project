@@ -93,3 +93,12 @@ BEGIN
     WHERE item_id = item_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE add_item(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT, IN photo_param BYTEA)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO items (item_id, item_name, price, photo, stock)
+    VALUES (item_id_param, item_name_param, price_param, photo_param, stock_param);
+END;
+$$

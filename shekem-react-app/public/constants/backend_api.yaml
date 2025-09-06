@@ -17,6 +17,7 @@ signup_api: "/api/signup"
 login_api: "/api/login"
 check_login_api: "/api/check_login"
 check_admin_api: "/api/check_admin"
+add_item_api: "/api/item/add"
 
 statuses:
   ok: "ok"

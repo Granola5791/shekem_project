@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -155,4 +154,46 @@ func HandleUpdateItemWithPhoto(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+}
+
+func HandleAddItem(c *gin.Context) {
+	item_id, err := strconv.Atoi(c.PostForm("item_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	item_title := c.PostForm("item_title")
+	item_price, err := strconv.ParseFloat(c.PostForm("price"), 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	item_stock, err := strconv.Atoi(c.PostForm("stock"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+
+	photo, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	photoFile, err := photo.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer photoFile.Close()
+	photoBytes, err := io.ReadAll(photoFile)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := AddItem(item_id, item_title, item_price, item_stock, photoBytes); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.item_added")})
 }

@@ -48,6 +48,7 @@ items:
   item_photo_label: "תמונה"
   cancel_button: "ביטול"
   submit_button: "שמור"
+  add_item: "הוסף מוצר חדש"
 
 checkout:
   title: "סיכום תשלום"

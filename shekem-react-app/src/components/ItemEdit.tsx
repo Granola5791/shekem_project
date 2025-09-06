@@ -1,6 +1,5 @@
 import React from 'react'
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -23,10 +22,11 @@ interface ItemEditProps {
     submitButtonText?: string
     onCancel?: () => void
     cancelButtonText?: string
+    readonlyID?: boolean
 
 }
 
-const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price, priceLabel, stock, stockLabel, imageUrl, imageLabel, onSubmit, submitButtonText, onCancel, cancelButtonText }: ItemEditProps) => {
+const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price, priceLabel, stock, stockLabel, imageUrl, imageLabel, onSubmit, submitButtonText, onCancel, cancelButtonText, readonlyID }: ItemEditProps) => {
 
     const [image, setImage] = React.useState<File | null>(null);
     const [imageUrlHook, setImageUrlHook] = React.useState<string>(imageUrl || '');
@@ -55,6 +55,7 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
                         type='number'
                         placeholder={itemIDLabel}
                         defaultValue={itemID}
+                        disabled={readonlyID}
                     />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -71,7 +72,7 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
                     <TextField
                         id='price'
                         type='number'
-                        onChange={(e) => setPriceHook(parseInt(e.target.value))}
+                        onChange={(e) => setPriceHook(parseFloat(e.target.value))}
                         placeholder={priceLabel}
                         defaultValue={price}
                     />

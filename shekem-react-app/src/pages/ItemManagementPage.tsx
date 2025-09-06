@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import SearchBar from '../components/SearchBar'
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants';
 import { FetchSearchItems, type Item } from '../utils/manageItems';
@@ -13,7 +13,8 @@ import ItemEdit from '../components/ItemEdit';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { useNavigation } from '../utils/navigation';
+import Button from '@mui/material/Button';
 
 const ItemManagementPage = () => {
 
@@ -28,6 +29,7 @@ const ItemManagementPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
+    const { goToHome: GoToHome } = useNavigation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -131,7 +133,7 @@ const ItemManagementPage = () => {
             newItems.delete(itemID);
             setItems(newItems);
         }
-        
+
         await deleteFromBackend();
         deleteFromFrontend();
     }
@@ -166,14 +168,20 @@ const ItemManagementPage = () => {
                 padding: '10px',
             }}
         >
-            <Box gap={3} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+
+            <Link to="/home" style={{position: 'absolute'}}>
+                <img style={{ maxHeight: '200px', width: '200px' }} src="/photos/caveret-logo.svg" alt="logo" />
+            </Link>
+
+            <Box gap={3} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '30px' }}>
+
                 <SearchBar
                     onSearch={(searchQuery: string) => {
                         setSearchParams({ q: searchQuery, page: '1' });
                     }}
                 />
 
-                <IconButton onClick={handleOpenNewItemEdit} sx={{ bgcolor: 'rgba(255, 235, 19, 1)', borderRadius: '10%' }}>
+                <IconButton onClick={handleOpenNewItemEdit} sx={{ bgcolor: 'rgba(255, 235, 19, 1)', borderRadius: '10%', height: 'fit-content' }}>
                     <AddIcon />
                     <Typography>{hebrewConstants.items.add_item}</Typography>
                 </IconButton>

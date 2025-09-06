@@ -180,7 +180,7 @@ const ItemManagementPage = () => {
             </Box>
 
 
-            <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
+            <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center" sx={{ marginTop: '20px' }}>
                 {[...items.values()].map((item: Item) => (
                     <AdminItemCard
                         key={item.id}

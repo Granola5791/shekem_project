@@ -36,6 +36,7 @@ server:
     get_category_name_path: "api/category/:category_id/name"
     get_search_items_path: "api/search"
     delete_from_cart_path: "api/cart/delete"
+    delete_item_path: "api/item/:item_id/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"
     update_item_path: "api/item/:item_id/update"
     update_item_with_photo_path: "api/item/:item_id/update_with_photo"
@@ -58,3 +59,4 @@ success:
   order_submitted: "Order submitted"
   item_updated: "Item updated"
   item_added: "Item added"
+  item_deleted: "Item deleted"

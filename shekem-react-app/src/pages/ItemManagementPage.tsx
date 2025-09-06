@@ -13,6 +13,7 @@ import ItemEdit from '../components/ItemEdit';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 const ItemManagementPage = () => {
 
@@ -111,6 +112,30 @@ const ItemManagementPage = () => {
         }
     }
 
+    const DeleteItem = async (itemID: number) => {
+        if (!backendConstants) {
+            return;
+        }
+        const deleteFromBackend = async () => {
+            const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.delete_item_api, itemID), {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            });
+            if (!res.ok) {
+                throw new Error('Failed to delete item');
+            }
+        }
+        const deleteFromFrontend = () => {
+            const newItems = new Map(items);
+            newItems.delete(itemID);
+            setItems(newItems);
+        }
+        
+        await deleteFromBackend();
+        deleteFromFrontend();
+    }
+
     const handleOpenItemEdit = (itemID: number) => {
         setCurrItemID(itemID);
         setOpenItemEdit(true);
@@ -164,11 +189,13 @@ const ItemManagementPage = () => {
                         itemTitle={item.name}
                         price={item.price}
                         stock={item.stock}
-                        buttonText={hebrewConstants.items.edit_item_button}
+                        editButtonText={hebrewConstants.items.edit_item_button}
+                        deleteButtonText={hebrewConstants.items.delete_item}
                         moneySymbol={hebrewConstants.items.money_symbol}
                         stockLabel={hebrewConstants.items.stock_label}
                         image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
                         onEdit={() => handleOpenItemEdit(item.id)}
+                        onDelete={DeleteItem}
                     />
                 ))}
             </Grid>

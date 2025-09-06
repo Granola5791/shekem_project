@@ -102,3 +102,12 @@ BEGIN
     VALUES (item_id_param, item_name_param, price_param, photo_param, stock_param);
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE delete_item(IN item_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM items
+    WHERE item_id = item_id_param;
+END;
+$$

@@ -197,3 +197,16 @@ func HandleAddItem(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.item_added")})
 }
+
+func HandleDeleteItem(c *gin.Context) {
+	ItemID, err := strconv.Atoi(c.Param("item_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	if err := DeleteItem(ItemID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.item_deleted")})
+}

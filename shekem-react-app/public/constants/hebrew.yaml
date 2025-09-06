@@ -49,6 +49,7 @@ items:
   cancel_button: "ביטול"
   submit_button: "שמור"
   add_item: "הוסף מוצר חדש"
+  delete_item: "מחק מוצר"
 
 checkout:
   title: "סיכום תשלום"

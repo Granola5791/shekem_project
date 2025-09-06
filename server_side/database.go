@@ -374,6 +374,15 @@ func AddItem(ItemID int, item_title string, item_price float64, item_stock int, 
 	return nil
 }
 
+func DeleteItem(ItemID int) error {
+	sqlStatement := `CALL delete_item($1);`
+	_, err := db.Exec(sqlStatement, ItemID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

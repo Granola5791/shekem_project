@@ -21,6 +21,7 @@ login_api: "/api/login"
 check_login_api: "/api/check_login"
 check_admin_api: "/api/check_admin"
 add_item_api: "/api/item/add"
+set_admin_api: "/api/user/{user_id}/set_admin"
 
 statuses:
   ok: "ok"

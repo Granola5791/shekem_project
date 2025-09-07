@@ -45,3 +45,16 @@ func HandleDeleteUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.user_deleted")})
 }
+
+func HandleSetAdmin(c *gin.Context) {
+	UserID, err := strconv.Atoi(c.Param("user_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
+		return
+	}
+	if err := SetAdmin(UserID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.admin_set")})
+}

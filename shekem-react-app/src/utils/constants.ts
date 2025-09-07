@@ -101,6 +101,7 @@ export type BackendConstants = {
     check_login_api: string;
     check_admin_api: string;
     add_item_api: string;
+    set_admin_api: string;
 
     statuses: {
         ok: string;
@@ -131,6 +132,7 @@ export type GeneralConstants = {
         order_submit_fail: string;
         search_load_fail: string;
         delete_user_fail: string;
+        set_admin_fail: string;
     };
 
     users: {

@@ -7,6 +7,7 @@ errors:
   order_submit_fail: "Failed to submit order"
   search_load_fail: "Failed to load search results"
   delete_user_fail: "Failed to delete user"
+  set_admin_fail: "Failed to set admin"
 
 users:
   admin_role: "admin"

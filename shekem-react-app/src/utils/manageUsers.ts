@@ -25,3 +25,11 @@ export async function DeleteUserFromBackend(userID: number, backendConstants: Ba
     });
     if (!res.ok) throw new Error(generalConstants.errors.delete_user_fail);
 }
+
+export async function SetAdminInBackend(userID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.set_admin_api, userID), {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error(generalConstants.errors.set_admin_fail);
+}

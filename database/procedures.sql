@@ -117,3 +117,13 @@ BEGIN
     WHERE user_id = user_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE set_admin(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET user_role = 'admin'
+    WHERE user_id = user_id_param;
+END;
+$$

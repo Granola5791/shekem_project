@@ -37,6 +37,7 @@ func SetRouter() {
 	router.PATCH(GetStringFromConfig("server.api.update_cart_item_quantity_path"), RequireAuthentication, HandleUpdateCartItemQuantity)
 	router.PATCH(GetStringFromConfig("server.api.update_item_path"), RequireAuthentication, RequireAdmin, HandleUpdateItem)
 	router.PATCH(GetStringFromConfig("server.api.update_item_with_photo_path"), RequireAuthentication, RequireAdmin, HandleUpdateItemWithPhoto)
+	router.PATCH(GetStringFromConfig("server.api.set_admin_path"), RequireAuthentication, RequireAdmin, HandleSetAdmin)
 
 	router.Run(GetStringFromConfig("server.listen_addr"))
 }

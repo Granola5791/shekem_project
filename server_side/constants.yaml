@@ -44,6 +44,7 @@ server:
     update_item_with_photo_path: "api/item/:item_id/update_with_photo"
     order_submit_path: "api/cart/submit_order"
     add_item_path: "api/item/add"
+    set_admin_path: "api/user/:user_id/set_admin"
 
 error:
   user_exists: "User already exists"
@@ -63,3 +64,4 @@ success:
   item_added: "Item added"
   item_deleted: "Item deleted"
   user_deleted: "User deleted"
+  admin_set: "Admin set"

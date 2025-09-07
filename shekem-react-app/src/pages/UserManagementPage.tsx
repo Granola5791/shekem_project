@@ -3,7 +3,7 @@ import AdminUserCard from '../components/AdminUserCard'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
 import type { User } from '../utils/manageUsers'
-import { FetchSearchUsers, DeleteUserFromBackend } from '../utils/manageUsers'
+import { FetchSearchUsers, DeleteUserFromBackend, SetAdminInBackend } from '../utils/manageUsers'
 import { useSearchParams } from 'react-router-dom'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
@@ -59,6 +59,11 @@ const UserManagementPage = () => {
         await DeleteUserFromBackend(userID, backendConstants, generalConstants);
         deleteUserFromFrontend();
     }
+
+    const SetAdmin = async (userID: number) => {
+        await SetAdminInBackend(userID, backendConstants, generalConstants);
+        window.location.reload();
+    }
         
 
     return (
@@ -91,7 +96,7 @@ const UserManagementPage = () => {
                         deleteButtonText={hebrewConstants.users.delete_user}
                         editButtonText={hebrewConstants.users.set_admin}
                         onDelete={DeleteUser}
-                        onEdit={(id: number) => { }}
+                        onEdit={SetAdmin}
                     />
                 ))}
             </Grid>

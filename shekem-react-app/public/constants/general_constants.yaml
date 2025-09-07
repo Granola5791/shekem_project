@@ -7,4 +7,4 @@ errors:
   order_submit_fail: "Failed to submit order"
   search_load_fail: "Failed to load search results"
 
-items_per_page: 12
+items_per_page: 8

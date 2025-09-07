@@ -25,29 +25,29 @@ interface AdminUserCardProps {
 
 const AdminUserCard = ({ userID, userIDLabel, username, usernameLabel, privileges, privilegesLabel, createdAt, createdAtLabel, deleteButtonText, editButtonText, onDelete, onEdit }: AdminUserCardProps) => {
     return (
-        <Card sx={{ padding: '10px', width: '180px', height: 'fit-content' }}>
+        <Card sx={{ padding: '10px', width: '250px', height: 'fit-content' }}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <Box>
                     <label htmlFor="user-id">{userIDLabel}: </label>
-                    <Typography id='user-id' variant="body1" fontWeight={'bold'} component="div">
+                    <Typography id='user-id' variant="body2" fontWeight={'bold'} component="div">
                         {userID}
                     </Typography>
                 </Box>
                 <Box>
                     <label htmlFor="username">{usernameLabel}: </label>
-                    <Typography id='username' variant="body1" fontWeight={'bold'} component="div">
+                    <Typography id='username' variant="body2" fontWeight={'bold'} component="div">
                         {username}
                     </Typography>
                 </Box>
                 <Box>
                     <label htmlFor="privileges">{privilegesLabel}: </label>
-                    <Typography id='privileges' variant="body1" fontWeight={'bold'} component="div">
+                    <Typography id='privileges' variant="body2" fontWeight={'bold'} component="div">
                         {privileges}
                     </Typography>
                 </Box>
                 <Box>
                     <label htmlFor="created-at">{createdAtLabel}: </label>
-                    <Typography id='created-at' variant="body1" fontWeight={'bold'} component="div">
+                    <Typography id='created-at' variant="body2" fontWeight={'bold'} component="div">
                         {createdAt}
                     </Typography>
                 </Box>

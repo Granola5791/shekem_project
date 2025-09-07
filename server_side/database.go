@@ -122,6 +122,43 @@ func AddToCart(userID int, productID int, quantity int) error {
 	return nil
 }
 
+func GetSearchUsersPage(query string, page int) ([]User, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	users := make([]User, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_users_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, query, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&users[i].ID, &users[i].Username, &users[i].CreatedAt, &users[i].Role)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return users[0:i], nil
+}
+
+func GetSearchUsersCount(query string) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_search_users_count($1);`
+	rows, err := db.Query(sqlStatement, query)
+	if err != nil {
+		return 0, err
+	}
+	if !rows.Next() {
+		return 0, sql.ErrNoRows
+	}
+	err = rows.Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func GetSearchItemsPage(searchTerm string, page int) ([]Item, error) {
 	var i int
 	pageSize := GetIntFromConfig("database.items_page_size")
@@ -382,6 +419,7 @@ func DeleteItem(ItemID int) error {
 	}
 	return nil
 }
+
 
 func OpenSQLConnection() error {
 	var err error

@@ -57,3 +57,11 @@ checkout:
   price_label: "מחיר"
   empty_cart_text: "נראה שעוד לא הוספת שום דבר לסל... לך תקנה משהו!"
 
+users:
+  username: "שם משתמש"
+  user_id: "מספר משתמש"
+  privileges: "הרשאות"
+  created_at: "נוצר בתאריך"
+  delete_user: "מחק משתמש"
+  set_admin: "הגדר כמנהל"
+  no_privileges: "ללא הרשאות"

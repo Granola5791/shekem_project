@@ -14,7 +14,7 @@ database:
   recommended_items_amount: 2
   categories_buffer_size: 20
   cart_buffer_size: 50
-  items_page_size: 12
+  items_page_size: 8
 
 server:
   listen_addr: "localhost:8081"
@@ -34,7 +34,8 @@ server:
     get_category_items_page_path: "api/category/:category_id/items"
     get_category_items_count_path: "api/category/:category_id/items_count"
     get_category_name_path: "api/category/:category_id/name"
-    get_search_items_path: "api/search"
+    get_search_items_path: "api/item/search"
+    get_search_users_path: "api/user/search"
     delete_from_cart_path: "api/cart/delete"
     delete_item_path: "api/item/:item_id/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"

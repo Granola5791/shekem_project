@@ -62,15 +62,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION search_users(search_term VARCHAR(50))
-RETURNS TABLE(user_id INT, username VARCHAR(50), user_role VARCHAR(255)) AS $$
-BEGIN
-   RETURN QUERY
-   SELECT u.user_id, u.username, u.user_role
-   FROM users u
-   WHERE u.username ILIKE '%' || search_term || '%';
-END;
-$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), offset_param INT, limit_param INT)
 RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
@@ -191,5 +182,29 @@ BEGIN
     FROM items
     WHERE item_id = item_id_param;
     RETURN ret_stock;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_search_users_page(search_term VARCHAR(50), offset_param INT, limit_param INT)
+RETURNS TABLE(user_id INT, username VARCHAR(50), created_at TIMESTAMP, user_role VARCHAR(255)) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT u.user_id, u.username, u.created_at, u.user_role
+   FROM users u
+   WHERE u.username ILIKE '%' || search_term || '%' OR u.user_id::TEXT = search_term
+   ORDER BY u.username
+   OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_search_users_count(search_term VARCHAR(50))
+RETURNS INT AS $$
+DECLARE 
+    cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO cnt
+    FROM users
+    WHERE username ILIKE '%' || search_term || '%' OR user_id::TEXT = search_term;
+    RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;

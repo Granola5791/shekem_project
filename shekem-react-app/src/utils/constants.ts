@@ -63,6 +63,16 @@ export type HebrewConstants = {
         price_label: string;
         button_text: string;
     };
+
+    users: {
+        username: string;
+        privileges: string;
+        created_at: string;
+        user_id: string;
+        delete_user: string;
+        set_admin: string;
+        no_privileges: string;
+    }
     go_to_login: string;
     go_to_home: string;
 };
@@ -78,6 +88,7 @@ export type BackendConstants = {
     get_category_items_count_api: string;
     get_category_name_api: string;
     get_search_items_page_api: string;
+    get_search_users_page_api: string;
     delete_from_cart_api: string;
     delete_item_api: string;
     update_cart_item_quantity_api: string;

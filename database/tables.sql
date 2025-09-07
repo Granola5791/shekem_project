@@ -22,6 +22,7 @@ CREATE TABLE items (
   price DECIMAL(10, 2) NOT NULL,
   photo BYTEA,
   stock INT NOT NULL CHECK (stock >= 0)
+  is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE order_items (

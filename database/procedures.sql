@@ -95,11 +95,12 @@ BEGIN
 END;
 $$
 
-CREATE OR REPLACE PROCEDURE delete_item(IN item_id_param INT)
+CREATE OR REPLACE PROCEDURE soft_delete_item(IN item_id_param INT)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    DELETE FROM items
+    UPDATE items
+    SET is_deleted = TRUE, item_name = item_name || '_deleted_', stock = 0
     WHERE item_id = item_id_param;
 END;
 $$

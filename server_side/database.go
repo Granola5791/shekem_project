@@ -412,7 +412,7 @@ func AddItem(ItemID int, item_title string, item_price float64, item_stock int, 
 }
 
 func DeleteItem(ItemID int) error {
-	sqlStatement := `CALL delete_item($1);`
+	sqlStatement := `CALL soft_delete_item($1);`
 	_, err := db.Exec(sqlStatement, ItemID)
 	if err != nil {
 		return err

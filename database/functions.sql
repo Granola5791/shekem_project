@@ -69,7 +69,7 @@ BEGIN
    RETURN QUERY
    SELECT i.item_id, i.item_name, i.price, i.stock
    FROM items i
-   WHERE i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term 
+   WHERE i.is_deleted = FALSE AND (i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term)
    ORDER BY i.item_name
    OFFSET offset_param LIMIT limit_param;
 END;
@@ -82,7 +82,7 @@ DECLARE
 BEGIN
     SELECT COUNT(*) INTO cnt
     FROM items
-    WHERE item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term;
+    WHERE is_deleted = FALSE AND (item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term);
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
@@ -142,7 +142,7 @@ DECLARE
 BEGIN
     SELECT COUNT(*) INTO cnt
     FROM cat_to_item
-    WHERE category_id = category_id_param;
+    WHERE stock > 0 AND category_id = category_id_param;
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
@@ -155,7 +155,7 @@ BEGIN
     FROM items i
     JOIN cat_to_item ctoi
     ON i.item_id = ctoi.item_id
-    WHERE ctoi.category_id = category_id_param
+    WHERE i.stock > 0 AND ctoi.category_id = category_id_param
     ORDER BY item_id
     LIMIT limit_param OFFSET offset_param;
 END;

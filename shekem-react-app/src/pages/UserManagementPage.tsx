@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import AdminUserCard from '../components/AdminUserCard'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
-import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
+import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants'
 import type { User } from '../utils/manageUsers'
 import { FetchSearchUsers, DeleteUserFromBackend, SetAdminInBackend } from '../utils/manageUsers'
 import { useSearchParams } from 'react-router-dom'
@@ -9,6 +9,8 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import PaginationControls from '../components/PaginationControls'
 import SearchBar from '../components/SearchBar'
+import Box from '@mui/material/Box'
+import { Link } from 'react-router-dom'
 
 const UserManagementPage = () => {
 
@@ -64,7 +66,7 @@ const UserManagementPage = () => {
         await SetAdminInBackend(userID, backendConstants, generalConstants);
         window.location.reload();
     }
-        
+
 
     return (
         <Container
@@ -75,11 +77,18 @@ const UserManagementPage = () => {
                 padding: '10px',
             }}
         >
-            <SearchBar
-                onSearch={(searchQuery: string) => {
-                    setSearchParams({ q: searchQuery, page: '1' });
-                }}
-            />
+
+            <Link to="/home" style={{ position: 'absolute' }}>
+                <img style={{ maxHeight: '200px', width: '200px' }} src="/photos/caveret-logo.svg" alt="logo" />
+            </Link>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginY: '30px' }}>
+                <SearchBar
+                    onSearch={(searchQuery: string) => {
+                        setSearchParams({ q: searchQuery, page: '1' });
+                    }}
+                />
+            </Box>
             <Grid container spacing={2} sx={{ marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
                 {[...users.values()].map((user: User) => (
                     <AdminUserCard

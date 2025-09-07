@@ -14,7 +14,6 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
 import { useNavigation } from '../utils/navigation';
-import Button from '@mui/material/Button';
 
 const ItemManagementPage = () => {
 

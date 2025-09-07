@@ -33,3 +33,11 @@ export async function SetAdminInBackend(userID: number, backendConstants: Backen
     });
     if (!res.ok) throw new Error(generalConstants.errors.set_admin_fail);
 }
+
+export async function IsAdmin(backendConstants: BackendConstants, generalConstants: GeneralConstants) {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.check_admin_api), {
+        method: 'GET',
+        credentials: 'include'
+    });
+    return res.ok;
+}

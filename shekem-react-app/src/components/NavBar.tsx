@@ -7,6 +7,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchBar from './SearchBar.tsx';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 
@@ -15,9 +16,11 @@ interface NavBarProps {
     goToCart: () => void;
     logoSrc?: string;
     logoClick?: () => void;
+    showEditButton?: boolean
+    onEdit?: () => void
 }
 
-const NavBar = ({ onSearch, goToCart, logoSrc, logoClick }: NavBarProps) => {
+const NavBar = ({ onSearch, goToCart, logoSrc, logoClick, showEditButton, onEdit }: NavBarProps) => {
 
     return (
         <AppBar position="fixed" sx={{ bgcolor: 'rgba(255, 235, 19, 1)' }}>
@@ -28,6 +31,13 @@ const NavBar = ({ onSearch, goToCart, logoSrc, logoClick }: NavBarProps) => {
                 <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', minWidth: 0, maxHeight: '50%' }}>
                     <SearchBar onSearch={onSearch} />
                 </Box>
+
+                {
+                    showEditButton &&
+                    <IconButton onClick={onEdit} sx={{ color: 'black' }}>
+                        <EditIcon sx={{ height: '35px', width: 'fit-content' }} />
+                    </IconButton>
+                }
 
                 <IconButton onClick={goToCart} sx={{ color: 'black' }}>
                     <ShoppingCartIcon sx={{ height: '35px', width: 'fit-content' }} />

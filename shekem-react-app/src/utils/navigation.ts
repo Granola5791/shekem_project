@@ -9,5 +9,6 @@ export function useNavigation() {
     goToCart: () => navigate('/cart'),
     goToHome: () => navigate('/home'),
     goToLogin: () => navigate('/login'),
+    goToManagement: () => navigate('/manage'),
   };
 }

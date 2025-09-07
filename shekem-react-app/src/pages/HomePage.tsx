@@ -9,6 +9,7 @@ import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
+import { IsAdmin } from '../utils/manageUsers.ts';
 
 
 type Category = {
@@ -42,6 +43,7 @@ const HomePage = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [categories, setCategories] = useState<Category[]>([]);
+    const [admin, setAdmin] = useState(false);
 
     // navigation functions
     const {
@@ -49,7 +51,8 @@ const HomePage = () => {
         goToCategory: GoToCategory,
         goToCart: GoToCart,
         goToHome: GoToHome,
-        goToLogin: GoToLogin
+        goToLogin: GoToLogin,
+        goToManagement: GoToManagement
     } = useNavigation();
 
 
@@ -68,6 +71,8 @@ const HomePage = () => {
 
                 const thisCategories = await FetchCategories(thisBackendConstants, thisGeneralConstants);
                 setCategories(thisCategories);
+                const isAdmin = await IsAdmin(thisBackendConstants, thisGeneralConstants);
+                setAdmin(isAdmin);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -107,6 +112,8 @@ const HomePage = () => {
                 goToCart={GoToCart}
                 logoSrc="./src/assets/caveret-logo.svg"
                 logoClick={GoToHome}
+                showEditButton={admin}
+                onEdit={GoToManagement}
             />
 
 

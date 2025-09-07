@@ -12,6 +12,7 @@ import CartPage from './pages/CartPage.tsx';
 import CategoryPage from './pages/CategoryPage.tsx';
 import SearchPage from './pages/SearchPage.tsx';
 import ItemManagementPage from './pages/ItemManagementPage.tsx';
+import UserManagementPage from './pages/UserManagementPage.tsx'
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,12 @@ const router = createBrowserRouter([
     {
         path: "/manage/items",
         element: <ItemManagementPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckAdminLoader,
+    },
+    {
+        path: "manage/users",
+        element: <UserManagementPage />,
         errorElement: <ErrorPage />,
         loader: CheckAdminLoader,
     },

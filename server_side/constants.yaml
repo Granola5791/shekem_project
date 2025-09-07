@@ -38,6 +38,7 @@ server:
     get_search_users_path: "api/user/search"
     delete_from_cart_path: "api/cart/delete"
     delete_item_path: "api/item/:item_id/delete"
+    delete_user_path: "api/user/:user_id/delete"
     update_cart_item_quantity_path: "api/cart/update_quantity"
     update_item_path: "api/item/:item_id/update"
     update_item_with_photo_path: "api/item/:item_id/update_with_photo"
@@ -61,3 +62,4 @@ success:
   item_updated: "Item updated"
   item_added: "Item added"
   item_deleted: "Item deleted"
+  user_deleted: "User deleted"

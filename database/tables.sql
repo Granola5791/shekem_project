@@ -5,6 +5,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   hashed_password VARCHAR(255) NOT NULL,
   salt VARCHAR(255) NOT NULL
+  is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE orders (

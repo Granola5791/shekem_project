@@ -33,6 +33,7 @@ func SetRouter() {
 	router.GET(GetStringFromConfig("server.api.get_search_users_path"), RequireAuthentication, RequireAdmin, HandleGetSearchUsers)
 	router.DELETE(GetStringFromConfig("server.api.delete_from_cart_path"), RequireAuthentication, HandleDeleteFromCart)
 	router.DELETE(GetStringFromConfig("server.api.delete_item_path"), RequireAuthentication, RequireAdmin, HandleDeleteItem)
+	router.DELETE(GetStringFromConfig("server.api.delete_user_path"), RequireAuthentication, RequireAdmin, HandleDeleteUser)
 	router.PATCH(GetStringFromConfig("server.api.update_cart_item_quantity_path"), RequireAuthentication, HandleUpdateCartItemQuantity)
 	router.PATCH(GetStringFromConfig("server.api.update_item_path"), RequireAuthentication, RequireAdmin, HandleUpdateItem)
 	router.PATCH(GetStringFromConfig("server.api.update_item_with_photo_path"), RequireAuthentication, RequireAdmin, HandleUpdateItemWithPhoto)

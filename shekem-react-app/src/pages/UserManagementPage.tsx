@@ -3,7 +3,7 @@ import AdminUserCard from '../components/AdminUserCard'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
 import type { User } from '../utils/manageUsers'
-import { FetchSearchUsers } from '../utils/manageUsers'
+import { FetchSearchUsers, DeleteUserFromBackend } from '../utils/manageUsers'
 import { useSearchParams } from 'react-router-dom'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
@@ -49,6 +49,18 @@ const UserManagementPage = () => {
         return <div>Loading...</div>;
     }
 
+    const DeleteUser = async (userID: number) => {
+        const deleteUserFromFrontend = () => {
+            const newUsers = new Map(users);
+            newUsers.delete(userID);
+            setUsers(newUsers);
+        }
+
+        await DeleteUserFromBackend(userID, backendConstants, generalConstants);
+        deleteUserFromFrontend();
+    }
+        
+
     return (
         <Container
             disableGutters
@@ -67,6 +79,7 @@ const UserManagementPage = () => {
                 {[...users.values()].map((user: User) => (
                     <AdminUserCard
                         key={user.id}
+                        isAdmin={user.role.includes(generalConstants.users.admin_role)}
                         userID={user.id}
                         userIDLabel={hebrewConstants.users.user_id}
                         username={user.username}
@@ -77,7 +90,7 @@ const UserManagementPage = () => {
                         createdAtLabel={hebrewConstants.users.created_at}
                         deleteButtonText={hebrewConstants.users.delete_user}
                         editButtonText={hebrewConstants.users.set_admin}
-                        onDelete={(id: number) => { }}
+                        onDelete={DeleteUser}
                         onEdit={(id: number) => { }}
                     />
                 ))}

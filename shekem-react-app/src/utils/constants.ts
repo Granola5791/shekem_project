@@ -91,6 +91,7 @@ export type BackendConstants = {
     get_search_users_page_api: string;
     delete_from_cart_api: string;
     delete_item_api: string;
+    delete_user_api: string;
     update_cart_item_quantity_api: string;
     update_item_api: string;
     update_item_with_photo_api: string;
@@ -129,7 +130,13 @@ export type GeneralConstants = {
         cart_load_fail: string;
         order_submit_fail: string;
         search_load_fail: string;
+        delete_user_fail: string;
     };
+
+    users: {
+        admin_role: string;
+    };
+
     items_per_page: number;
 };
 

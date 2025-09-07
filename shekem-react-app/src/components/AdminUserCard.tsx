@@ -9,6 +9,7 @@ import CardActions from '@mui/material/CardActions';
 
 
 interface AdminUserCardProps {
+    isAdmin: boolean,
     userID: number,
     userIDLabel: string,
     username: string,
@@ -23,7 +24,7 @@ interface AdminUserCardProps {
     onEdit: (id: number) => void
 }
 
-const AdminUserCard = ({ userID, userIDLabel, username, usernameLabel, privileges, privilegesLabel, createdAt, createdAtLabel, deleteButtonText, editButtonText, onDelete, onEdit }: AdminUserCardProps) => {
+const AdminUserCard = ({ isAdmin, userID, userIDLabel, username, usernameLabel, privileges, privilegesLabel, createdAt, createdAtLabel, deleteButtonText, editButtonText, onDelete, onEdit }: AdminUserCardProps) => {
     return (
         <Card sx={{ padding: '10px', width: '250px', height: 'fit-content' }}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -56,6 +57,7 @@ const AdminUserCard = ({ userID, userIDLabel, username, usernameLabel, privilege
                 <Button
                     variant="contained"
                     onClick={() => onEdit(userID)}
+                    disabled={isAdmin}
                     sx={{
                         backgroundColor: 'rgb(239, 232, 26)',
                         ':hover': { backgroundColor: 'rgba(255, 247, 0, 1)' },

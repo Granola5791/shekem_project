@@ -39,12 +39,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION user_exists(username_param VARCHAR(50)) 
+CREATE OR REPLACE FUNCTION user_exists(username_param VARCHAR(50)) 
 RETURNS BOOLEAN AS $$
 DECLARE
    ret_user_exists BOOLEAN;
 BEGIN
-   SELECT EXISTS(SELECT 1 FROM users WHERE username = username_param) INTO ret_user_exists;
+   SELECT EXISTS(SELECT 1 FROM users WHERE username = username_param AND is_deleted = FALSE) INTO ret_user_exists;
    RETURN ret_user_exists;
 END;
 $$ LANGUAGE plpgsql;
@@ -191,7 +191,7 @@ BEGIN
    RETURN QUERY
    SELECT u.user_id, u.username, u.created_at, u.user_role
    FROM users u
-   WHERE u.username ILIKE '%' || search_term || '%' OR u.user_id::TEXT = search_term
+   WHERE u.is_deleted = FALSE AND (u.username ILIKE '%' || search_term || '%' OR u.user_id::TEXT = search_term)
    ORDER BY u.username
    OFFSET offset_param LIMIT limit_param;
 END;
@@ -204,7 +204,7 @@ DECLARE
 BEGIN
     SELECT COUNT(*) INTO cnt
     FROM users
-    WHERE username ILIKE '%' || search_term || '%' OR user_id::TEXT = search_term;
+    WHERE is_deleted = FALSE AND (username ILIKE '%' || search_term || '%' OR user_id::TEXT = search_term);
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;

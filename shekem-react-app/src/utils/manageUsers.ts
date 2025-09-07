@@ -17,3 +17,11 @@ export async function FetchSearchUsers(searchTerm: string, page: number, backend
     const data = await res.json();
     return [data.users, data.count];
 }
+
+export async function DeleteUserFromBackend(userID: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) {
+    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.delete_user_api, userID), {
+        method: 'DELETE',
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error(generalConstants.errors.delete_user_fail);
+}

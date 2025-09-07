@@ -7,14 +7,6 @@ BEGIN
 END;
 $$
 
-CREATE PROCEDURE delete_user(IN username_param VARCHAR(50))
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    DELETE FROM users
-    WHERE username = username_param;
-END;
-$$
 
 CREATE OR REPLACE PROCEDURE add_to_cart(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
 LANGUAGE plpgsql
@@ -109,5 +101,19 @@ AS $$
 BEGIN
     DELETE FROM items
     WHERE item_id = item_id_param;
+END;
+$$
+
+
+CREATE OR REPLACE PROCEDURE soft_delete_user(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET is_deleted = TRUE, user_role = '', username = username || '_deleted_' || salt
+    WHERE user_id = user_id_param;
+
+    DELETE FROM cart_items
+    WHERE user_id = user_id_param;
 END;
 $$

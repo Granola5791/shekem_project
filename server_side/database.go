@@ -420,6 +420,15 @@ func DeleteItem(ItemID int) error {
 	return nil
 }
 
+func DeleteUser(UserID int) error {
+	sqlStatement := `CALL soft_delete_user($1);`
+	_, err := db.Exec(sqlStatement, UserID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 
 func OpenSQLConnection() error {
 	var err error

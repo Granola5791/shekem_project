@@ -1,11 +1,10 @@
-
-CREATE FUNCTION get_hashed_password(username_param VARCHAR(50)) 
+CREATE OR REPLACE FUNCTION get_hashed_password(username_param VARCHAR(50)) 
 RETURNS VARCHAR(255) AS $$
 DECLARE
    ret_hashed_password VARCHAR(255);
 BEGIN
    SELECT hashed_password INTO ret_hashed_password 
-   FROM users 
+   FROM undeleted_users
    WHERE username = username_param;
 
    RETURN ret_hashed_password;
@@ -13,26 +12,26 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION get_salt(username_param VARCHAR(50)) 
+CREATE OR REPLACE FUNCTION get_salt(username_param VARCHAR(50)) 
 RETURNS VARCHAR(255) AS $$
 DECLARE
    ret_salt VARCHAR(255);
 BEGIN
    SELECT salt INTO ret_salt 
-   FROM users 
+   FROM undeleted_users
    WHERE username = username_param;
 
    RETURN ret_salt;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION get_user_role(username_param VARCHAR(50)) 
+CREATE OR REPLACE FUNCTION get_user_role(username_param VARCHAR(50)) 
 RETURNS VARCHAR(255) AS $$
 DECLARE
    ret_user_role VARCHAR(255);
 BEGIN
    SELECT user_role INTO ret_user_role 
-   FROM users 
+   FROM undeleted_users
    WHERE username = username_param;
 
    RETURN ret_user_role;
@@ -44,18 +43,18 @@ RETURNS BOOLEAN AS $$
 DECLARE
    ret_user_exists BOOLEAN;
 BEGIN
-   SELECT EXISTS(SELECT 1 FROM users WHERE username = username_param AND is_deleted = FALSE) INTO ret_user_exists;
+   SELECT EXISTS(SELECT 1 FROM users WHERE username = username_param) INTO ret_user_exists;
    RETURN ret_user_exists;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION get_user_id(username_param VARCHAR(50)) 
+CREATE OR REPLACE FUNCTION get_user_id(username_param VARCHAR(50)) 
 RETURNS INT AS $$
 DECLARE
    ret_user_id INT;
 BEGIN
    SELECT user_id INTO ret_user_id 
-   FROM users 
+   FROM undeleted_users
    WHERE username = username_param;
 
    RETURN ret_user_id;
@@ -68,8 +67,8 @@ RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock I
 BEGIN
    RETURN QUERY
    SELECT i.item_id, i.item_name, i.price, i.stock
-   FROM items i
-   WHERE i.is_deleted = FALSE AND (i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term)
+   FROM undeleted_items i
+   WHERE i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term
    ORDER BY i.item_name
    OFFSET offset_param LIMIT limit_param;
 END;
@@ -81,8 +80,8 @@ DECLARE
     cnt INT;
 BEGIN
     SELECT COUNT(*) INTO cnt
-    FROM items
-    WHERE is_deleted = FALSE AND (item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term);
+    FROM undeleted_items
+    WHERE item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term;
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
@@ -141,8 +140,10 @@ DECLARE
     cnt INT;
 BEGIN
     SELECT COUNT(*) INTO cnt
-    FROM cat_to_item
-    WHERE stock > 0 AND category_id = category_id_param;
+    FROM cat_to_item ctoi
+    JOIN undeleted_items i
+    ON i.item_id = ctoi.item_id
+    WHERE i.stock > 0 AND ctoi.category_id = category_id_param;
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
@@ -152,7 +153,7 @@ RETURNS TABLE (item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock 
 BEGIN
     RETURN QUERY
     SELECT i.item_id, i.item_name, i.price, i.stock
-    FROM items i
+    FROM undeleted_items i
     JOIN cat_to_item ctoi
     ON i.item_id = ctoi.item_id
     WHERE i.stock > 0 AND ctoi.category_id = category_id_param
@@ -179,7 +180,7 @@ DECLARE
     ret_stock INT;
 BEGIN
     SELECT stock INTO ret_stock
-    FROM items
+    FROM undeleted_items
     WHERE item_id = item_id_param;
     RETURN ret_stock;
 END;
@@ -190,8 +191,8 @@ RETURNS TABLE(user_id INT, username VARCHAR(50), created_at TIMESTAMP, user_role
 BEGIN
    RETURN QUERY
    SELECT u.user_id, u.username, u.created_at, u.user_role
-   FROM users u
-   WHERE u.is_deleted = FALSE AND (u.username ILIKE '%' || search_term || '%' OR u.user_id::TEXT = search_term)
+   FROM undeleted_users u
+   WHERE u.username ILIKE '%' || search_term || '%' OR u.user_id::TEXT = search_term
    ORDER BY u.username
    OFFSET offset_param LIMIT limit_param;
 END;
@@ -203,8 +204,8 @@ DECLARE
     cnt INT;
 BEGIN
     SELECT COUNT(*) INTO cnt
-    FROM users
-    WHERE is_deleted = FALSE AND (username ILIKE '%' || search_term || '%' OR user_id::TEXT = search_term);
+    FROM undeleted_users
+    WHERE username ILIKE '%' || search_term || '%' OR user_id::TEXT = search_term;
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;

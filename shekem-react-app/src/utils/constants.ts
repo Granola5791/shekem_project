@@ -73,6 +73,12 @@ export type HebrewConstants = {
         set_admin: string;
         no_privileges: string;
     }
+
+    management: {
+        management_page_title: string;
+        manage_users: string;
+        manage_items: string;
+    }
     go_to_login: string;
     go_to_home: string;
 };

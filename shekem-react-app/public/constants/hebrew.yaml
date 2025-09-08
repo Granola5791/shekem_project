@@ -65,3 +65,9 @@ users:
   delete_user: "מחק משתמש"
   set_admin: "הגדר כמנהל"
   no_privileges: "ללא הרשאות"
+
+
+management:
+  management_page_title: "עמוד מנהלים (עם prestige וזה)"
+  manage_users: "ניהול משתמשים"
+  manage_items: "ניהול מוצרים"

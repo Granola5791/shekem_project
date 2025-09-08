@@ -100,7 +100,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     UPDATE items
-    SET is_deleted = TRUE, item_name = item_name || '_deleted_', stock = 0
+    SET is_deleted = TRUE, stock = 0
     WHERE item_id = item_id_param;
 END;
 $$
@@ -111,7 +111,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     UPDATE users
-    SET is_deleted = TRUE, user_role = '', username = username || '_deleted_' || salt
+    SET is_deleted = TRUE, user_role = ''
     WHERE user_id = user_id_param;
 
     DELETE FROM cart_items

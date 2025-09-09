@@ -198,7 +198,12 @@ const CartPage = () => {
                             onSubmit={SubmitOrder}
                         />)
                         :
-                        <Typography variant="h4">{hebrewConstants.checkout.empty_cart_text}</Typography>
+                        (
+                            <Box display='flex' flexDirection='column' gap={2}>
+                                <Typography variant="h4">{hebrewConstants.checkout.empty_cart_text}</Typography>
+                                <img style={{ maxHeight: '300px', width: '300px' }} src="photos\one_alcohol_please.jpg" alt="" />
+                            </Box>
+                        )
                     }
                 </Box>
             </Container>

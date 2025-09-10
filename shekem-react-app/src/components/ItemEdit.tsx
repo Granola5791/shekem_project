@@ -44,6 +44,12 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
         }
     }
 
+    const OnCancel = () => {
+        setImageUrlHook('');
+        setImage(null);
+        onCancel?.();
+    }
+
     return (
         <Dialog open={open} onClose={() => { setImage(null); setImageUrlHook(imageUrl || ''); }}>
             <Stack spacing={2} padding={2}>
@@ -94,10 +100,10 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
             </Stack>
 
             <Box gap={2} sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-                <Button variant='outlined' onClick={onCancel}>
+                <Button variant='outlined' onClick={OnCancel}>
                     {cancelButtonText}
                 </Button>
-                <Button variant='contained' onClick={() => {onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image); onCancel?.() }} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
+                <Button variant='contained' onClick={() => {onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image); OnCancel(); }} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
                     {submitButtonText}
                 </Button>
             </Box>

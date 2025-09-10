@@ -13,14 +13,7 @@ var db *sql.DB
 func GetUserIDFromDB(username string) (int, error) {
 	var userID int
 	sqlStatement := `SELECT get_user_id($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return 0, err
-	}
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&userID)
+	err := db.QueryRow(sqlStatement, username).Scan(&userID)
 	if err != nil {
 		return 0, err
 	}
@@ -48,14 +41,7 @@ func DeleteUserFromDB(username string) error {
 func UserExistsInDB(username string) (bool, error) {
 	var exists bool
 	sqlStatement := `SELECT user_exists($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return false, err
-	}
-	if !rows.Next() {
-		return false, nil
-	}
-	err = rows.Scan(&exists)
+	err := db.QueryRow(sqlStatement, username).Scan(&exists)
 	if err != nil {
 		return false, err
 	}
@@ -65,14 +51,7 @@ func UserExistsInDB(username string) (bool, error) {
 func GetUserRoleFromDB(username string) (string, error) {
 	var userRole string
 	sqlStatement := `SELECT get_user_role($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&userRole)
+	err := db.QueryRow(sqlStatement, username).Scan(&userRole)
 	if err != nil {
 		return "", err
 	}
@@ -82,14 +61,7 @@ func GetUserRoleFromDB(username string) (string, error) {
 func GetUserHashedPasswordFromDB(username string) (string, error) {
 	var hashedPassword string
 	sqlStatement := `SELECT get_hashed_password($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&hashedPassword)
+	err := db.QueryRow(sqlStatement, username).Scan(&hashedPassword)
 	if err != nil {
 		return "", err
 	}
@@ -99,14 +71,7 @@ func GetUserHashedPasswordFromDB(username string) (string, error) {
 func GetUserSaltFromDB(username string) (string, error) {
 	var salt string
 	sqlStatement := `SELECT get_salt($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&salt)
+	err := db.QueryRow(sqlStatement, username).Scan(&salt)
 	if err != nil {
 		return "", err
 	}
@@ -139,20 +104,16 @@ func GetSearchUsersPage(query string, page int) ([]User, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return users[0:i], nil
 }
 
 func GetSearchUsersCount(query string) (int, error) {
 	var count int
 	sqlStatement := `SELECT get_search_users_count($1);`
-	rows, err := db.Query(sqlStatement, query)
-	if err != nil {
-		return 0, err
-	}
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&count)
+	err := db.QueryRow(sqlStatement, query).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
@@ -176,20 +137,16 @@ func GetSearchItemsPage(searchTerm string, page int) ([]Item, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return items[0:i], nil
 }
 
 func GetSearchItemsCount(searchTerm string) (int, error) {
 	var count int
 	sqlStatement := `SELECT get_search_items_count($1);`
-	rows, err := db.Query(sqlStatement, searchTerm)
-	if err != nil {
-		return 0, err
-	}
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&count)
+	err := db.QueryRow(sqlStatement, searchTerm).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
@@ -242,21 +199,16 @@ func GetCategories() ([]Category, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return categories[0:i], nil
 }
 
 func GetCategoryPhoto(categoryID int, photoIndex int) ([]byte, error) {
 	var photo []byte
 	sqlStatement := `SELECT get_category_photo($1, $2);`
-	rows, err := db.Query(sqlStatement, categoryID, photoIndex)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	err = rows.Scan(&photo)
+	err := db.QueryRow(sqlStatement, categoryID, photoIndex).Scan(&photo)
 	if err != nil {
 		return nil, err
 	}
@@ -279,21 +231,16 @@ func GetCartFromDB(userID int) ([]FullCartItem, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return cart[0:i], nil
 }
 
 func GetItemPhoto(itemID int) ([]byte, error) {
 	var photo []byte
 	sqlStatement := `SELECT get_item_photo($1);`
-	rows, err := db.Query(sqlStatement, itemID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	err = rows.Scan(&photo)
+	err := db.QueryRow(sqlStatement, itemID).Scan(&photo)
 	if err != nil {
 		return nil, err
 	}
@@ -330,15 +277,7 @@ func SubmitOrderToDB(userID int) error {
 func GetCategoryItemsCount(categoryID int) (int, error) {
 	var count int
 	sqlStatement := `SELECT get_category_items_count($1);`
-	rows, err := db.Query(sqlStatement, categoryID)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&count)
+	err := db.QueryRow(sqlStatement, categoryID).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
@@ -352,7 +291,7 @@ func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
 	offset := (page - 1) * pageSize
 
 	sqlStatement := `SELECT * FROM get_category_items_page($1, $2, $3)`
-	rows, err := db.Query(sqlStatement, categoryID, offset, offset + pageSize)
+	rows, err := db.Query(sqlStatement, categoryID, offset, offset+pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -363,21 +302,16 @@ func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return items[0:i], nil
 }
 
 func GetCategoryNameFromDB(categoryID int) (string, error) {
 	var name string
 	sqlStatement := `SELECT get_category_name($1);`
-	rows, err := db.Query(sqlStatement, categoryID)
-	if err != nil {
-		return "", err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&name)
+	err := db.QueryRow(sqlStatement, categoryID).Scan(&name)
 	if err != nil {
 		return "", err
 	}
@@ -437,7 +371,6 @@ func SetAdmin(UserID int) error {
 	}
 	return nil
 }
-
 
 func OpenSQLConnection() error {
 	var err error

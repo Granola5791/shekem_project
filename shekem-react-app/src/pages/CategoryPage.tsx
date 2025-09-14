@@ -11,6 +11,7 @@ import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, ins
 import { useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
 import PaginationControls from '../components/PaginationControls'
+import OneButtonPopUp from '../components/OneButtonPopUp'
 
 const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
@@ -54,6 +55,7 @@ const CategoryPage = () => {
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [itemCount, setItemCount] = React.useState(0);
     const [categoryName, setCategoryName] = React.useState('');
+    const [openError, setOpenError] = React.useState(false);
 
     const {
         goToHome: GoToHome,
@@ -84,7 +86,7 @@ const CategoryPage = () => {
                 setItems(thisItems);
 
             } catch (err: any) {
-                console.error(err.message);
+                setOpenError(true);
             }
         }
         fetchData();
@@ -111,6 +113,10 @@ const CategoryPage = () => {
         });
         if (isUnauthorizedResponse(res)) {
             GoToLogin();
+            return;
+        }
+        if (!res.ok) {
+            setOpenError(true);
             return;
         }
     }
@@ -165,6 +171,15 @@ const CategoryPage = () => {
                         goToPage={GoToPage}
                     />
                 }
+
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
             </Container>
         </>
     )

@@ -10,6 +10,7 @@ import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
 import { IsAdmin } from '../utils/manageUsers.ts';
+import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
 
 
 type Category = {
@@ -38,12 +39,12 @@ const HomePage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
 
-    // loading and error states
+    // loading state
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [admin, setAdmin] = useState(false);
+    const [openError, setOpenError] = React.useState(false);
 
     // navigation functions
     const {
@@ -51,7 +52,6 @@ const HomePage = () => {
         goToCategory: GoToCategory,
         goToCart: GoToCart,
         goToHome: GoToHome,
-        goToLogin: GoToLogin,
         goToManagement: GoToManagement
     } = useNavigation();
 
@@ -74,36 +74,15 @@ const HomePage = () => {
                 const isAdmin = await IsAdmin(thisBackendConstants, thisGeneralConstants);
                 setAdmin(isAdmin);
             } catch (err: any) {
-                setError(err.message);
+                setOpenError(true);
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
     }, []);
-    if (error) return <p>{'Something went wrong, try again later'}</p>;
     if (!hebrewConstants || !backendConstants || !generalConstants || loading) return <p>Loading...</p>;
 
-
-    async function AddToCart(id: number, selectCount: number) {
-        if (selectCount <= 0) {
-            return;
-        }
-        if (!backendConstants) {
-            console.error(generalConstants?.errors.config_not_found);
-            return;
-        }
-        const res = await fetch(backendConstants.backend_address + backendConstants.add_to_cart_api, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ product_id: id, quantity: selectCount }),
-            credentials: 'include',
-        });
-        if (isUnauthorizedResponse(res)) {
-            GoToLogin();
-            return;
-        }
-    }
 
     return (
         <>
@@ -142,6 +121,14 @@ const HomePage = () => {
                         </Grid>
                     ))}
                 </Grid>
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
             </Container>
         </>
     )

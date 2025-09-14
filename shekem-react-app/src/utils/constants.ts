@@ -5,6 +5,7 @@ export type HebrewConstants = {
     search_bar_text: string;
     category_list_title: string;
     wait_text: string;
+    ok: string;
     user_errors: {
         generic_error: string;
         page_not_found: string;

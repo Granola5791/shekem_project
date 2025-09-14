@@ -10,6 +10,7 @@ import { useNavigation } from '../utils/navigation'
 import Checkout from '../components/Checkout'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
+import OneButtonPopUp from '../components/OneButtonPopUp'
 
 
 type CartItem = {
@@ -34,14 +35,6 @@ const FetchCartItems = async (backendConstants: BackendConstants, generalConstan
     return data.cart;
 }
 
-const SubmitOrder = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
-        method: 'POST',
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail + res.json());
-}
-
 
 const CartPage = () => {
     useEffect(() => {
@@ -57,13 +50,13 @@ const CartPage = () => {
                 const thisCartItems = await FetchCartItems(thisBackendConstants, thisGeneralConstants);
                 setCartItems(thisCartItems);
             } catch (err: any) {
-                console.error(err.message);
+                setOpenError(true);
             }
         }
         fetchData();
     }, []);
 
-    const DeleteItem = (itemID: number) => {
+    const DeleteItem = async (itemID: number) => {
         const DeleteFromBackend = async () => {
             if (!backendConstants) {
                 return;
@@ -74,6 +67,7 @@ const CartPage = () => {
                 body: JSON.stringify({ item_id: itemID }),
                 credentials: 'include',
             });
+            return res.ok;
         }
 
         const DeleteFromFrontend = async () => {
@@ -82,7 +76,12 @@ const CartPage = () => {
         }
 
 
-        DeleteFromBackend();
+        const isOK = await DeleteFromBackend();
+        if (!isOK) {
+            setOpenError(true);
+            return;
+        }
+
         DeleteFromFrontend();
     };
 
@@ -99,7 +98,8 @@ const CartPage = () => {
         });
 
         if (!res.ok) {
-            throw new Error('Failed to update quantity');
+            setOpenError(true);
+            return;
         }
 
         setCartItems(prev =>
@@ -118,7 +118,10 @@ const CartPage = () => {
             method: 'POST',
             credentials: 'include'
         });
-        if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail);
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
         window.location.reload();
     }
 
@@ -127,6 +130,7 @@ const CartPage = () => {
     const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
+    const [openError, setOpenError] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const {
         searchItems: SearchItems,
@@ -206,6 +210,15 @@ const CartPage = () => {
                         )
                     }
                 </Box>
+
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
             </Container>
         </>
     )

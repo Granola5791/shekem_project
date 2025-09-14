@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import NavBar from '../components/NavBar';
 import PaginationControls from '../components/PaginationControls';
 import { isUnauthorizedResponse } from '../utils/http';
+import OneButtonPopUp from '../components/OneButtonPopUp';
 
 
 
@@ -32,24 +33,29 @@ const SearchPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [items, setItems] = React.useState<Item[]>([]);
     const [itemCount, setItemCount] = React.useState(0);
+    const [openError, setOpenError] = React.useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            let hebrew = hebrewConstants as HebrewConstants;
-            let backend = backendConstants as BackendConstants;
-            let general = generalConstants as GeneralConstants;
-            if (!hebrew || !backend || !general) {
-                hebrew = await FetchHebrewConstants();
-                setHebrewConstants(hebrew);
-                backend = await FetchBackendConstants();
-                setBackendConstants(backend);
-                general = await FetchGeneralConstants();
-                setGeneralConstants(general);
-            }
+            try {
+                let hebrew = hebrewConstants as HebrewConstants;
+                let backend = backendConstants as BackendConstants;
+                let general = generalConstants as GeneralConstants;
+                if (!hebrew || !backend || !general) {
+                    hebrew = await FetchHebrewConstants();
+                    setHebrewConstants(hebrew);
+                    backend = await FetchBackendConstants();
+                    setBackendConstants(backend);
+                    general = await FetchGeneralConstants();
+                    setGeneralConstants(general);
+                }
 
-            const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
-            setItems(searchItems);
-            setItemCount(itemCount);
+                const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
+                setItems(searchItems);
+                setItemCount(itemCount);
+            } catch (err) {
+                setOpenError(true);
+            }
         };
         fetchData();
     }, [query, page]);
@@ -72,6 +78,10 @@ const SearchPage = () => {
         });
         if (isUnauthorizedResponse(res)) {
             GoToLogin();
+            return;
+        }
+        if (!res.ok) {
+            setOpenError(true);
             return;
         }
     }
@@ -131,6 +141,15 @@ const SearchPage = () => {
                         goToPage={GoToPage}
                     />
                 }
+
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
             </Container>
         </>
     )

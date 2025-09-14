@@ -11,6 +11,7 @@ import PaginationControls from '../components/PaginationControls'
 import SearchBar from '../components/SearchBar'
 import Box from '@mui/material/Box'
 import { Link } from 'react-router-dom'
+import OneButtonPopUp from '../components/OneButtonPopUp'
 
 const UserManagementPage = () => {
 
@@ -22,26 +23,31 @@ const UserManagementPage = () => {
     const page = searchParams.get('page') || '1';
     const [users, setUsers] = React.useState<Map<number, User>>(new Map());
     const [userCount, setUserCount] = React.useState(0);
+    const [openError, setOpenError] = React.useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            let hebrew = hebrewConstants as HebrewConstants;
-            let backend = backendConstants as BackendConstants;
-            let general = generalConstants as GeneralConstants;
-            if (!hebrew || !backend || !general) {
-                hebrew = await FetchHebrewConstants();
-                setHebrewConstants(hebrew);
-                backend = await FetchBackendConstants();
-                setBackendConstants(backend);
-                general = await FetchGeneralConstants();
-                setGeneralConstants(general);
-            }
+            try {
+                let hebrew = hebrewConstants as HebrewConstants;
+                let backend = backendConstants as BackendConstants;
+                let general = generalConstants as GeneralConstants;
+                if (!hebrew || !backend || !general) {
+                    hebrew = await FetchHebrewConstants();
+                    setHebrewConstants(hebrew);
+                    backend = await FetchBackendConstants();
+                    setBackendConstants(backend);
+                    general = await FetchGeneralConstants();
+                    setGeneralConstants(general);
+                }
 
-            if (query !== '') {
-                const [searchUsers, userCount] = await FetchSearchUsers(query, parseInt(page), backend, general);
-                const userMap = new Map<number, User>(searchUsers.map((user: User) => [user.id, user]));
-                setUsers(userMap);
-                setUserCount(userCount);
+                if (query !== '') {
+                    const [searchUsers, userCount] = await FetchSearchUsers(query, parseInt(page), backend, general);
+                    const userMap = new Map<number, User>(searchUsers.map((user: User) => [user.id, user]));
+                    setUsers(userMap);
+                    setUserCount(userCount);
+                }
+            } catch (err) {
+                setOpenError(true);
             }
         };
         fetchData();
@@ -57,8 +63,12 @@ const UserManagementPage = () => {
             newUsers.delete(userID);
             setUsers(newUsers);
         }
-
-        await DeleteUserFromBackend(userID, backendConstants, generalConstants);
+        try {
+            await DeleteUserFromBackend(userID, backendConstants, generalConstants);
+        } catch (err) {
+            setOpenError(true);
+            return;
+        }
         deleteUserFromFrontend();
     }
 
@@ -116,6 +126,15 @@ const UserManagementPage = () => {
                     setSearchParams({ q: query, page: (page + 1).toString() });
                 }}
             />
+
+            <OneButtonPopUp
+                open={openError}
+                theme='error'
+                buttonText={hebrewConstants.ok}
+                onButtonClick={() => setOpenError(false)}
+            >
+                {hebrewConstants.user_errors.generic_error}
+            </OneButtonPopUp>
         </Container>
     )
 }

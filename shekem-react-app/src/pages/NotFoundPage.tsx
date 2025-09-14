@@ -4,12 +4,14 @@ import { parse } from 'yaml'
 import Button from '@mui/material/Button';
 import { useNavigation } from '../utils/navigation';
 import { FetchHebrewConstants, FetchBackendConstants } from '../utils/constants';
+import OneButtonPopUp from '../components/OneButtonPopUp';
 
 
 
 const NotFoundPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
+    const [openError, setOpenError] = React.useState(false);
 
     const {
         goToHome
@@ -24,7 +26,7 @@ const NotFoundPage = () => {
                 const backendConfig = await FetchBackendConstants();
                 setBackendConstants(backendConfig as BackendConstants);
             } catch (error) {
-                console.error("Error loading constants:", error);
+                setOpenError(true);
             }
         };
 
@@ -42,6 +44,14 @@ const NotFoundPage = () => {
             <h1>{backendConstants?.status_codes?.not_found}</h1>
             <h2>{hebrewConstants?.user_errors?.page_not_found}</h2>
             <Button onClick={goToHome}>{hebrewConstants?.go_to_home}</Button>
+            <OneButtonPopUp
+                open={openError}
+                theme='error'
+                buttonText={hebrewConstants.ok}
+                onButtonClick={() => setOpenError(false)}
+            >
+                {hebrewConstants.user_errors.generic_error}
+            </OneButtonPopUp>
         </>
     )
 }

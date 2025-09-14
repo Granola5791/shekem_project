@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
 import { useNavigation } from '../utils/navigation';
+import OneButtonPopUp from '../components/OneButtonPopUp';
 
 const ItemManagementPage = () => {
 
@@ -28,6 +29,7 @@ const ItemManagementPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
+    const [openError, setOpenError] = React.useState(false);
     const { goToHome: GoToHome } = useNavigation();
 
     useEffect(() => {
@@ -76,9 +78,7 @@ const ItemManagementPage = () => {
                 body: formData,
                 credentials: 'include',
             })
-            if (!res.ok) {
-                throw new Error('Failed to update item');
-            }
+            return res.ok;
         }
 
         const updateFrontend = () => {
@@ -89,7 +89,11 @@ const ItemManagementPage = () => {
             }
         }
 
-        await updateBackend();
+        const isOK = await updateBackend();
+        if (!isOK) {
+            setOpenError(true);
+            return;
+        }
         updateFrontend();
     };
 
@@ -109,7 +113,8 @@ const ItemManagementPage = () => {
             credentials: 'include',
         })
         if (!res.ok) {
-            throw new Error('Failed to add item');
+            setOpenError(true);
+            return;
         }
     }
 
@@ -123,9 +128,7 @@ const ItemManagementPage = () => {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
             });
-            if (!res.ok) {
-                throw new Error('Failed to delete item');
-            }
+            return res.ok;
         }
         const deleteFromFrontend = () => {
             const newItems = new Map(items);
@@ -133,7 +136,11 @@ const ItemManagementPage = () => {
             setItems(newItems);
         }
 
-        await deleteFromBackend();
+        const isOK = await deleteFromBackend();
+        if (!isOK) {
+            setOpenError(true);
+            return;
+        }
         deleteFromFrontend();
     }
 
@@ -168,7 +175,7 @@ const ItemManagementPage = () => {
             }}
         >
 
-            <Link to="/home" style={{position: 'absolute'}}>
+            <Link to="/home" style={{ position: 'absolute' }}>
                 <img style={{ maxHeight: '200px', width: '200px' }} src="/photos/caveret-logo.svg" alt="logo" />
             </Link>
 
@@ -248,6 +255,14 @@ const ItemManagementPage = () => {
                     setSearchParams({ q: query, page: (page + 1).toString() });
                 }}
             />
+            <OneButtonPopUp
+                open={openError}
+                theme='error'
+                buttonText={hebrewConstants.ok}
+                onButtonClick={() => setOpenError(false)}
+            >
+                {hebrewConstants.user_errors.generic_error}
+            </OneButtonPopUp>
         </Container>
     )
 }

@@ -11,6 +11,7 @@ import Checkout from '../components/Checkout'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import OneButtonPopUp from '../components/OneButtonPopUp'
+import { useConfirm } from '../components/useConfirm'
 
 
 type CartItem = {
@@ -37,6 +38,21 @@ const FetchCartItems = async (backendConstants: BackendConstants, generalConstan
 
 
 const CartPage = () => {
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
+    const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
+    const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
+    const [openError, setOpenError] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const {
+        searchItems: SearchItems,
+        goToCart: GoToCart,
+        goToHome: GoToHome
+    } = useNavigation();
+    const { askConfirm, ConfirmDialog } = useConfirm();
+
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -53,14 +69,19 @@ const CartPage = () => {
                 setOpenError(true);
             }
         }
+
         fetchData();
     }, []);
 
+    useEffect(() => {
+        setTotalPrice(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
+    }, [cartItems]);
+
+    if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
+
+
     const DeleteItem = async (itemID: number) => {
         const DeleteFromBackend = async () => {
-            if (!backendConstants) {
-                return;
-            }
             const res = await fetch(backendConstants.backend_address + backendConstants.delete_from_cart_api, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
@@ -75,6 +96,10 @@ const CartPage = () => {
             setCartItems(newCartItems);
         }
 
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
 
         const isOK = await DeleteFromBackend();
         if (!isOK) {
@@ -86,9 +111,6 @@ const CartPage = () => {
     };
 
     const UpdateQuantity = async (itemID: number, quantity: number) => {
-        if (!backendConstants) {
-            return;
-        }
 
         const res = await fetch(backendConstants.backend_address + backendConstants.update_cart_item_quantity_api, {
             method: 'PATCH',
@@ -111,7 +133,8 @@ const CartPage = () => {
     }
 
     const SubmitOrder = async () => {
-        if (!backendConstants || !generalConstants) {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
             return;
         }
         const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
@@ -126,25 +149,7 @@ const CartPage = () => {
     }
 
 
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
-    const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
-    const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
-    const [openError, setOpenError] = useState(false);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const {
-        searchItems: SearchItems,
-        goToCart: GoToCart,
-        goToHome: GoToHome
-    } = useNavigation();
 
-
-    useEffect(() => {
-        setTotalPrice(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
-    }, [cartItems]);
-
-
-    if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
     return (
         <>
             <NavBar
@@ -219,6 +224,10 @@ const CartPage = () => {
                 >
                     {hebrewConstants.user_errors.generic_error}
                 </OneButtonPopUp>
+                <ConfirmDialog
+                    yesButtonText={hebrewConstants.ok}
+                    noButtonText={hebrewConstants.cancel}
+                />
             </Container>
         </>
     )

@@ -43,6 +43,7 @@ const CartPage = () => {
     const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
     const [openError, setOpenError] = useState(false);
+    const [openSuccess, setOpenSuccess] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const {
         searchItems: SearchItems,
@@ -145,7 +146,7 @@ const CartPage = () => {
             setOpenError(true);
             return;
         }
-        window.location.reload();
+        setOpenSuccess(true);
     }
 
 
@@ -223,6 +224,14 @@ const CartPage = () => {
                     onButtonClick={() => setOpenError(false)}
                 >
                     {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+                <OneButtonPopUp
+                    open={openSuccess}
+                    theme='success'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => { window.location.reload(); }}
+                >
+                    {hebrewConstants.user_success.successful_purchase}
                 </OneButtonPopUp>
                 <ConfirmDialog
                     yesButtonText={hebrewConstants.ok}

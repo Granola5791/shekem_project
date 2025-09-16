@@ -74,3 +74,8 @@ management:
   management_page_title: "עמוד מנהלים (עם prestige וזה)"
   manage_users: "ניהול משתמשים"
   manage_items: "ניהול מוצרים"
+
+user_success:
+  generic_success: "הפעולה בוצעה בהצלחה"
+  successful_signup: "ההרשמה בוצעה בהצלחה, עכשיו אפשר להתחבר"
+  successful_purchase: "ההזמנה בוצעה בהצלחה, תודה שקניתם אצלנו!"

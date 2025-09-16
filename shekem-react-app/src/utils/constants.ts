@@ -17,6 +17,11 @@ export type HebrewConstants = {
         username_taken: string;
         server_error: string;
     };
+    user_success: {
+        generic_success: string;
+        successful_signup: string;
+        successful_purchase: string;
+    };
     signup_texts: {
         signup_title: string;
         username_placeholder: string;

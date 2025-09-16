@@ -5,6 +5,8 @@ wait_text: "רגע..."
 go_to_login: "להתחברות"
 go_to_home: "לעמוד הבית"
 ok: "אישור"
+cancel: "ביטול"
+are_you_sure: "האם אתה בטוח שברצונך להמשיך עם הפעולה?"
 
 user_errors:
   generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"

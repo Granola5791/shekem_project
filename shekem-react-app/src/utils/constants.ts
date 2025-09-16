@@ -6,6 +6,9 @@ export type HebrewConstants = {
     category_list_title: string;
     wait_text: string;
     ok: string;
+    cancel: string;
+    are_you_sure: string;
+    
     user_errors: {
         generic_error: string;
         page_not_found: string;

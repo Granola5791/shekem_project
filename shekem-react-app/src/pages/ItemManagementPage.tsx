@@ -93,20 +93,21 @@ const ItemManagementPage = () => {
 
         const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
         if (!userConfirmed) {
-            return;
+            return false;
         }
         const isOK = await updateBackend();
         if (!isOK) {
             setOpenError(true);
-            return;
+            return false;
         }
         updateFrontend();
+        return true;
     };
 
     const AddItem = async (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => {
         const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
         if (!userConfirmed) {
-            return;
+            return false;
         }
         const formData = new FormData();
         formData.append('item_id', itemID.toString());
@@ -121,8 +122,9 @@ const ItemManagementPage = () => {
         })
         if (!res.ok) {
             setOpenError(true);
-            return;
+            return false;
         }
+        return true;
     }
 
     const DeleteItem = async (itemID: number) => {

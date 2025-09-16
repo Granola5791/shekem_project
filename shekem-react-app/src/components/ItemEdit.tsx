@@ -18,7 +18,7 @@ interface ItemEditProps {
     stockLabel: string
     imageUrl?: string
     imageLabel: string
-    onSubmit?: (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => void
+    onSubmit?: (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => Promise<boolean>
     submitButtonText?: string
     onCancel?: () => void
     cancelButtonText?: string
@@ -48,6 +48,13 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
         setImageUrlHook('');
         setImage(null);
         onCancel?.();
+    }
+
+    const OnSubmit = async () => {
+        const userConfirmed = await onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image);
+        if (userConfirmed) {
+            OnCancel();
+        }
     }
 
     return (
@@ -103,7 +110,7 @@ const ItemEdit = ({ open, itemID, itemIDLabel, itemTitle, itemTitleLabel, price,
                 <Button variant='outlined' onClick={OnCancel}>
                     {cancelButtonText}
                 </Button>
-                <Button variant='contained' onClick={() => {onSubmit?.(itemIDHook, itemTitleHook, priceHook, stockHook, image); OnCancel(); }} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
+                <Button variant='contained' onClick={OnSubmit} sx={{ backgroundColor: 'rgb(239, 232, 26)' }}>
                     {submitButtonText}
                 </Button>
             </Box>

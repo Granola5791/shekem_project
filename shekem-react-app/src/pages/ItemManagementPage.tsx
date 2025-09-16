@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
 import { useNavigation } from '../utils/navigation';
 import OneButtonPopUp from '../components/OneButtonPopUp';
+import { useConfirm } from '../components/useConfirm';
 
 const ItemManagementPage = () => {
 
@@ -31,6 +32,7 @@ const ItemManagementPage = () => {
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [openError, setOpenError] = React.useState(false);
     const { goToHome: GoToHome } = useNavigation();
+    const { askConfirm, ConfirmDialog } = useConfirm();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,10 +58,10 @@ const ItemManagementPage = () => {
         fetchData();
     }, [query, page]);
 
+    if (!hebrewConstants || !backendConstants || !generalConstants) return <div>Loading...</div>;
+
+
     const UpdateItem = async (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => {
-        if (!backendConstants) {
-            return;
-        }
         const updateBackend = async () => {
             const formData = new FormData();
             formData.append('item_title', itemTitle);
@@ -89,6 +91,10 @@ const ItemManagementPage = () => {
             }
         }
 
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
         const isOK = await updateBackend();
         if (!isOK) {
             setOpenError(true);
@@ -98,7 +104,8 @@ const ItemManagementPage = () => {
     };
 
     const AddItem = async (itemID: number, itemTitle: string, price: number, stock: number, image: File | null) => {
-        if (!backendConstants) {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
             return;
         }
         const formData = new FormData();
@@ -119,9 +126,6 @@ const ItemManagementPage = () => {
     }
 
     const DeleteItem = async (itemID: number) => {
-        if (!backendConstants) {
-            return;
-        }
         const deleteFromBackend = async () => {
             const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.delete_item_api, itemID), {
                 method: 'DELETE',
@@ -136,6 +140,10 @@ const ItemManagementPage = () => {
             setItems(newItems);
         }
 
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
         const isOK = await deleteFromBackend();
         if (!isOK) {
             setOpenError(true);
@@ -163,7 +171,6 @@ const ItemManagementPage = () => {
     };
 
 
-    if (!hebrewConstants || !backendConstants || !generalConstants) return <div>Loading...</div>;
 
     return (
         <Container
@@ -263,6 +270,10 @@ const ItemManagementPage = () => {
             >
                 {hebrewConstants.user_errors.generic_error}
             </OneButtonPopUp>
+            <ConfirmDialog
+                yesButtonText={hebrewConstants.ok}
+                noButtonText={hebrewConstants.cancel}
+            />
         </Container>
     )
 }

@@ -12,6 +12,7 @@ import SearchBar from '../components/SearchBar'
 import Box from '@mui/material/Box'
 import { Link } from 'react-router-dom'
 import OneButtonPopUp from '../components/OneButtonPopUp'
+import { useConfirm } from '../components/useConfirm'
 
 const UserManagementPage = () => {
 
@@ -24,6 +25,7 @@ const UserManagementPage = () => {
     const [users, setUsers] = React.useState<Map<number, User>>(new Map());
     const [userCount, setUserCount] = React.useState(0);
     const [openError, setOpenError] = React.useState(false);
+    const { askConfirm, ConfirmDialog } = useConfirm();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,6 +65,12 @@ const UserManagementPage = () => {
             newUsers.delete(userID);
             setUsers(newUsers);
         }
+
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
+
         try {
             await DeleteUserFromBackend(userID, backendConstants, generalConstants);
         } catch (err) {
@@ -73,6 +81,10 @@ const UserManagementPage = () => {
     }
 
     const SetAdmin = async (userID: number) => {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
         await SetAdminInBackend(userID, backendConstants, generalConstants);
         window.location.reload();
     }
@@ -135,6 +147,10 @@ const UserManagementPage = () => {
             >
                 {hebrewConstants.user_errors.generic_error}
             </OneButtonPopUp>
+            <ConfirmDialog
+                yesButtonText={hebrewConstants.ok}
+                noButtonText={hebrewConstants.cancel}
+            />
         </Container>
     )
 }

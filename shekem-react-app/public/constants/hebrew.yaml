@@ -59,6 +59,7 @@ checkout:
   button_text: "קחו את הכסף שלי"
   price_label: "מחיר"
   empty_cart_text: "נראה שעוד לא הוספת שום דבר לסל... לך תקנה משהו!"
+  delete_entire_cart: "מחק את כל הסל"
 
 users:
   username: "שם משתמש"

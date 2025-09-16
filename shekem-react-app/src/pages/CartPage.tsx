@@ -12,6 +12,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import { useConfirm } from '../components/useConfirm'
+import Button from '@mui/material/Button'
 
 
 type CartItem = {
@@ -149,6 +150,22 @@ const CartPage = () => {
         setOpenSuccess(true);
     }
 
+    const DeleteEntireCart = async () => {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
+        const res = await fetch(backendConstants.backend_address + backendConstants.delete_entire_cart_api, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        setCartItems([]);
+    }
+
 
 
     return (
@@ -199,14 +216,18 @@ const CartPage = () => {
 
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
                     {cartItems.length > 0 ? (
-                        <Checkout
-                            title={hebrewConstants.checkout.title}
-                            priceLabel={hebrewConstants.checkout.price_label}
-                            price={totalPrice}
-                            moneySymbol={hebrewConstants.items.money_symbol}
-                            buttonText={hebrewConstants.checkout.button_text}
-                            onSubmit={SubmitOrder}
-                        />)
+                        <Box display='flex' flexDirection='column' gap={2}>
+                            <Checkout
+                                title={hebrewConstants.checkout.title}
+                                priceLabel={hebrewConstants.checkout.price_label}
+                                price={totalPrice}
+                                moneySymbol={hebrewConstants.items.money_symbol}
+                                buttonText={hebrewConstants.checkout.button_text}
+                                onSubmit={SubmitOrder}
+                            />
+                            <Button variant="contained" onClick={DeleteEntireCart} sx={{ bgcolor: 'red', marginX: 'auto' }}>{hebrewConstants.checkout.delete_entire_cart}</Button>
+                        </Box>
+                    )
                         :
                         (
                             <Box display='flex' flexDirection='column' gap={2}>

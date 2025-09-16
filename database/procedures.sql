@@ -128,3 +128,12 @@ BEGIN
     WHERE user_id = user_id_param;
 END;
 $$
+
+CREATE OR REPLACE PROCEDURE delete_entire_cart(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM cart_items
+    WHERE user_id = user_id_param;
+END;
+$$

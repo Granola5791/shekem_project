@@ -71,6 +71,7 @@ export type HebrewConstants = {
         title: string;
         price_label: string;
         button_text: string;
+        delete_entire_cart: string;
     };
 
     users: {
@@ -107,6 +108,7 @@ export type BackendConstants = {
     delete_from_cart_api: string;
     delete_item_api: string;
     delete_user_api: string;
+    delete_entire_cart_api: string;
     update_cart_item_quantity_api: string;
     update_item_api: string;
     update_item_with_photo_api: string;

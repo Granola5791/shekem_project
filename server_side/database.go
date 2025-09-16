@@ -372,6 +372,15 @@ func SetAdmin(UserID int) error {
 	return nil
 }
 
+func DeleteEntireCartFromDB(userID int) error {
+	sqlStatement := `CALL delete_entire_cart($1);`
+	_, err := db.Exec(sqlStatement, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

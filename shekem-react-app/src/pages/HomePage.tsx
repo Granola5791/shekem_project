@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { parse } from 'yaml'
-import { isUnauthorizedResponse } from '../utils/http.ts';
 import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
@@ -11,6 +9,8 @@ import type { HebrewConstants, GeneralConstants, BackendConstants } from '../uti
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
 import { IsAdmin } from '../utils/manageUsers.ts';
 import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
+import HamburgerMenu from '../components/HamburgerMenu.tsx';
+import Box from '@mui/material/Box';
 
 
 type Category = {
@@ -45,6 +45,7 @@ const HomePage = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [admin, setAdmin] = useState(false);
     const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     // navigation functions
     const {
@@ -93,6 +94,7 @@ const HomePage = () => {
                 logoClick={GoToHome}
                 showEditButton={admin}
                 onEdit={GoToManagement}
+                onMenuClick={() => setMenuOpen(true)}
             />
 
 
@@ -129,6 +131,15 @@ const HomePage = () => {
                 >
                     {hebrewConstants.user_errors.generic_error}
                 </OneButtonPopUp>
+
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        itemTitles={['Home', 'Cart']}
+                        itemFunctions={[GoToHome, GoToCart]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
         </>
     )

@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import { useConfirm } from '../components/useConfirm'
 import Button from '@mui/material/Button'
+import HamburgerMenu from '../components/HamburgerMenu'
 
 
 type CartItem = {
@@ -46,6 +47,7 @@ const CartPage = () => {
     const [openError, setOpenError] = useState(false);
     const [openSuccess, setOpenSuccess] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [menuOpen, setMenuOpen] = useState(false);
     const {
         searchItems: SearchItems,
         goToCart: GoToCart,
@@ -175,6 +177,7 @@ const CartPage = () => {
                 onSearch={SearchItems}
                 logoClick={GoToHome}
                 goToCart={GoToCart}
+                onMenuClick={() => setMenuOpen(true)}
             />
 
             <Container
@@ -258,6 +261,14 @@ const CartPage = () => {
                     yesButtonText={hebrewConstants.ok}
                     noButtonText={hebrewConstants.cancel}
                 />
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        itemFunctions={[GoToHome, GoToCart]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
         </>
     )

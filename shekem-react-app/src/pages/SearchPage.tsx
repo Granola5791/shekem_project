@@ -13,7 +13,8 @@ import NavBar from '../components/NavBar';
 import PaginationControls from '../components/PaginationControls';
 import { isUnauthorizedResponse } from '../utils/http';
 import OneButtonPopUp from '../components/OneButtonPopUp';
-
+import Box from '@mui/material/Box';
+import HamburgerMenu from '../components/HamburgerMenu';
 
 
 
@@ -34,6 +35,7 @@ const SearchPage = () => {
     const [items, setItems] = React.useState<Item[]>([]);
     const [itemCount, setItemCount] = React.useState(0);
     const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = React.useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -100,7 +102,8 @@ const SearchPage = () => {
                 onSearch={SearchItems}
                 goToCart={GoToCart}
                 logoClick={GoToHome}
-                logoSrc='\public\photos\caveret-logo.svg'
+                logoSrc='\photos\caveret-logo.svg'
+                onMenuClick={() => setMenuOpen(!menuOpen)}
             />
             <Container
                 disableGutters
@@ -150,6 +153,14 @@ const SearchPage = () => {
                 >
                     {hebrewConstants.user_errors.generic_error}
                 </OneButtonPopUp>
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        itemFunctions={[GoToHome, GoToCart]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
         </>
     )

@@ -12,6 +12,8 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
 import PaginationControls from '../components/PaginationControls'
 import OneButtonPopUp from '../components/OneButtonPopUp'
+import Box from '@mui/material/Box'
+import HamburgerMenu from '../components/HamburgerMenu'
 
 const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
@@ -56,12 +58,13 @@ const CategoryPage = () => {
     const [itemCount, setItemCount] = React.useState(0);
     const [categoryName, setCategoryName] = React.useState('');
     const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = React.useState(false);
 
     const {
         goToHome: GoToHome,
         goToCart: GoToCart,
         searchItems: SearchItems,
-        goToLogin: GoToLogin
+        goToLogin: GoToLogin,
     } = useNavigation()
 
     useEffect(() => {
@@ -131,7 +134,8 @@ const CategoryPage = () => {
                 onSearch={SearchItems}
                 goToCart={GoToCart}
                 logoClick={GoToHome}
-                logoSrc='\public\photos\caveret-logo.svg'
+                logoSrc='\photos\caveret-logo.svg'
+                onMenuClick={() => setMenuOpen(true)}
             />
             <Container
                 disableGutters
@@ -180,6 +184,14 @@ const CategoryPage = () => {
                 >
                     {hebrewConstants.user_errors.generic_error}
                 </OneButtonPopUp>
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        itemFunctions={[GoToHome, GoToCart]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
         </>
     )

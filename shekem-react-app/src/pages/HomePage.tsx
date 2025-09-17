@@ -135,7 +135,7 @@ const HomePage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        itemTitles={['Home', 'Cart']}
+                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
                         itemFunctions={[GoToHome, GoToCart]}
                         bgColor='rgba(255, 235, 19, 1)'
                     />

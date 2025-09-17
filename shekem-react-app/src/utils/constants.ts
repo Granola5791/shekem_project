@@ -91,6 +91,7 @@ export type HebrewConstants = {
     }
     go_to_login: string;
     go_to_home: string;
+    go_to_cart: string;
 };
 
 export type BackendConstants = {

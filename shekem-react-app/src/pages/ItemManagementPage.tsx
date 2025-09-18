@@ -48,12 +48,10 @@ const ItemManagementPage = () => {
                 setGeneralConstants(general);
             }
 
-            if (query !== '') {
-                const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
-                const itemMap = new Map<number, Item>(searchItems.map((item: Item) => [item.id, item]));
-                setItems(itemMap);
-                setItemCount(itemCount);
-            }
+            const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
+            const itemMap = new Map<number, Item>(searchItems.map((item: Item) => [item.id, item]));
+            setItems(itemMap);
+            setItemCount(itemCount);
         };
         fetchData();
     }, [query, page]);

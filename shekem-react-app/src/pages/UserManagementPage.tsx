@@ -42,12 +42,10 @@ const UserManagementPage = () => {
                     setGeneralConstants(general);
                 }
 
-                if (query !== '') {
-                    const [searchUsers, userCount] = await FetchSearchUsers(query, parseInt(page), backend, general);
-                    const userMap = new Map<number, User>(searchUsers.map((user: User) => [user.id, user]));
-                    setUsers(userMap);
-                    setUserCount(userCount);
-                }
+                const [searchUsers, userCount] = await FetchSearchUsers(query, parseInt(page), backend, general);
+                const userMap = new Map<number, User>(searchUsers.map((user: User) => [user.id, user]));
+                setUsers(userMap);
+                setUserCount(userCount);
             } catch (err) {
                 setOpenError(true);
             }

@@ -9,18 +9,30 @@ import Button from '@mui/material/Button';
 
 interface HamburgerMenuProps {
     isOpen: boolean;
-    itemTitles: string[];
-    itemFunctions: (() => void)[];
+    topItemTitles?: string[];
+    topItemFunctions?: (() => void)[];
+    bottomItemTitles?: string[];
+    bottomItemFunctions?: (() => void)[];
     bgColor?: string;
 }
 
-const HamburgerMenu = ({ isOpen, itemTitles, itemFunctions, bgColor }: HamburgerMenuProps) => {
+const HamburgerMenu = ({ isOpen, topItemTitles = [], topItemFunctions = [], bottomItemTitles = [], bottomItemFunctions = [], bgColor }: HamburgerMenuProps) => {
     return (
         <Drawer anchor="right" open={isOpen} onClose={() => { }} slotProps={{ paper: { sx: { backgroundColor: bgColor ? bgColor : 'white' } } }}>
             <List sx={{ width: '200px' }}>
-                {itemTitles.map((text, index) => (
+                {topItemTitles.map((text, index) => (
                     <ListItem key={text} disablePadding>
-                        <Button onClick={itemFunctions[index]} sx={{ width: '100%' }}>
+                        <Button onClick={topItemFunctions[index]} sx={{ width: '100%' }}>
+                            <ListItemText primary={text} />
+                        </Button>
+                    </ListItem>
+                ))}
+            </List>
+
+            <List sx={{ width: '200px', position: 'absolute', bottom: 0}}>
+                {bottomItemTitles.map((text, index) => (
+                    <ListItem key={text} disablePadding>
+                        <Button onClick={bottomItemFunctions[index]} sx={{ width: '100%' }}>
                             <ListItemText primary={text} />
                         </Button>
                     </ListItem>

@@ -5,6 +5,10 @@ hash:
   keyLen: 32 # Length of the derived key
   saltLen: 16 # Length of the salt
 
+jwt:
+  token_cookie_name: "auth_token"
+  token_expiration_seconds: 1800 # 30 minutes
+
 database:
   host: "localhost"
   port: 5432
@@ -22,6 +26,7 @@ server:
   api:
     login_path: "api/login"
     signup_path: "api/signup"
+    logout_path: "api/logout"
     check_login_path: "api/check_login"
     check_admin_path: "api/check_admin"
     add_to_cart_path: "api/cart/add"

@@ -17,6 +17,7 @@ func SetRouter() {
 
 	router.POST(GetStringFromConfig("server.api.login_path"), HandleLogin)
 	router.POST(GetStringFromConfig("server.api.signup_path"), HandleSignup)
+	router.POST(GetStringFromConfig("server.api.logout_path"), RequireAuthentication, HandleLogout)
 	router.POST(GetStringFromConfig("server.api.add_to_cart_path"), RequireAuthentication, HandleAddToCart)
 	router.POST(GetStringFromConfig("server.api.order_submit_path"), RequireAuthentication, HandleOrderSubmit)
 	router.POST(GetStringFromConfig("server.api.add_item_path"), RequireAuthentication, RequireAdmin, HandleAddItem)

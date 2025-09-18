@@ -15,6 +15,7 @@ import { isUnauthorizedResponse } from '../utils/http';
 import OneButtonPopUp from '../components/OneButtonPopUp';
 import Box from '@mui/material/Box';
 import HamburgerMenu from '../components/HamburgerMenu';
+import { Logout } from '../utils/logout';
 
 
 
@@ -93,6 +94,15 @@ const SearchPage = () => {
         setPage((page + 1).toString());
     }
 
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
+    }
+
 
     if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
 
@@ -156,8 +166,10 @@ const SearchPage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
-                        itemFunctions={[GoToHome, GoToCart]}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        topItemFunctions={[GoToHome, GoToCart]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
                         bgColor='rgba(255, 235, 19, 1)'
                     />
                 </Box>

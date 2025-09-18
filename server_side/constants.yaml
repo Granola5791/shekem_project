@@ -70,3 +70,4 @@ success:
   user_deleted: "User deleted"
   admin_set: "Admin set"
   delete_entire_cart: "Entire cart deleted"
+  logged_out: "Logged out successfully"

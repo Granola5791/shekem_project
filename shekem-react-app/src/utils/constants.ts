@@ -8,6 +8,7 @@ export type HebrewConstants = {
     ok: string;
     cancel: string;
     are_you_sure: string;
+    logout: string;
     
     user_errors: {
         generic_error: string;
@@ -116,6 +117,7 @@ export type BackendConstants = {
     submit_order_api: string;
     signup_api: string;
     login_api: string;
+    logout_api: string;
     check_login_api: string;
     check_admin_api: string;
     add_item_api: string;

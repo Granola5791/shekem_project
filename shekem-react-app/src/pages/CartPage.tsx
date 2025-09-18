@@ -14,6 +14,7 @@ import OneButtonPopUp from '../components/OneButtonPopUp'
 import { useConfirm } from '../components/useConfirm'
 import Button from '@mui/material/Button'
 import HamburgerMenu from '../components/HamburgerMenu'
+import { Logout } from '../utils/logout'
 
 
 type CartItem = {
@@ -51,7 +52,8 @@ const CartPage = () => {
     const {
         searchItems: SearchItems,
         goToCart: GoToCart,
-        goToHome: GoToHome
+        goToHome: GoToHome,
+        goToLogin: GoToLogin
     } = useNavigation();
     const { askConfirm, ConfirmDialog } = useConfirm();
 
@@ -168,6 +170,15 @@ const CartPage = () => {
         setCartItems([]);
     }
 
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
+    }
+
 
 
     return (
@@ -264,8 +275,10 @@ const CartPage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
-                        itemFunctions={[GoToHome, GoToCart]}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        topItemFunctions={[GoToHome, GoToCart]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
                         bgColor='rgba(255, 235, 19, 1)'
                     />
                 </Box>

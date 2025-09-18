@@ -14,6 +14,7 @@ import PaginationControls from '../components/PaginationControls'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import Box from '@mui/material/Box'
 import HamburgerMenu from '../components/HamburgerMenu'
+import { Logout } from '../utils/logout'
 
 const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
@@ -123,6 +124,14 @@ const CategoryPage = () => {
             return;
         }
     }
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
+    }
 
     if (!hebrewConstants || !backendConstants || !generalConstants || !items) {
         return <>loading</>
@@ -187,8 +196,10 @@ const CategoryPage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        itemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
-                        itemFunctions={[GoToHome, GoToCart]}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
+                        topItemFunctions={[GoToHome, GoToCart]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
                         bgColor='rgba(255, 235, 19, 1)'
                     />
                 </Box>

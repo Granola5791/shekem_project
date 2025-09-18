@@ -66,7 +66,7 @@ const ItemCard = ({ id, buttonText = "add to cart", image, AddToCart, itemTitle,
 
                 <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', height: 'fit-content' }}>
                     <Typography variant="h6" sx={{ color: 'rgb(239, 232, 26)', fontWeight: 'bold' }}>
-                        {price} {moneySymbol}
+                        {price.toFixed(2)} {moneySymbol}
                     </Typography>
 
                     <Typography variant="body2">

@@ -1,9 +1,10 @@
 import React from 'react'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import type { Category } from '../utils/categories';
 
 interface SearchFilterProps {
-    categories?: string[];
+    categories?: Category[];
     categoriesLabel?: string;
     sortOptions?: string[];
     sortLabel?: string;
@@ -28,8 +29,8 @@ const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortLabel, fil
                             style={{ backgroundColor: 'white', borderRadius: '5px', border: '1px solid gray', padding: '5px' }}
                         >
                             {categories.map((category, index) => (
-                                <option key={index} value={category}>
-                                    {category}
+                                <option key={index} value={category.id}>
+                                    {category.name}
                                 </option>
                             ))}
                         </select>

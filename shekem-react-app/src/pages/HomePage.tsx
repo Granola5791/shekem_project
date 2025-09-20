@@ -12,27 +12,9 @@ import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
 import HamburgerMenu from '../components/HamburgerMenu.tsx';
 import Box from '@mui/material/Box';
 import { Logout } from '../utils/logout.ts';
+import { FetchCategories } from '../utils/categories.ts';
+import type { Category } from '../utils/categories.ts';
 
-
-type Category = {
-    id: number;
-    name: string;
-}
-
-
-const FetchCategories = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    if (!backendConstants) {
-        console.error(generalConstants.errors.config_not_found);
-        return [];
-    }
-    const res = await fetch(backendConstants.backend_address + backendConstants.get_categories_api, {
-        method: 'GET',
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error(generalConstants.errors.category_load_fail);
-    const data = await res.json();
-    return data.categories;
-}
 
 const HomePage = () => {
     // configs

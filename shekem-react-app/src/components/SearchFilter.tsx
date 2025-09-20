@@ -10,14 +10,15 @@ interface SearchFilterProps {
     sortLabel?: string;
     filterButtonText?: string;
     onFilter?: (category: string, sort: string) => void;
+    sx?: object;
 }
 
-const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortLabel, filterButtonText, onFilter }: SearchFilterProps) => {
+const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortLabel, filterButtonText, onFilter, sx }: SearchFilterProps) => {
     const [categorySelected, setCategorySelected] = React.useState<string>('');
     const [sortSelected, setSortSelected] = React.useState<string>('');
 
     return (
-        <Box >
+        <Box sx={sx}>
             <form action="" style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
                 <Box>
                     {categoriesLabel && <label htmlFor="category-filter">{categoriesLabel}: </label>}

@@ -187,14 +187,14 @@ func GetCategories() ([]Category, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.categories_buffer_size")
 	categories := make([]Category, bufferSize)
-	sqlStatement := `SELECT * FROM categories;`
+	sqlStatement := `SELECT * FROM get_categories();`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	for i = 0; i < bufferSize && rows.Next(); i++ {
-		err = rows.Scan(&categories[i].ID, &categories[i].Name, &categories[i].Photos)
+		err = rows.Scan(&categories[i].ID, &categories[i].Name)
 		if err != nil {
 			return nil, err
 		}

@@ -5,13 +5,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"
 )
 
 type Category struct {
 	ID     int           `json:"id"`
 	Name   string        `json:"name"`
-	Photos pq.ByteaArray `json:"photos"`
 }
 
 func HandleGetCategories(c *gin.Context) {

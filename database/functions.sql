@@ -209,3 +209,12 @@ BEGIN
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_categories()
+RETURNS TABLE(category_id INT, category_name VARCHAR(255)) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.category_id, c.category_name
+    FROM categories c;
+END;
+$$ LANGUAGE plpgsql;

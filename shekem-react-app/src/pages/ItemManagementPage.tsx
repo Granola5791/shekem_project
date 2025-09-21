@@ -48,7 +48,7 @@ const ItemManagementPage = () => {
                 setGeneralConstants(general);
             }
 
-            const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
+            const [searchItems, itemCount] = await FetchSearchItems(searchParams.toString(), backend, general);
             const itemMap = new Map<number, Item>(searchItems.map((item: Item) => [item.id, item]));
             setItems(itemMap);
             setItemCount(itemCount);

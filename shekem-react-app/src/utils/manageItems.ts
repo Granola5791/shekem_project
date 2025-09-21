@@ -8,8 +8,8 @@ export type Item = {
     stock: number;
 }
 
-export async function FetchSearchItems(searchTerm: string, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) {
-    const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_search_items_page_api, searchTerm, page), {
+export async function FetchSearchItems(searchParams: string, backendConstants: BackendConstants, generalConstants: GeneralConstants) {
+    const res = await fetch(backendConstants.backend_address + backendConstants.get_search_items_page_api + searchParams, {
         method: 'GET',
         credentials: 'include'
     });

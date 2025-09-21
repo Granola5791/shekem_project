@@ -12,4 +12,9 @@ errors:
 users:
   admin_role: "admin"
 
+items:
+  sort_by_options:
+    - "price_asc"
+    - "price_desc"
+
 items_per_page: 8

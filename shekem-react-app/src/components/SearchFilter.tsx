@@ -3,17 +3,21 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import type { Category } from '../utils/categories';
 
+
+
+
 interface SearchFilterProps {
     categories?: Category[];
     categoriesLabel?: string;
     sortOptions?: string[];
+    sortOptionsLabels?: string[];
     sortLabel?: string;
     filterButtonText?: string;
     onFilter?: (category: string, sort: string) => void;
     sx?: object;
 }
 
-const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortLabel, filterButtonText, onFilter, sx }: SearchFilterProps) => {
+const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLabels, sortLabel, filterButtonText, onFilter, sx }: SearchFilterProps) => {
     const [categorySelected, setCategorySelected] = React.useState<string>('');
     const [sortSelected, setSortSelected] = React.useState<string>('');
 
@@ -49,7 +53,7 @@ const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortLabel, fil
                         >
                             {sortOptions.map((option, index) => (
                                 <option key={index} value={option}>
-                                    {option}
+                                    {sortOptionsLabels ? sortOptionsLabels[index] : option}
                                 </option>
                             ))}
                         </select>

@@ -69,22 +69,62 @@ func HandleGetCategoryItemsCount(c *gin.Context) {
 }
 
 func HandleGetSearchItems(c *gin.Context) {
+	var sortColumn string
+	var is_asc bool
+	var items []Item
+	var count int
 	query := c.DefaultQuery("q", "")
 	page, err := strconv.Atoi(c.DefaultQuery("p", "1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
 	}
-	items, err := GetSearchItemsPage(query, page)
+	categoryID, err := strconv.Atoi(c.DefaultQuery("category", "0"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
 	}
-	count, err := GetSearchItemsCount(query)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	sortBy := c.DefaultQuery("sort", "")
+
+	switch sortBy {
+	case "price_asc":
+		{
+			sortColumn, is_asc = "price", true
+		}
+	case "price_desc":
+		{
+			sortColumn, is_asc = "price", false
+		}
+	default:
+		{
+			sortColumn, is_asc = "", false
+		}
 	}
+
+	if categoryID == 0 || sortBy == "" || sortColumn == "" {
+		items, err = GetSearchItemsPage(query, page)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		count, err = GetSearchItemsCount(query)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	} else {
+		items, err = GetSearchItemsPageWithFilters(query, page, categoryID, sortColumn, is_asc)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		count, err = GetSearchItemsCountWithFilters(query, categoryID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"items": items, "count": count})
 }
 

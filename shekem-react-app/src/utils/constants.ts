@@ -65,6 +65,10 @@ export type HebrewConstants = {
         submit_button: string;
         add_item: string;
         delete_item: string;
+        filter_by_category_label: string;
+        sort_by_label: string;
+        sort_by_options_labels: string[];
+        filter_button: string;
     };
 
     checkout: {
@@ -157,6 +161,10 @@ export type GeneralConstants = {
 
     users: {
         admin_role: string;
+    };
+
+    items: {
+        sort_by_options: string[];
     };
 
     items_per_page: number;

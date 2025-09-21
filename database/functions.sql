@@ -74,6 +74,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), category_id_param INT, sort_by_column VARCHAR(50), is_ascending BOOLEAN, offset_param INT, limit_param INT)
+RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT i.item_id, i.item_name, i.price, i.stock
+   FROM undeleted_items i
+   WHERE is_item_of_category(i.item_id, category_id_param) AND (i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term)
+   ORDER BY
+    CASE WHEN sort_by_column = 'price' AND is_ascending THEN i.price END ASC,
+    CASE WHEN sort_by_column = 'price' AND NOT is_ascending THEN i.price END DESC,
+    CASE WHEN sort_by_column = 'item_name' AND is_ascending THEN i.item_name END ASC,
+    CASE WHEN sort_by_column = 'item_name' AND NOT is_ascending THEN i.item_name END DESC
+   OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION get_search_items_count(search_term VARCHAR(50))
 RETURNS INT AS $$
 DECLARE 
@@ -82,6 +98,18 @@ BEGIN
     SELECT COUNT(*) INTO cnt
     FROM undeleted_items
     WHERE item_name ILIKE '%' || search_term || '%' OR item_id::TEXT = search_term;
+    RETURN cnt;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_search_items_count(search_term VARCHAR(50), category_id_param INT)
+RETURNS INT AS $$
+DECLARE 
+    cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO cnt
+    FROM undeleted_items i
+    WHERE is_item_of_category(i.item_id, category_id_param) AND (i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term);
     RETURN cnt;
 END;
 $$ LANGUAGE plpgsql;
@@ -216,5 +244,16 @@ BEGIN
     RETURN QUERY
     SELECT c.category_id, c.category_name
     FROM categories c;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION is_item_of_category(item_id_param INT, category_id_param INT)
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1
+        FROM cat_to_item
+        WHERE item_id = item_id_param AND category_id = category_id_param
+    );
 END;
 $$ LANGUAGE plpgsql;

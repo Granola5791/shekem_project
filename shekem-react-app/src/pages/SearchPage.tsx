@@ -16,6 +16,9 @@ import OneButtonPopUp from '../components/OneButtonPopUp';
 import Box from '@mui/material/Box';
 import HamburgerMenu from '../components/HamburgerMenu';
 import { Logout } from '../utils/logout';
+import SearchFilter from '../components/SearchFilter';
+import { FetchCategories } from '../utils/categories';
+import type { Category } from '../utils/categories';
 
 
 
@@ -23,6 +26,8 @@ const SearchPage = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
+    const category = searchParams.get('category') || '';
+    const sort = searchParams.get('sort') || '';
     const [page, setPage] = React.useState<string>(searchParams.get('page') || '1');
     const {
         goToHome: GoToHome,
@@ -33,6 +38,7 @@ const SearchPage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
+    const [categories, setCategories] = React.useState<Category[]>([]);
     const [items, setItems] = React.useState<Item[]>([]);
     const [itemCount, setItemCount] = React.useState(0);
     const [openError, setOpenError] = React.useState(false);
@@ -44,6 +50,7 @@ const SearchPage = () => {
                 let hebrew = hebrewConstants as HebrewConstants;
                 let backend = backendConstants as BackendConstants;
                 let general = generalConstants as GeneralConstants;
+                let cats = categories as Category[];
                 if (!hebrew || !backend || !general) {
                     hebrew = await FetchHebrewConstants();
                     setHebrewConstants(hebrew);
@@ -53,7 +60,12 @@ const SearchPage = () => {
                     setGeneralConstants(general);
                 }
 
-                const [searchItems, itemCount] = await FetchSearchItems(query, parseInt(page), backend, general);
+                if (!categories || categories.length === 0) {
+                    cats = await FetchCategories(backend, general);
+                    setCategories(cats);
+                }
+
+                const [searchItems, itemCount] = await FetchSearchItems(searchParams.toString(), backend, general);
                 setItems(searchItems);
                 setItemCount(itemCount);
             } catch (err) {
@@ -61,7 +73,7 @@ const SearchPage = () => {
             }
         };
         fetchData();
-    }, [query, page]);
+    }, [searchParams]);
 
 
 
@@ -90,7 +102,7 @@ const SearchPage = () => {
     }
 
     const GoToPage = (page: number) => {
-        setSearchParams({ p: (page + 1).toString() });
+        setSearchParams({ p: (page + 1).toString(), q: query, category: category, sort: sort });
         setPage((page + 1).toString());
     }
 
@@ -101,6 +113,10 @@ const SearchPage = () => {
             return;
         }
         GoToLogin();
+    }
+
+    const FilterItems = (newCategory: string, newSort: string) => {
+        setSearchParams({ q: query, category: newCategory, sort: newSort, page: '1' });
     }
 
 
@@ -128,6 +144,17 @@ const SearchPage = () => {
                 <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }} >
                     {hebrewConstants.items.search_results_title}: "{query}"
                 </Typography>
+
+                <SearchFilter
+                    categories={categories}
+                    categoriesLabel={hebrewConstants.items.filter_by_category_label}
+                    sortOptions={generalConstants.items.sort_by_options}
+                    sortOptionsLabels={hebrewConstants.items.sort_by_options_labels}
+                    sortLabel={hebrewConstants.items.sort_by_label}
+                    filterButtonText={hebrewConstants.items.filter_button}
+                    onFilter={FilterItems}
+                    sx={{ margin: '20px' }}
+                />
 
                 <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
                     {items.map((item: Item) => (

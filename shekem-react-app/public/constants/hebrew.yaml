@@ -55,6 +55,12 @@ items:
   submit_button: "שמור"
   add_item: "הוסף מוצר חדש"
   delete_item: "מחק מוצר"
+  filter_by_category_label: "סינון לפי קטגוריה"
+  sort_by_label: "מיין לפי"
+  sort_by_options_labels:
+    - "מחיר: מהנמוך לגבוה"
+    - "מחיר: מהגבוה לנמוך"
+  filter_button: "סנן"
 
 checkout:
   title: "סיכום תשלום"

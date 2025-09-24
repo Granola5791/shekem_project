@@ -69,6 +69,7 @@ export type HebrewConstants = {
         sort_by_label: string;
         sort_by_options_labels: string[];
         filter_button: string;
+        none_selected_text: string;
     };
 
     checkout: {

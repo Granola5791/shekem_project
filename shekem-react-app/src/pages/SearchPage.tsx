@@ -152,6 +152,7 @@ const SearchPage = () => {
                     sortOptionsLabels={hebrewConstants.items.sort_by_options_labels}
                     sortLabel={hebrewConstants.items.sort_by_label}
                     filterButtonText={hebrewConstants.items.filter_button}
+                    noneSelectedText={hebrewConstants.items.none_selected_text}
                     onFilter={FilterItems}
                     sx={{ margin: '20px' }}
                 />

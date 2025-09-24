@@ -74,6 +74,34 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), sort_by_column VARCHAR(50), is_ascending BOOLEAN, offset_param INT, limit_param INT)
+RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT i.item_id, i.item_name, i.price, i.stock
+   FROM undeleted_items i
+   WHERE i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term
+   ORDER BY
+    CASE WHEN sort_by_column = 'price' AND is_ascending THEN i.price END ASC,
+    CASE WHEN sort_by_column = 'price' AND NOT is_ascending THEN i.price END DESC,
+    CASE WHEN sort_by_column = 'item_name' AND is_ascending THEN i.item_name END ASC,
+    CASE WHEN sort_by_column = 'item_name' AND NOT is_ascending THEN i.item_name END DESC
+   OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), category_id_param INT, offset_param INT, limit_param INT)
+RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
+BEGIN
+   RETURN QUERY
+   SELECT i.item_id, i.item_name, i.price, i.stock
+   FROM undeleted_items i
+   WHERE is_item_of_category(i.item_id, category_id_param) AND (i.item_name ILIKE '%' || search_term || '%' OR i.item_id::TEXT = search_term)
+   ORDER BY i.item_name
+   OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION get_search_items_page(search_term VARCHAR(50), category_id_param INT, sort_by_column VARCHAR(50), is_ascending BOOLEAN, offset_param INT, limit_param INT)
 RETURNS TABLE(item_id INT, item_name VARCHAR(255), price DECIMAL(10, 2), stock INT) AS $$
 BEGIN

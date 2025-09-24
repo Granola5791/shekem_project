@@ -143,13 +143,59 @@ func GetSearchItemsPage(searchTerm string, page int) ([]Item, error) {
 	return items[0:i], nil
 }
 
-func GetSearchItemsPageWithFilters(searchTerm string, page int, categoryID int, sortColumn string, is_asc bool) ([]Item, error) {
+func GetSearchItemsPageWithFiltersAndSort(searchTerm string, page int, categoryID int, sortColumn string, is_asc bool) ([]Item, error) {
 	var i int
 	pageSize := GetIntFromConfig("database.items_page_size")
 	items := make([]Item, pageSize)
 	start := (page - 1) * pageSize
 	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4, $5, $6);`
 	rows, err := db.Query(sqlStatement, searchTerm, categoryID, sortColumn, is_asc, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsPageWithSort(searchTerm string, page int, sortColumn string, is_asc bool) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4, $5);`
+	rows, err := db.Query(sqlStatement, searchTerm, sortColumn, is_asc, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsPageWithFilters(searchTerm string, page int, categoryID int) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4);`
+	rows, err := db.Query(sqlStatement, searchTerm, categoryID, start, pageSize)
 	if err != nil {
 		return nil, err
 	}

@@ -13,11 +13,12 @@ interface SearchFilterProps {
     sortOptionsLabels?: string[];
     sortLabel?: string;
     filterButtonText?: string;
+    noneSelectedText?: string;
     onFilter?: (category: string, sort: string) => void;
     sx?: object;
 }
 
-const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLabels, sortLabel, filterButtonText, onFilter, sx }: SearchFilterProps) => {
+const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLabels, sortLabel, filterButtonText, noneSelectedText, onFilter, sx }: SearchFilterProps) => {
     const [categorySelected, setCategorySelected] = React.useState<string>('');
     const [sortSelected, setSortSelected] = React.useState<string>('');
 
@@ -29,10 +30,13 @@ const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLab
                     {categories &&
                         <select
                             id="category-filter"
-                            value={categorySelected}
                             onChange={(e) => setCategorySelected(e.target.value)}
+                            defaultValue={''}
                             style={{ backgroundColor: 'white', borderRadius: '5px', border: '1px solid gray', padding: '5px' }}
                         >
+                            <option value="">
+                                {noneSelectedText}
+                            </option>
                             {categories.map((category, index) => (
                                 <option key={index} value={category.id}>
                                     {category.name}
@@ -47,10 +51,13 @@ const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLab
                     {sortOptions &&
                         <select
                             id="sort-filter"
-                            value={sortSelected}
+                            defaultValue={''}
                             onChange={(e) => setSortSelected(e.target.value)}
                             style={{ backgroundColor: 'white', borderRadius: '5px', border: '1px solid gray', padding: '5px', marginLeft: '10px' }}
                         >
+                            <option value="">
+                                {noneSelectedText}
+                            </option>
                             {sortOptions.map((option, index) => (
                                 <option key={index} value={option}>
                                     {sortOptionsLabels ? sortOptionsLabels[index] : option}

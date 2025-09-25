@@ -68,6 +68,7 @@ const SearchFilter = ({ categories, categoriesLabel, sortOptions, sortOptionsLab
                 </Box>
 
                 <Button
+                    disabled={!categorySelected && !sortSelected}
                     variant="contained"
                     onClick={() => onFilter?.(categorySelected, sortSelected)}
                     sx={{ width: 'fit-content' }}

@@ -18,6 +18,7 @@ database:
   categories_buffer_size: 20
   cart_buffer_size: 50
   items_page_size: 8
+  orders_page_size: 5
 
 server:
   listen_addr: "localhost:8081"
@@ -39,6 +40,7 @@ server:
     get_category_name_path: "api/category/:category_id/name"
     get_search_items_path: "api/item/search"
     get_search_users_path: "api/user/search"
+    get_orders_path: "api/orders"
     delete_from_cart_path: "api/cart/delete"
     delete_item_path: "api/item/:item_id/delete"
     delete_user_path: "api/user/:user_id/delete"

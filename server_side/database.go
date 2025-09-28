@@ -460,6 +460,67 @@ func DeleteEntireCartFromDB(userID int) error {
 	return nil
 }
 
+func GetOrdersPageFromDB(userID int, page int) ([]Order, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.orders_page_size")
+	orders := make([]Order, pageSize)
+	offset := (page - 1) * pageSize
+
+	sqlStatement := `SELECT * FROM get_user_orders_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, userID, offset, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&orders[i].OrderID, &orders[i].Date, &orders[i].TotalPrice)
+		if err != nil {
+			return nil, err
+		}
+		orders[i].Items, err = GetOrderItemsFromDB(orders[i].OrderID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return orders[0:i], nil
+}
+
+func GetOrderItemsFromDB(orderID int) ([]OrderItem, error) {
+	var i int
+	bufferSize := GetIntFromConfig("database.cart_buffer_size")
+	orderItems := make([]OrderItem, bufferSize)
+
+	sqlStatement := `SELECT * FROM get_order_items($1);`
+	rows, err := db.Query(sqlStatement, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < bufferSize && rows.Next(); i++ {
+		err = rows.Scan(&orderItems[i].ItemID, &orderItems[i].ItemName, &orderItems[i].Quantity, &orderItems[i].Price)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return orderItems[0:i], nil
+}
+
+func GetOrdersCountFromDB(userID int) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_user_orders_count($1);`
+	err := db.QueryRow(sqlStatement, userID).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func OpenSQLConnection() error {
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

@@ -285,3 +285,37 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_order_items(order_id_param INT)
+RETURNS TABLE(item_id INT, item_name VARCHAR(255), quantity INT, price DECIMAL(10, 2)) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT oi.item_id, oi.item_name, oi.quantity, oi.price
+    FROM order_items_view oi
+    WHERE oi.order_id = order_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_user_orders_page(user_id_param INT, offset_param INT, limit_param INT)
+RETURNS TABLE(order_id INT, order_date TIMESTAMP, total_price DECIMAL(10, 2)) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT o.order_id, o.order_date, o.total_price
+    FROM orders o
+    WHERE o.user_id = user_id_param
+    ORDER BY o.order_date DESC
+    OFFSET offset_param LIMIT limit_param;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_user_orders_count(user_id_param INT)
+RETURNS INT AS $$
+DECLARE 
+    cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO cnt
+    FROM orders
+    WHERE user_id = user_id_param;
+    RETURN cnt;
+END;
+$$ LANGUAGE plpgsql;

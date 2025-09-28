@@ -89,10 +89,6 @@ func HandleGetSearchItems(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return
 	}
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
-		return
-	}
 	sortBy := c.DefaultQuery("sort", "")
 
 	switch sortBy {

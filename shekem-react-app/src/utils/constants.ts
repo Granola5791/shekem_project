@@ -9,7 +9,7 @@ export type HebrewConstants = {
     cancel: string;
     are_you_sure: string;
     logout: string;
-    
+
     user_errors: {
         generic_error: string;
         page_not_found: string;
@@ -95,6 +95,12 @@ export type HebrewConstants = {
         manage_users: string;
         manage_items: string;
     }
+
+    orders: {
+        order_id: string;
+        order_date: string;
+    }
+    
     go_to_login: string;
     go_to_home: string;
     go_to_cart: string;

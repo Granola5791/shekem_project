@@ -89,3 +89,7 @@ user_success:
   generic_success: "הפעולה בוצעה בהצלחה"
   successful_signup: "ההרשמה בוצעה בהצלחה, עכשיו אפשר להתחבר"
   successful_purchase: "ההזמנה בוצעה בהצלחה, תודה שקניתם אצלנו!"
+
+orders:
+  order_id: "מספר הזמנה"
+  order_date: "תאריך הזמנה"

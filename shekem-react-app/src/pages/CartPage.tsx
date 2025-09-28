@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CartItem from '../components/CartItemCard'
 import Container from '@mui/material/Container'
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'

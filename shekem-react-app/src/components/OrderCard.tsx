@@ -1,66 +1,56 @@
-import React from 'react'
+import type { OrderItem } from '../utils/manageOrders'
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import ValueAndLable from './ValueAndLable';
+import Stack from '@mui/material/Stack';
+import OrderItemCard from './OrderItemCard';
+import type { HebrewConstants, BackendConstants } from '../utils/constants';
+import { insertValuesToConstantStr } from '../utils/constants';
 
 interface OrderCardProps {
     id: number
-    idLabel: string
-    image: string
-    title: string
-    totalPrice: number
-    totalPriceLabel: string
-    quantity: number
-    quantityLabel: string
+    orderItems: OrderItem[]
+    total: number
     date: string
-    dateLabel: string
-    moneySymbol: string
+    hebrewConstants: HebrewConstants
+    backendConstants: BackendConstants
 }
 
-const OrderCard = ({ id, idLabel, image, title, totalPrice, totalPriceLabel, quantity, quantityLabel, date, dateLabel, moneySymbol }: OrderCardProps) => {
+const OrderCard = ({ id, orderItems, total, date, hebrewConstants, backendConstants }: OrderCardProps) => {
     return (
-        <Card sx={{ width: '250px' }}>
-            <CardMedia
-                component="img"
-                image={image}
-                alt="item"
-                sx={{ maxHeight: '150px', maxWidth: '250px' }}
-
-            />
-            <CardContent sx={{ padding: 1 }}>
-                <Typography
-                    variant="body1"
-                    height={'40px'}
-                    textAlign={'center'}
-                    overflow={'hidden'}
-                >
-                    {title}
+        <Card sx={{ display: 'flex' }}>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflowX: 'auto' }}>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    {hebrewConstants.orders.order_id}: {id}
                 </Typography>
-
-                <ValueAndLable
-                    label={idLabel}
-                    value={id}
-                />
-
-                <ValueAndLable
-                    label={totalPriceLabel}
-                    value={totalPrice.toFixed(2) + moneySymbol}
-                />
-
-                <ValueAndLable
-                    label={quantityLabel}
-                    value={quantity}
-                />
-
-                <ValueAndLable
-                    label={dateLabel}
-                    value={date}
-                />
-
+                <Box sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+                    <Stack direction={'row'} spacing={2}>
+                        {orderItems.map((orderItem) => <OrderItemCard
+                            key={orderItem.item_id}
+                            id={orderItem.item_id}
+                            title={orderItem.item_name}
+                            price={orderItem.price}
+                            quantity={orderItem.quantity}
+                            moneySymbol={hebrewConstants.shekel_symbol}
+                            idLabel={hebrewConstants.items.item_id_label}
+                            priceLabel={hebrewConstants.items.price_label}
+                            quantityLabel={hebrewConstants.items.quantity_label}
+                            image={
+                                backendConstants.backend_address +
+                                insertValuesToConstantStr(backendConstants.get_item_photo_api, orderItem.item_id)
+                            }
+                        />)}
+                    </Stack>
+                </Box>
+                <Divider />
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    {hebrewConstants.orders.order_date}: {date}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    {hebrewConstants.checkout.price_label}: {total.toFixed(2)} {hebrewConstants.shekel_symbol}
+                </Typography>
             </CardContent>
         </Card>
     )

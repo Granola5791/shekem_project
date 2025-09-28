@@ -88,7 +88,7 @@ const SearchPage = () => {
         const res = await fetch(backendConstants.backend_address + backendConstants.add_to_cart_api, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ product_id: id, quantity: selectCount }),
+            body: JSON.stringify({ item_id: id, quantity: selectCount }),
             credentials: 'include',
         });
         if (isUnauthorizedResponse(res)) {

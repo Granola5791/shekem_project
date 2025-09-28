@@ -8,6 +8,7 @@ errors:
   search_load_fail: "Failed to load search results"
   delete_user_fail: "Failed to delete user"
   set_admin_fail: "Failed to set admin"
+  order_load_fail: "Failed to load orders"
 
 users:
   admin_role: "admin"

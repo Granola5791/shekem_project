@@ -112,6 +112,7 @@ export type BackendConstants = {
     get_category_name_api: string;
     get_search_items_page_api: string;
     get_search_users_page_api: string;
+    get_orders_api: string;
     delete_from_cart_api: string;
     delete_item_api: string;
     delete_user_api: string;
@@ -158,6 +159,7 @@ export type GeneralConstants = {
         search_load_fail: string;
         delete_user_fail: string;
         set_admin_fail: string;
+        order_load_fail: string;
     };
 
     users: {

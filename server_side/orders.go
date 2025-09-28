@@ -23,7 +23,7 @@ type Order struct {
 
 func HandleGetOrders(c *gin.Context) {
 	userID, _ := c.Get("userID")
-	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	page, err := strconv.Atoi(c.DefaultQuery("p", "1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": GetStringFromConfig("error.invalid_input")})
 		return

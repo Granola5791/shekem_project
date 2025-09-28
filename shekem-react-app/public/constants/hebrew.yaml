@@ -41,7 +41,7 @@ login_texts:
     link_text: "להרשמה!"
 
 items:
-  quantity_label: "כמות: "
+  quantity_label: "כמות"
   money_symbol: "₪"
   stock_label: "מלאי"
   add_to_cart_button: "הוסף לסל"

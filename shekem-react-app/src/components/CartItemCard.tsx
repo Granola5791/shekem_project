@@ -65,7 +65,7 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
                     </Typography>
                     <Box className='select-count-container' sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <Typography>
-                            {quantityLabel}
+                            {quantityLabel}: 
                         </Typography>
 
                         <IconButton disabled={buttonDisabled} onClick={OnPlus}>

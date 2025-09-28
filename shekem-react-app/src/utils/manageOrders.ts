@@ -14,13 +14,12 @@ export type OrderItem = {
     price: number;
 }
 
-export async function FetchOrders(backendConstants: BackendConstants, generalConstants: GeneralConstants) {
-    const res = await fetch(backendConstants.backend_address + backendConstants.get_orders_api, {
+export async function FetchOrders(searchParams: string, backendConstants: BackendConstants, generalConstants: GeneralConstants) {
+    const res = await fetch(backendConstants.backend_address + backendConstants.get_orders_api + searchParams, {
         method: 'GET',
         credentials: 'include'
     });
     if (!res.ok) throw new Error(generalConstants.errors.order_load_fail);
     const data = await res.json();
-    console.log(data);
     return [data.orders, data.count];
 }

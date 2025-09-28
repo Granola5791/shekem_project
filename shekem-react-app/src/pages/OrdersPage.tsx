@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import OrderItemCard from '../components/OrderItemCard'
+import { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import { FetchOrders } from '../utils/manageOrders'
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
 import type { Order } from '../utils/manageOrders'
 import OrderCard from '../components/OrderCard'
+import Container from '@mui/material/Container'
 
 
 const OrdersPage = () => {
@@ -16,7 +16,7 @@ const OrdersPage = () => {
     const [orders, setOrders] = useState<Order[]>([])
     const [orderCount, setItemCount] = useState(0)
 
-    
+
     useEffect(() => {
         const fetchData = async () => {
             const [hebrewConstants, backendConstants, generalConstants] = await Promise.all([
@@ -41,20 +41,22 @@ const OrdersPage = () => {
     }
 
     return (
-        <Grid container spacing={2}>
-            { orders.map((order) => (
-                <Grid key={order.order_id} width={'80%'}>
-                    <OrderCard
-                        id={order.order_id}
-                        orderItems={order.items}
-                        total={order.total_price}
-                        date={order.date}
-                        hebrewConstants={hebrewConstants}
-                        backendConstants={backendConstants}
-                    />
-                </Grid>
-            ))}
-        </Grid>
+        <Container maxWidth="md" sx={{ padding: '20px', bgcolor: 'rgba(218, 218, 218, 0.69)' }}>
+            <Grid container spacing={2} justifyContent={'center'}>
+                {orders.map((order) => (
+                    <Grid key={order.order_id} width={'80%'}>
+                        <OrderCard
+                            id={order.order_id}
+                            orderItems={order.items}
+                            total={order.total_price}
+                            date={order.date}
+                            hebrewConstants={hebrewConstants}
+                            backendConstants={backendConstants}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        </Container >
     )
 }
 

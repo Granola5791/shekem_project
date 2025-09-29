@@ -10,5 +10,6 @@ export function useNavigation() {
     goToHome: () => navigate('/home'),
     goToLogin: () => navigate('/login'),
     goToManagement: () => navigate('/manage'),
+    goToOrders: () => navigate('/orders'),
   };
 }

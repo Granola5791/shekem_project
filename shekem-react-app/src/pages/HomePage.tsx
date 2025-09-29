@@ -29,7 +29,6 @@ const HomePage = () => {
     const [admin, setAdmin] = useState(false);
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-
     // navigation functions
     const {
         searchItems: SearchItems,
@@ -37,7 +36,8 @@ const HomePage = () => {
         goToCart: GoToCart,
         goToHome: GoToHome,
         goToManagement: GoToManagement,
-        goToLogin: GoToLogin
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
     } = useNavigation();
 
 
@@ -127,8 +127,8 @@ const HomePage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
-                        topItemFunctions={[GoToHome, GoToCart]}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
                         bottomItemTitles={[hebrewConstants.logout]}
                         bottomItemFunctions={[LogoutUser]}
                         bgColor='rgba(255, 235, 19, 1)'

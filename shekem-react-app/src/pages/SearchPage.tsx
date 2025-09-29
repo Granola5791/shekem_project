@@ -33,7 +33,8 @@ const SearchPage = () => {
         goToHome: GoToHome,
         goToCart: GoToCart,
         searchItems: SearchItems,
-        goToLogin: GoToLogin
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
     } = useNavigation();
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
@@ -194,8 +195,8 @@ const SearchPage = () => {
                 <Box onClick={() => setMenuOpen(false)}>
                     <HamburgerMenu
                         isOpen={menuOpen}
-                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart]}
-                        topItemFunctions={[GoToHome, GoToCart]}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
                         bottomItemTitles={[hebrewConstants.logout]}
                         bottomItemFunctions={[LogoutUser]}
                         bgColor='rgba(255, 235, 19, 1)'

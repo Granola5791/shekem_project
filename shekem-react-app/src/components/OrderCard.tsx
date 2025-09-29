@@ -21,7 +21,7 @@ interface OrderCardProps {
 const OrderCard = ({ id, orderItems, total, date, hebrewConstants, backendConstants }: OrderCardProps) => {
     return (
         <Card sx={{ display: 'flex' }}>
-            <CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflowX: 'auto' }}>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, overflowX: 'auto' }}>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {hebrewConstants.orders.order_id}: {id}
                 </Typography>
@@ -48,7 +48,7 @@ const OrderCard = ({ id, orderItems, total, date, hebrewConstants, backendConsta
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {hebrewConstants.orders.order_date}: {date}
                 </Typography>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                <Typography variant='h6' fontWeight={'bold'} color="rgb(239, 232, 26)" gutterBottom>
                     {hebrewConstants.checkout.price_label}: {total.toFixed(2)} {hebrewConstants.shekel_symbol}
                 </Typography>
             </CardContent>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import { FetchOrders } from '../utils/manageOrders'
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'
-import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
+import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants'
 import type { Order } from '../utils/manageOrders'
 import OrderCard from '../components/OrderCard'
 import Container from '@mui/material/Container'
@@ -14,6 +14,7 @@ import Box from '@mui/material/Box'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import PaginationControls from '../components/PaginationControls'
 import { useSearchParams } from 'react-router-dom'
+import Typography from '@mui/material/Typography'
 
 
 const OrdersPage = () => {
@@ -64,7 +65,7 @@ const OrdersPage = () => {
 
 
     const GoToPage = (page: number) => {
-        setSearchParams({ p: (page + 1).toString()});
+        setSearchParams({ p: (page + 1).toString() });
     }
 
     const LogoutUser = async () => {
@@ -85,8 +86,13 @@ const OrdersPage = () => {
                 goToCart={GoToCart}
                 onMenuClick={() => setMenuOpen(true)}
             />
-            <Container maxWidth="md" sx={{ padding: '20px', bgcolor: 'rgba(218, 218, 218, 0.69)', marginTop: '15vh' }}>
-                <Grid container spacing={2} justifyContent={'center'}>
+            <Container maxWidth="md" sx={{ padding: '20px', bgcolor: 'rgba(218, 218, 218, 0.41)', marginTop: '15vh' }}>
+
+                <Typography variant="h4" align="center">
+                    <s>{hebrewConstants.orders.order_page_title.part1}</s> {hebrewConstants.orders.order_page_title.part2}
+                </Typography>
+
+                <Grid container spacing={2} justifyContent={'center'} marginTop={'20px'}>
                     {orders.map((order) => (
                         <Grid key={order.order_id} width={'80%'}>
                             <OrderCard
@@ -111,6 +117,7 @@ const OrdersPage = () => {
                         bgColor='rgba(255, 235, 19, 1)'
                     />
                 </Box>
+                
                 <OneButtonPopUp
                     open={openError}
                     theme='error'

@@ -99,6 +99,10 @@ export type HebrewConstants = {
     orders: {
         order_id: string;
         order_date: string;
+        order_page_title: {
+            part1: string;
+            part2: string;
+        }
     }
     
     go_to_login: string;

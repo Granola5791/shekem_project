@@ -93,3 +93,6 @@ user_success:
 orders:
   order_id: "מספר הזמנה"
   order_date: "תאריך הזמנה"
+  order_page_title:
+    part1: "הטעויות"
+    part2: "ההזמנות שלי"

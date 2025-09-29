@@ -25,8 +25,8 @@ const OrderCard = ({ id, orderItems, total, date, hebrewConstants, backendConsta
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {hebrewConstants.orders.order_id}: {id}
                 </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
-                    <Stack direction={'row'} spacing={2}>
+                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', overflowX: 'auto' }}>
+                    <Stack alignSelf={'center'} direction={'row'} spacing={2}>
                         {orderItems.map((orderItem) => <OrderItemCard
                             key={orderItem.item_id}
                             id={orderItem.item_id}

@@ -7,13 +7,13 @@ import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
-import { IsAdmin } from '../utils/manageUsers.ts';
 import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
 import HamburgerMenu from '../components/HamburgerMenu.tsx';
 import Box from '@mui/material/Box';
 import { Logout } from '../utils/logout.ts';
 import { FetchCategories } from '../utils/categories.ts';
 import type { Category } from '../utils/categories.ts';
+import { useLocation } from 'react-router-dom';
 
 
 const HomePage = () => {
@@ -26,10 +26,12 @@ const HomePage = () => {
     const [loading, setLoading] = useState(true);
 
     const [categories, setCategories] = useState<Category[]>([]);
-    const [admin, setAdmin] = useState(false);
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    // navigation functions
+    
+
+    const {state} = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         searchItems: SearchItems,
         goToCategory: GoToCategory,
@@ -38,7 +40,7 @@ const HomePage = () => {
         goToManagement: GoToManagement,
         goToLogin: GoToLogin,
         goToOrders: GoToOrders,
-    } = useNavigation();
+    } = useNavigation(isAdmin);
 
 
     useEffect(() => {
@@ -56,8 +58,6 @@ const HomePage = () => {
 
                 const thisCategories = await FetchCategories(thisBackendConstants, thisGeneralConstants);
                 setCategories(thisCategories);
-                const isAdmin = await IsAdmin(thisBackendConstants, thisGeneralConstants);
-                setAdmin(isAdmin);
             } catch (err: any) {
                 setOpenError(true);
             } finally {
@@ -84,7 +84,7 @@ const HomePage = () => {
                 goToCart={GoToCart}
                 logoSrc="./src/assets/caveret-logo.svg"
                 logoClick={GoToHome}
-                showEditButton={admin}
+                showEditButton={isAdmin}
                 onEdit={GoToManagement}
                 onMenuClick={() => setMenuOpen(true)}
             />

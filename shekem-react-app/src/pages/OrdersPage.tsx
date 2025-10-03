@@ -13,7 +13,7 @@ import { Logout } from '../utils/logout'
 import Box from '@mui/material/Box'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import PaginationControls from '../components/PaginationControls'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 
 
@@ -26,15 +26,18 @@ const OrdersPage = () => {
     const [orderCount, setItemCount] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
     const [openError, setOpenError] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = searchParams.get('p') || '1';
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         searchItems: SearchItems,
         goToCart: GoToCart,
         goToHome: GoToHome,
         goToLogin: GoToLogin,
         goToOrders: GoToOrders,
-    } = useNavigation();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const page = searchParams.get('p') || '1';
+        goToManagement: GoToManagement,
+    } = useNavigation(isAdmin);
 
 
 
@@ -86,6 +89,8 @@ const OrdersPage = () => {
                 logoClick={GoToHome}
                 goToCart={GoToCart}
                 onMenuClick={() => setMenuOpen(true)}
+                showEditButton={false}
+                onEdit={GoToManagement}
             />
             <Container maxWidth="md" sx={{ padding: '20px', bgcolor: 'rgba(218, 218, 218, 0.41)', marginTop: '15vh' }}>
 

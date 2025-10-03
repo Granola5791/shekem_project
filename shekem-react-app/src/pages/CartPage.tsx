@@ -15,6 +15,7 @@ import { useConfirm } from '../components/useConfirm'
 import Button from '@mui/material/Button'
 import HamburgerMenu from '../components/HamburgerMenu'
 import { Logout } from '../utils/logout'
+import { useLocation } from 'react-router-dom'
 
 
 type CartItem = {
@@ -49,14 +50,17 @@ const CartPage = () => {
     const [openSuccess, setOpenSuccess] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
+    const { askConfirm, ConfirmDialog } = useConfirm();
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         searchItems: SearchItems,
         goToCart: GoToCart,
         goToHome: GoToHome,
         goToLogin: GoToLogin,
         goToOrders: GoToOrders,
-    } = useNavigation();
-    const { askConfirm, ConfirmDialog } = useConfirm();
+        goToManagement: GoToManagement
+    } = useNavigation(isAdmin);
 
 
 
@@ -190,6 +194,8 @@ const CartPage = () => {
                 logoClick={GoToHome}
                 goToCart={GoToCart}
                 onMenuClick={() => setMenuOpen(true)}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
             />
 
             <Container

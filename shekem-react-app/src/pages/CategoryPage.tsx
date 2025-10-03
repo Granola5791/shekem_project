@@ -8,7 +8,7 @@ import ItemCard from '../components/ItemCard'
 import type { Item } from '../utils/manageItems'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
 import PaginationControls from '../components/PaginationControls'
 import OneButtonPopUp from '../components/OneButtonPopUp'
@@ -61,13 +61,16 @@ const CategoryPage = () => {
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = React.useState(false);
 
+    const {state} = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         goToHome: GoToHome,
         goToCart: GoToCart,
         searchItems: SearchItems,
         goToLogin: GoToLogin,
         goToOrders: GoToOrders,
-    } = useNavigation()
+        goToManagement: GoToManagement,
+    } = useNavigation(isAdmin);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -146,6 +149,8 @@ const CategoryPage = () => {
                 logoClick={GoToHome}
                 logoSrc='\photos\caveret-logo.svg'
                 onMenuClick={() => setMenuOpen(true)}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
             />
             <Container
                 disableGutters

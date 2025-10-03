@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useNavigation } from '../utils/navigation';
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants';
@@ -29,13 +29,6 @@ const SearchPage = () => {
     const category = searchParams.get('category') || '';
     const sort = searchParams.get('sort') || '';
     const [page, setPage] = React.useState<string>(searchParams.get('page') || '1');
-    const {
-        goToHome: GoToHome,
-        goToCart: GoToCart,
-        searchItems: SearchItems,
-        goToLogin: GoToLogin,
-        goToOrders: GoToOrders,
-    } = useNavigation();
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
@@ -44,6 +37,17 @@ const SearchPage = () => {
     const [itemCount, setItemCount] = React.useState(0);
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = React.useState(false);
+
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
+    const {
+        goToHome: GoToHome,
+        goToCart: GoToCart,
+        searchItems: SearchItems,
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToManagement: GoToManagement,
+    } = useNavigation(isAdmin);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -131,6 +135,8 @@ const SearchPage = () => {
                 logoClick={GoToHome}
                 logoSrc='\photos\caveret-logo.svg'
                 onMenuClick={() => setMenuOpen(!menuOpen)}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
             />
             <Container
                 disableGutters

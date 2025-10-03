@@ -76,7 +76,7 @@ func HandleLogin(c *gin.Context) {
 		MaxAge:   GetIntFromConfig("jwt.token_expiration_seconds"),
 	})
 
-	c.JSON(http.StatusOK, gin.H{"success": GetStringFromConfig("success.login_success")})
+	c.JSON(http.StatusOK, gin.H{"success": GetStringFromConfig("success.login_success"), "role": role})
 }
 
 func IsValidUserInput(s string) bool {

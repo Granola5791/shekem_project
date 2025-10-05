@@ -3,19 +3,22 @@ import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
-import type { HebrewConstants } from '../utils/constants'
-import { FetchHebrewConstants } from '../utils/constants'
+import type { HebrewConstants, BackendConstants } from '../utils/constants'
+import { FetchHebrewConstants, FetchBackendConstants } from '../utils/constants'
 import NavBar from '../components/NavBar'
 import { useNavigation } from '../utils/navigation'
 import HamburgerMenu from '../components/HamburgerMenu'
 import { Logout } from '../utils/logout'
 import OneButtonPopUp from '../components/OneButtonPopUp'
+import CartDrawer from '../components/CartDrawer'
 
 const ManagementPage = () => {
 
-    const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants>()
+    const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants>();
+    const [backendConstants, setBackendConstants] = React.useState<BackendConstants>();
     const [menuOpen, setMenuOpen] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
+    const [cartOpen, setCartOpen] = React.useState(false);
     const {
         goToCart: GoToCart,
         goToHome: GoToHome,
@@ -29,11 +32,13 @@ const ManagementPage = () => {
         const fetchConstants = async () => {
             const hebrew = await FetchHebrewConstants();
             setHebrewConstants(hebrew);
+            const backend = await FetchBackendConstants();
+            setBackendConstants(backend);
         };
         fetchConstants();
     }, []);
 
-    if (!hebrewConstants) {
+    if (!hebrewConstants || !backendConstants) {
         return <div>Loading...</div>;
     }
 
@@ -46,11 +51,15 @@ const ManagementPage = () => {
         GoToLogin();
     }
 
+    const OpenCart = () => {
+        setCartOpen(true);
+    }
+
     return (
         <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
-                goToCart={GoToCart}
+                goToCart={OpenCart}
                 logoSrc="/photos/caveret-logo.svg"
                 logoClick={GoToHome}
                 showEditButton={true}
@@ -129,6 +138,12 @@ const ManagementPage = () => {
                 >
                     {hebrewConstants.user_errors.generic_error}
                 </OneButtonPopUp>
+                <CartDrawer
+                    open={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    backendConstants={backendConstants}
+                    hebrewConstants={hebrewConstants}
+                />
             </Container >
         </Container>
     )

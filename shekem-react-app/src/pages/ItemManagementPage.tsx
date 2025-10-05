@@ -19,6 +19,7 @@ import { useConfirm } from '../components/useConfirm';
 import NavBar from '../components/NavBar';
 import HamburgerMenu from '../components/HamburgerMenu';
 import { Logout } from '../utils/logout';
+import CartDrawer from '../components/CartDrawer';
 
 const ItemManagementPage = () => {
 
@@ -33,6 +34,7 @@ const ItemManagementPage = () => {
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
+    const [cartOpen, setCartOpen] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const {
@@ -189,6 +191,10 @@ const ItemManagementPage = () => {
         }
         GoToLogin();
     }
+    
+    const OpenCart = () => {
+        setCartOpen(true);
+    }
 
 
 
@@ -196,7 +202,7 @@ const ItemManagementPage = () => {
         <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
-                goToCart={GoToCart}
+                goToCart={OpenCart}
                 logoSrc="/photos/caveret-logo.svg"
                 logoClick={GoToHome}
                 showEditButton={true}
@@ -310,6 +316,12 @@ const ItemManagementPage = () => {
                         bgColor='rgba(255, 235, 19, 1)'
                     />
                 </Box>
+                <CartDrawer
+                    open={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    backendConstants={backendConstants}
+                    hebrewConstants={hebrewConstants}
+                />
             </Container>
         </Container>
     )

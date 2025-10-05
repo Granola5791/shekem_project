@@ -15,6 +15,7 @@ import OneButtonPopUp from '../components/OneButtonPopUp'
 import PaginationControls from '../components/PaginationControls'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
+import CartDrawer from '../components/CartDrawer'
 
 
 const OrdersPage = () => {
@@ -26,6 +27,7 @@ const OrdersPage = () => {
     const [orderCount, setItemCount] = useState(0);
     const [menuOpen, setMenuOpen] = useState(false);
     const [openError, setOpenError] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get('p') || '1';
     const { state } = useLocation();
@@ -81,13 +83,17 @@ const OrdersPage = () => {
         GoToLogin();
     }
 
+    const OpenCart = () => {
+        setCartOpen(true);
+    }
+
     return (
         <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 logoSrc='/photos/caveret-logo.svg'
                 onSearch={SearchItems}
                 logoClick={GoToHome}
-                goToCart={GoToCart}
+                goToCart={OpenCart}
                 onMenuClick={() => setMenuOpen(true)}
                 showEditButton={false}
                 onEdit={GoToManagement}
@@ -147,6 +153,12 @@ const OrdersPage = () => {
                         goToPage={GoToPage}
                     />
                 }
+                <CartDrawer
+                    open={cartOpen}
+                    onClose={() => setCartOpen(false)}
+                    backendConstants={backendConstants}
+                    hebrewConstants={hebrewConstants}
+                />
             </Container >
         </Container>
     )

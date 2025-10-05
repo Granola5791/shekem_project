@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { isUnauthorizedResponse } from '../utils/http.ts';
 import MyCategory from '../components/CategoryCard.tsx';
 import NavBar from '../components/NavBar.tsx';
 import { useNavigation } from '../utils/navigation.ts';
@@ -128,7 +127,8 @@ const HomePage = () => {
                     open={cartOpen}
                     onClose={() => setCartOpen(false)}
                     backendConstants={backendConstants}
-                    hebrewConstants={hebrewConstants} />
+                    hebrewConstants={hebrewConstants}
+                />
                 <OneButtonPopUp
                     open={openError}
                     theme='error'

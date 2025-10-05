@@ -1,5 +1,4 @@
 import type { BackendConstants, GeneralConstants } from "./constants";
-import { insertValuesToConstantStr } from "./constants";
 
 export type Item = {
     id: number;

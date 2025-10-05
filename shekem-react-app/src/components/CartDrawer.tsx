@@ -42,7 +42,11 @@ const CartDrawer = ({ open, onClose, backendConstants, hebrewConstants }: CartDr
                 console.error(error);
             }
         };
-        fetchCartItems();
+        if (open) {
+            fetchCartItems();
+        } else {
+            setCartItems([]);
+        }
     }, [open]);
 
     const DeleteItem = (itemID: number) => {
@@ -102,36 +106,34 @@ const CartDrawer = ({ open, onClose, backendConstants, hebrewConstants }: CartDr
         return <div>Loading...</div>;
     }
     return (
-        <>
-            <Drawer open={open} onClose={OnClose} >
-                <Button onClick={goToCart} sx={{ bgcolor: 'rgba(255, 235, 19, 1)' }} >
-                    <Typography variant="h6" color='black'>{hebrewConstants.items.cart_title}</Typography>
-                </Button>
-                <Box sx={{ width: '350px', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
-                    <Stack spacing={2}>
-                        {cartItems.map((item) => (
-                            <CartItem
-                                key={item.itemID}
-                                id={item.itemID}
-                                quantity={item.quantity}
-                                quantityLabel={hebrewConstants.items.quantity_label}
-                                itemTitle={item.title}
-                                price={item.price * item.quantity}
-                                moneySymbol={hebrewConstants.items.money_symbol}
-                                photoPath={
-                                    backendConstants.backend_address +
-                                    insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
-                                }
-                                onDelete={DeleteItem}
-                                onChangeQuantity={UpdateQuantity}
-                                stock={item.stock}
-                                stockLabel={hebrewConstants.items.stock_label}
-                            />
-                        ))}
-                    </Stack>
-                </Box>
-            </Drawer >
-        </>
+        <Drawer open={open} onClose={OnClose} >
+            <Button onClick={goToCart} sx={{ bgcolor: 'rgba(255, 235, 19, 1)' }} >
+                <Typography variant="h6" color='black'>{hebrewConstants.items.cart_title}</Typography>
+            </Button>
+            <Box sx={{ width: '350px', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
+                <Stack spacing={2}>
+                    {cartItems.map((item) => (
+                        <CartItem
+                            key={item.itemID}
+                            id={item.itemID}
+                            quantity={item.quantity}
+                            quantityLabel={hebrewConstants.items.quantity_label}
+                            itemTitle={item.title}
+                            price={item.price * item.quantity}
+                            moneySymbol={hebrewConstants.items.money_symbol}
+                            photoPath={
+                                backendConstants.backend_address +
+                                insertValuesToConstantStr(backendConstants.get_item_photo_api, item.itemID)
+                            }
+                            onDelete={DeleteItem}
+                            onChangeQuantity={UpdateQuantity}
+                            stock={item.stock}
+                            stockLabel={hebrewConstants.items.stock_label}
+                        />
+                    ))}
+                </Stack>
+            </Box>
+        </Drawer >
     )
 }
 

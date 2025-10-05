@@ -61,11 +61,11 @@ const CartItem = ({ id, photoPath, onDelete, itemTitle, price, quantity, quantit
                         {itemTitle}
                     </Typography>
                     <Typography fontWeight={'bold'}>
-                        {price} {moneySymbol}
+                        {price.toFixed(2)} {moneySymbol}
                     </Typography>
                     <Box className='select-count-container' sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <Typography>
-                            {quantityLabel}
+                            {quantityLabel}: 
                         </Typography>
 
                         <IconButton disabled={buttonDisabled} onClick={OnPlus}>

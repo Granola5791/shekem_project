@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CartItem from '../components/CartItemCard'
 import Container from '@mui/material/Container'
 import type { BackendConstants, GeneralConstants, HebrewConstants } from '../utils/constants'
@@ -10,6 +10,12 @@ import { useNavigation } from '../utils/navigation'
 import Checkout from '../components/Checkout'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
+import OneButtonPopUp from '../components/OneButtonPopUp'
+import { useConfirm } from '../components/useConfirm'
+import Button from '@mui/material/Button'
+import HamburgerMenu from '../components/HamburgerMenu'
+import { Logout } from '../utils/logout'
+import { useLocation } from 'react-router-dom'
 
 
 type CartItem = {
@@ -34,16 +40,30 @@ const FetchCartItems = async (backendConstants: BackendConstants, generalConstan
     return data.cart;
 }
 
-const SubmitOrder = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
-        method: 'POST',
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail + res.json());
-}
-
 
 const CartPage = () => {
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
+    const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
+    const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
+    const [openError, setOpenError] = useState(false);
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const { askConfirm, ConfirmDialog } = useConfirm();
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
+    const {
+        searchItems: SearchItems,
+        goToCart: GoToCart,
+        goToHome: GoToHome,
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToManagement: GoToManagement
+    } = useNavigation(isAdmin);
+
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -57,23 +77,29 @@ const CartPage = () => {
                 const thisCartItems = await FetchCartItems(thisBackendConstants, thisGeneralConstants);
                 setCartItems(thisCartItems);
             } catch (err: any) {
-                console.error(err.message);
+                setOpenError(true);
             }
         }
+
         fetchData();
     }, []);
 
-    const DeleteItem = (itemID: number) => {
+    useEffect(() => {
+        setTotalPrice(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
+    }, [cartItems]);
+
+    if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
+
+
+    const DeleteItem = async (itemID: number) => {
         const DeleteFromBackend = async () => {
-            if (!backendConstants) {
-                return;
-            }
             const res = await fetch(backendConstants.backend_address + backendConstants.delete_from_cart_api, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ item_id: itemID }),
                 credentials: 'include',
             });
+            return res.ok;
         }
 
         const DeleteFromFrontend = async () => {
@@ -81,15 +107,21 @@ const CartPage = () => {
             setCartItems(newCartItems);
         }
 
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
 
-        DeleteFromBackend();
+        const isOK = await DeleteFromBackend();
+        if (!isOK) {
+            setOpenError(true);
+            return;
+        }
+
         DeleteFromFrontend();
     };
 
     const UpdateQuantity = async (itemID: number, quantity: number) => {
-        if (!backendConstants) {
-            return;
-        }
 
         const res = await fetch(backendConstants.backend_address + backendConstants.update_cart_item_quantity_api, {
             method: 'PATCH',
@@ -99,7 +131,8 @@ const CartPage = () => {
         });
 
         if (!res.ok) {
-            throw new Error('Failed to update quantity');
+            setOpenError(true);
+            return;
         }
 
         setCartItems(prev =>
@@ -111,54 +144,68 @@ const CartPage = () => {
     }
 
     const SubmitOrder = async () => {
-        if (!backendConstants || !generalConstants) {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
             return;
         }
         const res = await fetch(backendConstants.backend_address + backendConstants.submit_order_api, {
             method: 'POST',
             credentials: 'include'
         });
-        if (!res.ok) throw new Error(generalConstants.errors.order_submit_fail);
-        window.location.reload();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        setOpenSuccess(true);
+    }
+
+    const DeleteEntireCart = async () => {
+        const userConfirmed = await askConfirm(hebrewConstants.are_you_sure);
+        if (!userConfirmed) {
+            return;
+        }
+        const res = await fetch(backendConstants.backend_address + backendConstants.delete_entire_cart_api, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        setCartItems([]);
+    }
+
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
     }
 
 
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    const [backendConstants, setBackendConstants] = useState<BackendConstants | null>(null);
-    const [generalConstants, setGeneralConstants] = useState<GeneralConstants | null>(null);
-    const [hebrewConstants, setHebrewConstants] = useState<HebrewConstants | null>(null);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const {
-        searchItems: SearchItems,
-        goToCart: GoToCart,
-        goToHome: GoToHome
-    } = useNavigation();
 
-
-    useEffect(() => {
-        setTotalPrice(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
-    }, [cartItems]);
-
-
-    if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
-                logoSrc='/src/assets/caveret-logo.svg'
+                logoSrc='/photos/caveret-logo.svg'
                 onSearch={SearchItems}
                 logoClick={GoToHome}
                 goToCart={GoToCart}
+                onMenuClick={() => setMenuOpen(true)}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
             />
-
             <Container
                 disableGutters
                 maxWidth="md"
                 sx={{
-                    bgcolor: 'rgba(250, 250, 250, 1)',
+                    bgcolor: 'white',
                     display: 'flex',
-                    height: '100vh',
                     padding: '10px',
-                    marginTop: '15vh'
+                    marginTop: '15vh',
+                    minHeight: '100vh',
                 }}
             >
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
@@ -189,20 +236,60 @@ const CartPage = () => {
 
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
                     {cartItems.length > 0 ? (
-                        <Checkout
-                            title={hebrewConstants.checkout.title}
-                            priceLabel={hebrewConstants.checkout.price_label}
-                            price={totalPrice}
-                            moneySymbol={hebrewConstants.items.money_symbol}
-                            buttonText={hebrewConstants.checkout.button_text}
-                            onSubmit={SubmitOrder}
-                        />)
+                        <Box display='flex' flexDirection='column' gap={2}>
+                            <Checkout
+                                title={hebrewConstants.checkout.title}
+                                priceLabel={hebrewConstants.checkout.price_label}
+                                price={totalPrice}
+                                moneySymbol={hebrewConstants.items.money_symbol}
+                                buttonText={hebrewConstants.checkout.button_text}
+                                onSubmit={SubmitOrder}
+                            />
+                            <Button variant="contained" onClick={DeleteEntireCart} sx={{ bgcolor: 'red', marginX: 'auto' }}>{hebrewConstants.checkout.delete_entire_cart}</Button>
+                        </Box>
+                    )
                         :
-                        <Typography variant="h4">{hebrewConstants.checkout.empty_cart_text}</Typography>
+                        (
+                            <Box display='flex' flexDirection='column' gap={2}>
+                                <Typography variant="h4">{hebrewConstants.checkout.empty_cart_text}</Typography>
+                                <img style={{ maxHeight: '300px', width: '300px' }} src="photos\one_alcohol_please.jpg" alt="" />
+                            </Box>
+                        )
                     }
                 </Box>
+
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+                <OneButtonPopUp
+                    open={openSuccess}
+                    theme='success'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => { window.location.reload(); }}
+                >
+                    {hebrewConstants.user_success.successful_purchase}
+                </OneButtonPopUp>
+                <ConfirmDialog
+                    yesButtonText={hebrewConstants.ok}
+                    noButtonText={hebrewConstants.cancel}
+                />
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

@@ -13,14 +13,7 @@ var db *sql.DB
 func GetUserIDFromDB(username string) (int, error) {
 	var userID int
 	sqlStatement := `SELECT get_user_id($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return 0, err
-	}
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&userID)
+	err := db.QueryRow(sqlStatement, username).Scan(&userID)
 	if err != nil {
 		return 0, err
 	}
@@ -48,14 +41,7 @@ func DeleteUserFromDB(username string) error {
 func UserExistsInDB(username string) (bool, error) {
 	var exists bool
 	sqlStatement := `SELECT user_exists($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return false, err
-	}
-	if !rows.Next() {
-		return false, nil
-	}
-	err = rows.Scan(&exists)
+	err := db.QueryRow(sqlStatement, username).Scan(&exists)
 	if err != nil {
 		return false, err
 	}
@@ -65,14 +51,7 @@ func UserExistsInDB(username string) (bool, error) {
 func GetUserRoleFromDB(username string) (string, error) {
 	var userRole string
 	sqlStatement := `SELECT get_user_role($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&userRole)
+	err := db.QueryRow(sqlStatement, username).Scan(&userRole)
 	if err != nil {
 		return "", err
 	}
@@ -82,14 +61,7 @@ func GetUserRoleFromDB(username string) (string, error) {
 func GetUserHashedPasswordFromDB(username string) (string, error) {
 	var hashedPassword string
 	sqlStatement := `SELECT get_hashed_password($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&hashedPassword)
+	err := db.QueryRow(sqlStatement, username).Scan(&hashedPassword)
 	if err != nil {
 		return "", err
 	}
@@ -99,14 +71,7 @@ func GetUserHashedPasswordFromDB(username string) (string, error) {
 func GetUserSaltFromDB(username string) (string, error) {
 	var salt string
 	sqlStatement := `SELECT get_salt($1)`
-	rows, err := db.Query(sqlStatement, username)
-	if err != nil {
-		return "", err
-	}
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&salt)
+	err := db.QueryRow(sqlStatement, username).Scan(&salt)
 	if err != nil {
 		return "", err
 	}
@@ -122,29 +87,149 @@ func AddToCart(userID int, productID int, quantity int) error {
 	return nil
 }
 
-func SearchItems(searchTerm string, page int) ([]int, error) {
-	pageSize := GetIntFromConfig("search.page_size")
-	itemIDs := make([]int, pageSize)
-	offset := (page - 1) * pageSize
-	sqlStatement := `CALL search_items($1)`
-	rows, err := db.Query(sqlStatement, searchTerm)
+func GetSearchUsersPage(query string, page int) ([]User, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	users := make([]User, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_users_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, query, start, pageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	for i := 0; i < offset && rows.Next(); i++ {
-		rows.Next()
-	}
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	for i := 0; i < pageSize && rows.Next(); i++ {
-		err = rows.Scan(&itemIDs[i])
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&users[i].ID, &users[i].Username, &users[i].CreatedAt, &users[i].Role)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return itemIDs, nil
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return users[0:i], nil
+}
+
+func GetSearchUsersCount(query string) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_search_users_count($1);`
+	err := db.QueryRow(sqlStatement, query).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func GetSearchItemsPage(searchTerm string, page int) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, searchTerm, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsPageWithFiltersAndSort(searchTerm string, page int, categoryID int, sortColumn string, is_asc bool) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4, $5, $6);`
+	rows, err := db.Query(sqlStatement, searchTerm, categoryID, sortColumn, is_asc, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsPageWithSort(searchTerm string, page int, sortColumn string, is_asc bool) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4, $5);`
+	rows, err := db.Query(sqlStatement, searchTerm, sortColumn, is_asc, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsPageWithFilters(searchTerm string, page int, categoryID int) ([]Item, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.items_page_size")
+	items := make([]Item, pageSize)
+	start := (page - 1) * pageSize
+	sqlStatement := `SELECT * FROM get_search_items_page($1, $2, $3, $4);`
+	rows, err := db.Query(sqlStatement, searchTerm, categoryID, start, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&items[i].ID, &items[i].Name, &items[i].Price, &items[i].Stock)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return items[0:i], nil
+}
+
+func GetSearchItemsCount(searchTerm string) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_search_items_count($1);`
+	err := db.QueryRow(sqlStatement, searchTerm).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func GetSearchItemsCountWithFilters(searchTerm string, categoryID int) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_search_items_count($1, $2);`
+	err := db.QueryRow(sqlStatement, searchTerm, categoryID).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func UpdateItemPhoto(itemID int, photoPath string) error {
@@ -181,17 +266,20 @@ func GetCategories() ([]Category, error) {
 	var i int
 	bufferSize := GetIntFromConfig("database.categories_buffer_size")
 	categories := make([]Category, bufferSize)
-	sqlStatement := `SELECT * FROM categories;`
+	sqlStatement := `SELECT * FROM get_categories();`
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	for i = 0; i < bufferSize && rows.Next(); i++ {
-		err = rows.Scan(&categories[i].ID, &categories[i].Name, &categories[i].Photos)
+		err = rows.Scan(&categories[i].ID, &categories[i].Name)
 		if err != nil {
 			return nil, err
 		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 	return categories[0:i], nil
 }
@@ -199,15 +287,7 @@ func GetCategories() ([]Category, error) {
 func GetCategoryPhoto(categoryID int, photoIndex int) ([]byte, error) {
 	var photo []byte
 	sqlStatement := `SELECT get_category_photo($1, $2);`
-	rows, err := db.Query(sqlStatement, categoryID, photoIndex)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	err = rows.Scan(&photo)
+	err := db.QueryRow(sqlStatement, categoryID, photoIndex).Scan(&photo)
 	if err != nil {
 		return nil, err
 	}
@@ -230,21 +310,16 @@ func GetCartFromDB(userID int) ([]FullCartItem, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return cart[0:i], nil
 }
 
 func GetItemPhoto(itemID int) ([]byte, error) {
 	var photo []byte
 	sqlStatement := `SELECT get_item_photo($1);`
-	rows, err := db.Query(sqlStatement, itemID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, sql.ErrNoRows
-	}
-	err = rows.Scan(&photo)
+	err := db.QueryRow(sqlStatement, itemID).Scan(&photo)
 	if err != nil {
 		return nil, err
 	}
@@ -281,15 +356,7 @@ func SubmitOrderToDB(userID int) error {
 func GetCategoryItemsCount(categoryID int) (int, error) {
 	var count int
 	sqlStatement := `SELECT get_category_items_count($1);`
-	rows, err := db.Query(sqlStatement, categoryID)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return 0, sql.ErrNoRows
-	}
-	err = rows.Scan(&count)
+	err := db.QueryRow(sqlStatement, categoryID).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
@@ -303,7 +370,7 @@ func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
 	offset := (page - 1) * pageSize
 
 	sqlStatement := `SELECT * FROM get_category_items_page($1, $2, $3)`
-	rows, err := db.Query(sqlStatement, categoryID, offset, offset + pageSize)
+	rows, err := db.Query(sqlStatement, categoryID, offset, offset+pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -314,25 +381,144 @@ func GetCategoryItemsPage(categoryID int, page int) ([]Item, error) {
 			return nil, err
 		}
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return items[0:i], nil
 }
 
 func GetCategoryNameFromDB(categoryID int) (string, error) {
 	var name string
 	sqlStatement := `SELECT get_category_name($1);`
-	rows, err := db.Query(sqlStatement, categoryID)
-	if err != nil {
-		return "", err
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return "", sql.ErrNoRows
-	}
-	err = rows.Scan(&name)
+	err := db.QueryRow(sqlStatement, categoryID).Scan(&name)
 	if err != nil {
 		return "", err
 	}
 	return name, nil
+}
+
+func UpdateItem(ItemID int, item_title string, item_price float64, item_stock int) error {
+	sqlStatement := `CALL update_item($1, $2, $3, $4);`
+	_, err := db.Exec(sqlStatement, ItemID, item_title, item_price, item_stock)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateItemWithPhoto(ItemID int, item_title string, item_price float64, item_stock int, photo []byte) error {
+	sqlStatement := `CALL update_item_with_photo($1, $2, $3, $4, $5);`
+	_, err := db.Exec(sqlStatement, ItemID, item_title, item_price, item_stock, photo)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddItem(ItemID int, item_title string, item_price float64, item_stock int, photo []byte) error {
+	sqlStatement := `CALL add_item($1, $2, $3, $4, $5);`
+	_, err := db.Exec(sqlStatement, ItemID, item_title, item_price, item_stock, photo)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteItem(ItemID int) error {
+	sqlStatement := `CALL soft_delete_item($1);`
+	_, err := db.Exec(sqlStatement, ItemID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteUser(UserID int) error {
+	sqlStatement := `CALL soft_delete_user($1);`
+	_, err := db.Exec(sqlStatement, UserID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SetAdmin(UserID int) error {
+	sqlStatement := `CALL set_admin($1);`
+	_, err := db.Exec(sqlStatement, UserID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteEntireCartFromDB(userID int) error {
+	sqlStatement := `CALL delete_entire_cart($1);`
+	_, err := db.Exec(sqlStatement, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetOrdersPageFromDB(userID int, page int) ([]Order, error) {
+	var i int
+	pageSize := GetIntFromConfig("database.orders_page_size")
+	orders := make([]Order, pageSize)
+	offset := (page - 1) * pageSize
+
+	sqlStatement := `SELECT * FROM get_user_orders_page($1, $2, $3);`
+	rows, err := db.Query(sqlStatement, userID, offset, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < pageSize && rows.Next(); i++ {
+		err = rows.Scan(&orders[i].OrderID, &orders[i].Date, &orders[i].TotalPrice)
+		if err != nil {
+			return nil, err
+		}
+		orders[i].Items, err = GetOrderItemsFromDB(orders[i].OrderID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return orders[0:i], nil
+}
+
+func GetOrderItemsFromDB(orderID int) ([]OrderItem, error) {
+	var i int
+	bufferSize := GetIntFromConfig("database.cart_buffer_size")
+	orderItems := make([]OrderItem, bufferSize)
+
+	sqlStatement := `SELECT * FROM get_order_items($1);`
+	rows, err := db.Query(sqlStatement, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for i = 0; i < bufferSize && rows.Next(); i++ {
+		err = rows.Scan(&orderItems[i].ItemID, &orderItems[i].ItemName, &orderItems[i].Quantity, &orderItems[i].Price)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return orderItems[0:i], nil
+}
+
+func GetOrdersCountFromDB(userID int) (int, error) {
+	var count int
+	sqlStatement := `SELECT get_user_orders_count($1);`
+	err := db.QueryRow(sqlStatement, userID).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func OpenSQLConnection() error {

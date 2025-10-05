@@ -5,49 +5,84 @@ import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import SignupPage from './pages/SignupPage.tsx'
 import ErrorPage from './pages/ErrorPage.tsx'
-import {createBrowserRouter, RouterProvider } from "react-router-dom";
-import checkLogin from './utils/checkLogin.ts';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CheckLoginLoader, CheckAdminLoader } from './utils/checkLogin.ts';
 import NotFound from './pages/NotFoundPage.tsx';
 import CartPage from './pages/CartPage.tsx';
 import CategoryPage from './pages/CategoryPage.tsx';
+import SearchPage from './pages/SearchPage.tsx';
+import ItemManagementPage from './pages/ItemManagementPage.tsx';
+import UserManagementPage from './pages/UserManagementPage.tsx'
+import ManagementPage from './pages/ManagementPage.tsx'
+import OrdersPage from './pages/OrdersPage.tsx'
 
 const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <LoginPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/home",
-    element: <HomePage />,
-    errorElement: <ErrorPage />,
-    loader: checkLogin,
-  },
-  {
-    path: "/cart",
-    element: <CartPage />,
-    errorElement: <ErrorPage />,
-    loader: checkLogin,
-  },
-  {
-    path: "/category/:id",
-    element: <CategoryPage />,
-    errorElement: <ErrorPage />,
-    loader: checkLogin,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+    {
+        path: "/login",
+        element: <LoginPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/signup",
+        element: <SignupPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/home",
+        element: <HomePage />,
+        errorElement: <ErrorPage />,
+        loader: CheckLoginLoader,
+    },
+    {
+        path: "/cart",
+        element: <CartPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckLoginLoader,
+    },
+    {
+        path: "/category/:id",
+        element: <CategoryPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckLoginLoader,
+    },
+    {
+        path: "/search",
+        element: <SearchPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckLoginLoader,
+    },
+        {
+        path: "/orders",
+        element: <OrdersPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckLoginLoader,
+    },
+    {
+        path: "/manage",
+        element: <ManagementPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckAdminLoader,
+    },
+    {
+        path: "/manage/items",
+        element: <ItemManagementPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckAdminLoader,
+    },
+    {
+        path: "manage/users",
+        element: <UserManagementPage />,
+        errorElement: <ErrorPage />,
+        loader: CheckAdminLoader,
+    },
+    {
+        path: "*",
+        element: <NotFound />,
+    },
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+    <StrictMode>
+        <RouterProvider router={router} />
+    </StrictMode>,
 )

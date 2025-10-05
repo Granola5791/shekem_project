@@ -7,11 +7,24 @@ get_item_photo_api: "/api/item/{item_id}/photo"
 get_category_items_page_api: "/api/category/{category_id}/items?p={page}"
 get_category_items_count_api: "/api/category/{category_id}/items_count"
 get_category_name_api: "/api/category/{category_id}/name"
+get_search_items_page_api: "/api/item/search?"
+get_search_users_page_api: "/api/user/search?q={query}&p={page}"
+get_orders_api: "/api/orders?"
 delete_from_cart_api: "/api/cart/delete"
+delete_item_api: "/api/item/{item_id}/delete"
+delete_user_api: "/api/user/{user_id}/delete"
+delete_entire_cart_api: "/api/cart/clear"
 update_cart_item_quantity_api: "/api/cart/update_quantity"
+update_item_api: "/api/item/{item_id}/update"
+update_item_with_photo_api: "/api/item/{item_id}/update_with_photo"
 submit_order_api: "/api/cart/submit_order"
 signup_api: "/api/signup"
 login_api: "/api/login"
+logout_api: "/api/logout"
+check_login_api: "/api/check_login"
+check_admin_api: "/api/check_admin"
+add_item_api: "/api/item/add"
+set_admin_api: "/api/user/{user_id}/set_admin"
 
 statuses:
   ok: "ok"
@@ -22,6 +35,7 @@ statuses:
 status_codes:
   ok: 200
   created: 201
+  found: 302
   bad_request: 400
   unauthorized: 401
   not_found: 404

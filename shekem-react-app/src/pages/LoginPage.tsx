@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants';
 import { isGenericOKResponse } from '../utils/http';
-import { useNavigation } from '../utils/navigation';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -27,7 +26,7 @@ const LoginPage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [response, setResponse] = React.useState('');
-    const { goToHome: GoToHome } = useNavigation();
+    const navigate = useNavigate();
 
     const handleLogin = async (username: string, password: string) => {
         if (!hebrewConstants || !backendConstants) {
@@ -44,7 +43,12 @@ const LoginPage = () => {
 
 
             if (isGenericOKResponse(res)) {
-                GoToHome();
+                const data = await res.json();
+                if (data.role === 'admin') {
+                    navigate('/home', { state: { role: 'admin' } });
+                } else {
+                    navigate('/home');
+                }
             }
             else {
                 setResponse(hebrewConstants.user_errors.invalid_username_or_password);

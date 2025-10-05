@@ -7,14 +7,6 @@ BEGIN
 END;
 $$
 
-CREATE PROCEDURE delete_user(IN username_param VARCHAR(50))
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    DELETE FROM users
-    WHERE username = username_param;
-END;
-$$
 
 CREATE OR REPLACE PROCEDURE add_to_cart(IN user_id_param INT, IN item_id_param INT, IN quantity_param INT)
 LANGUAGE plpgsql
@@ -69,6 +61,78 @@ BEGIN
     FROM cart_items
     WHERE user_id = user_id_param;
 
+    DELETE FROM cart_items
+    WHERE user_id = user_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE update_item(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE items
+    SET item_name = item_name_param, price = price_param, stock = stock_param
+    WHERE item_id = item_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE update_item_with_photo(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT, IN photo_param BYTEA)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE items
+    SET item_name = item_name_param, price = price_param, photo = photo_param, stock = stock_param
+    WHERE item_id = item_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE add_item(IN item_id_param INT, IN item_name_param VARCHAR(255), IN price_param DECIMAL(10, 2), IN stock_param INT, IN photo_param BYTEA)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO items (item_id, item_name, price, photo, stock)
+    VALUES (item_id_param, item_name_param, price_param, photo_param, stock_param);
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE soft_delete_item(IN item_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE items
+    SET is_deleted = TRUE, stock = 0
+    WHERE item_id = item_id_param;
+END;
+$$
+
+
+CREATE OR REPLACE PROCEDURE soft_delete_user(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET is_deleted = TRUE, user_role = ''
+    WHERE user_id = user_id_param;
+
+    DELETE FROM cart_items
+    WHERE user_id = user_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE set_admin(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET user_role = 'admin'
+    WHERE user_id = user_id_param;
+END;
+$$
+
+CREATE OR REPLACE PROCEDURE delete_entire_cart(IN user_id_param INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
     DELETE FROM cart_items
     WHERE user_id = user_id_param;
 END;

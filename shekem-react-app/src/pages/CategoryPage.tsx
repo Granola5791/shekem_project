@@ -8,10 +8,14 @@ import ItemCard from '../components/ItemCard'
 import type { Item } from '../utils/manageItems'
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants'
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { isUnauthorizedResponse } from '../utils/http'
 import PaginationControls from '../components/PaginationControls'
 import CartDrawer from '../components/CartDrawer.tsx'
+import OneButtonPopUp from '../components/OneButtonPopUp'
+import Box from '@mui/material/Box'
+import HamburgerMenu from '../components/HamburgerMenu'
+import { Logout } from '../utils/logout'
 
 const FetchCategoryItemsPage = async (categoryID: number, page: number, backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
     const res = await fetch(backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_category_items_page_api, categoryID, page), {
@@ -56,12 +60,19 @@ const CategoryPage = () => {
     const [itemCount, setItemCount] = React.useState(0);
     const [categoryName, setCategoryName] = React.useState('');
     const [cartOpen, setCartOpen] = React.useState(false);
+    const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = React.useState(false);
 
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         goToHome: GoToHome,
         searchItems: SearchItems,
-        goToLogin: GoToLogin
-    } = useNavigation()
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToManagement: GoToManagement,
+        goToCart: GoToCart
+    } = useNavigation(isAdmin);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -85,7 +96,7 @@ const CategoryPage = () => {
                 setItems(thisItems);
 
             } catch (err: any) {
-                console.error(err.message);
+                setOpenError(true);
             }
         }
         fetchData();
@@ -118,6 +129,18 @@ const CategoryPage = () => {
             GoToLogin();
             return;
         }
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+    }
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
     }
 
     if (!hebrewConstants || !backendConstants || !generalConstants || !items) {
@@ -125,20 +148,23 @@ const CategoryPage = () => {
     }
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
                 goToCart={OpenCart}
                 logoClick={GoToHome}
-                logoSrc='\public\photos\caveret-logo.svg'
+                logoSrc='\photos\caveret-logo.svg'
+                onMenuClick={() => setMenuOpen(true)}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
             />
             <Container
-                disableGutters
+                maxWidth="md"
                 sx={{
                     bgcolor: 'rgba(250, 250, 250, 1)',
-                    height: '100vh',
                     padding: '10px',
-                    marginTop: '15vh'
+                    marginTop: '15vh',
+                    minHeight: '100vh',
                 }}
             >
                 <Typography variant="h4" gutterBottom textAlign={'center'}>
@@ -178,8 +204,26 @@ const CategoryPage = () => {
                     backendConstants={backendConstants}
                     hebrewConstants={hebrewConstants}
                 />
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

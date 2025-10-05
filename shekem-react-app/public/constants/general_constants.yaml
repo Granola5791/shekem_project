@@ -5,5 +5,17 @@ errors:
   category_load_not_found: "Categories not found"
   cart_load_fail: "Failed to load cart"
   order_submit_fail: "Failed to submit order"
+  search_load_fail: "Failed to load search results"
+  delete_user_fail: "Failed to delete user"
+  set_admin_fail: "Failed to set admin"
+  order_load_fail: "Failed to load orders"
 
-items_per_page: 12
+users:
+  admin_role: "admin"
+
+items:
+  sort_by_options:
+    - "price_asc"
+    - "price_desc"
+
+items_per_page: 8

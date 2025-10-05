@@ -4,6 +4,12 @@ category_list_title: "קטגוריות"
 wait_text: "רגע..."
 go_to_login: "להתחברות"
 go_to_home: "לעמוד הבית"
+go_to_cart: "לעגלת הקניות"
+go_to_orders: "להזמנות שלי"
+logout: "התנתקות"
+ok: "אישור"
+cancel: "ביטול"
+are_you_sure: "האם אתה בטוח שברצונך להמשיך עם הפעולה?"
 
 user_errors:
   generic_error: "משהו השתבש, אנא נסה שוב מאוחר יותר"
@@ -36,15 +42,59 @@ login_texts:
     link_text: "להרשמה!"
 
 items:
-  quantity_label: "כמות: "
+  quantity_label: "כמות"
   money_symbol: "₪"
   stock_label: "מלאי"
   add_to_cart_button: "הוסף לסל"
   cart_title: "סל הקניות"
+  search_results_title: "תוצאות חיפוש עבור"
+  item_id_label: "מק״ט"
+  edit_item_button: "עריכה"
+  item_name_label: "שם המוצר"
+  price_label: "מחיר"
+  item_photo_label: "תמונה"
+  cancel_button: "ביטול"
+  submit_button: "שמור"
+  add_item: "הוסף מוצר חדש"
+  delete_item: "מחק מוצר"
+  filter_by_category_label: "סינון לפי קטגוריה"
+  sort_by_label: "מיין לפי"
+  sort_by_options_labels:
+    - "מחיר: מהנמוך לגבוה"
+    - "מחיר: מהגבוה לנמוך"
+  filter_button: "סנן"
+  none_selected_text: "אין"
 
 checkout:
   title: "סיכום תשלום"
   button_text: "קחו את הכסף שלי"
   price_label: "מחיר"
   empty_cart_text: "נראה שעוד לא הוספת שום דבר לסל... לך תקנה משהו!"
+  delete_entire_cart: "מחק את כל הסל"
 
+users:
+  username: "שם משתמש"
+  user_id: "מספר משתמש"
+  privileges: "הרשאות"
+  created_at: "נוצר בתאריך"
+  delete_user: "מחק משתמש"
+  set_admin: "הגדר כמנהל"
+  no_privileges: "ללא הרשאות"
+
+
+management:
+  management_page_title: "עמוד מנהלים (עם prestige וזה)"
+  manage_users: "ניהול משתמשים"
+  manage_items: "ניהול מוצרים"
+
+user_success:
+  generic_success: "הפעולה בוצעה בהצלחה"
+  successful_signup: "ההרשמה בוצעה בהצלחה, עכשיו אפשר להתחבר"
+  successful_purchase: "ההזמנה בוצעה בהצלחה, תודה שקניתם אצלנו!"
+
+orders:
+  order_id: "מספר הזמנה"
+  order_date: "תאריך הזמנה"
+  order_page_title:
+    part1: "הטעויות"
+    part2: "ההזמנות שלי"

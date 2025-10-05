@@ -7,6 +7,8 @@ import type { HebrewConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants } from '../utils/constants.ts';
 import { useNavigation } from '../utils/navigation.ts';
 import Container from '@mui/material/Container';
+import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
+
 
 
 const SignupPage = () => {
@@ -25,9 +27,10 @@ const SignupPage = () => {
     const [response, setResponse] = React.useState<React.ReactNode>('');
     const [hebrewConstants, setHebrewConstants] = React.useState<HebrewConstants | null>(null);
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
+    const [openSuccess, setOpenSuccess] = React.useState(false);
     const { goToLogin: GoToLogin } = useNavigation();
 
-    
+
     const handleSignup = async (username: string, password: string, repeatedPassword: string) => {
         if (!hebrewConstants || !backendConstants) {
             return;
@@ -45,7 +48,7 @@ const SignupPage = () => {
             });
             switch (res.status) {
                 case backendConstants.status_codes.created:
-                    GoToLogin();
+                    setOpenSuccess(true);
                     break;
                 case backendConstants.status_codes.bad_request:
                     setResponse(hebrewConstants.user_errors.invalid_username_or_password);
@@ -99,6 +102,14 @@ const SignupPage = () => {
             <Typography variant="body1" align="center" sx={{ color: 'red', marginTop: '20px' }}>
                 {response}
             </Typography>
+            <OneButtonPopUp
+                open={openSuccess}
+                theme='success'
+                buttonText={hebrewConstants.go_to_login}
+                onButtonClick={() => { GoToLogin(); }}
+            >
+                {hebrewConstants.user_success.successful_signup}
+            </OneButtonPopUp>
         </Container>
     )
 }

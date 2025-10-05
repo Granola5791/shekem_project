@@ -5,6 +5,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   hashed_password VARCHAR(255) NOT NULL,
   salt VARCHAR(255) NOT NULL
+  is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE orders (
@@ -21,6 +22,7 @@ CREATE TABLE items (
   price DECIMAL(10, 2) NOT NULL,
   photo BYTEA,
   stock INT NOT NULL CHECK (stock >= 0)
+  is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE order_items (

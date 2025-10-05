@@ -39,7 +39,7 @@ const Checkout = ({ title, priceLabel, price, moneySymbol, buttonText, onSubmit 
             </Typography>
 
             <Typography variant="h5">
-                {priceLabel}: {price} {moneySymbol}
+                {priceLabel}: {price.toFixed(2)} {moneySymbol}
             </Typography>
 
             <Button

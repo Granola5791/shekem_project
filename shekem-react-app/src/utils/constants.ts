@@ -5,6 +5,11 @@ export type HebrewConstants = {
     search_bar_text: string;
     category_list_title: string;
     wait_text: string;
+    ok: string;
+    cancel: string;
+    are_you_sure: string;
+    logout: string;
+
     user_errors: {
         generic_error: string;
         page_not_found: string;
@@ -12,6 +17,11 @@ export type HebrewConstants = {
         invalid_username_or_password: string;
         username_taken: string;
         server_error: string;
+    };
+    user_success: {
+        generic_success: string;
+        successful_signup: string;
+        successful_purchase: string;
     };
     signup_texts: {
         signup_title: string;
@@ -46,6 +56,21 @@ export type HebrewConstants = {
         stock_label: string;
         add_to_cart_button: string;
         cart_title: string;
+        search_results_title: string;
+        item_id_label: string;
+        item_name_label: string;
+        price_label: string;
+        edit_item_button: string;
+        item_photo_label: string;
+        cancel_button: string;
+        submit_button: string;
+        add_item: string;
+        delete_item: string;
+        filter_by_category_label: string;
+        sort_by_label: string;
+        sort_by_options_labels: string[];
+        filter_button: string;
+        none_selected_text: string;
     };
 
     checkout: {
@@ -53,9 +78,38 @@ export type HebrewConstants = {
         title: string;
         price_label: string;
         button_text: string;
+        delete_entire_cart: string;
     };
+
+    users: {
+        username: string;
+        privileges: string;
+        created_at: string;
+        user_id: string;
+        delete_user: string;
+        set_admin: string;
+        no_privileges: string;
+    }
+
+    management: {
+        management_page_title: string;
+        manage_users: string;
+        manage_items: string;
+    }
+
+    orders: {
+        order_id: string;
+        order_date: string;
+        order_page_title: {
+            part1: string;
+            part2: string;
+        }
+    }
+    
     go_to_login: string;
     go_to_home: string;
+    go_to_cart: string;
+    go_to_orders: string;
 };
 
 export type BackendConstants = {
@@ -68,11 +122,24 @@ export type BackendConstants = {
     get_category_items_page_api: string;
     get_category_items_count_api: string;
     get_category_name_api: string;
+    get_search_items_page_api: string;
+    get_search_users_page_api: string;
+    get_orders_api: string;
     delete_from_cart_api: string;
+    delete_item_api: string;
+    delete_user_api: string;
+    delete_entire_cart_api: string;
     update_cart_item_quantity_api: string;
+    update_item_api: string;
+    update_item_with_photo_api: string;
     submit_order_api: string;
     signup_api: string;
     login_api: string;
+    logout_api: string;
+    check_login_api: string;
+    check_admin_api: string;
+    add_item_api: string;
+    set_admin_api: string;
 
     statuses: {
         ok: string;
@@ -84,6 +151,7 @@ export type BackendConstants = {
     status_codes: {
         ok: number;
         created: number;
+        found: number;
         bad_request: number;
         unauthorized: number;
         not_found: number;
@@ -100,11 +168,24 @@ export type GeneralConstants = {
         category_load_not_found: string;
         cart_load_fail: string;
         order_submit_fail: string;
+        search_load_fail: string;
+        delete_user_fail: string;
+        set_admin_fail: string;
+        order_load_fail: string;
     };
+
+    users: {
+        admin_role: string;
+    };
+
+    items: {
+        sort_by_options: string[];
+    };
+
     items_per_page: number;
 };
 
-export function insertValuesToConstantStr(configString: string, ...values: number[]): string {
+export function insertValuesToConstantStr(configString: string, ...values: any[]): string {
     let argsIndex = 0;
     let result = '';
     for (let i = 0; i < configString.length; i++) {

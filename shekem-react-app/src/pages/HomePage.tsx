@@ -9,27 +9,14 @@ import { useNavigation } from '../utils/navigation.ts';
 import type { HebrewConstants, GeneralConstants, BackendConstants } from '../utils/constants.ts';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants } from '../utils/constants.ts';
 import CartDrawer from '../components/CartDrawer.tsx';
+import OneButtonPopUp from '../components/OneButtonPopUp.tsx';
+import HamburgerMenu from '../components/HamburgerMenu.tsx';
+import Box from '@mui/material/Box';
+import { Logout } from '../utils/logout.ts';
+import { FetchCategories } from '../utils/categories.ts';
+import type { Category } from '../utils/categories.ts';
+import { useLocation } from 'react-router-dom';
 
-
-type Category = {
-    id: number;
-    name: string;
-}
-
-
-const FetchCategories = async (backendConstants: BackendConstants, generalConstants: GeneralConstants) => {
-    if (!backendConstants) {
-        console.error(generalConstants.errors.config_not_found);
-        return [];
-    }
-    const res = await fetch(backendConstants.backend_address + backendConstants.get_categories_api, {
-        method: 'GET',
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error(generalConstants.errors.category_load_fail);
-    const data = await res.json();
-    return data.categories;
-}
 
 const HomePage = () => {
     // configs
@@ -37,20 +24,26 @@ const HomePage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
 
-    // loading and error states
+    // loading state
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [cartOpen, setCartOpen] = React.useState(false);
+    const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    // navigation functions
+
+    const { state } = useLocation();
+    const isAdmin = state?.role === 'admin';
     const {
         searchItems: SearchItems,
         goToCategory: GoToCategory,
         goToHome: GoToHome,
-        goToLogin: GoToLogin
-    } = useNavigation();
+        goToManagement: GoToManagement,
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToCart: GoToCart
+    } = useNavigation(isAdmin);
 
 
     useEffect(() => {
@@ -69,35 +62,22 @@ const HomePage = () => {
                 const thisCategories = await FetchCategories(thisBackendConstants, thisGeneralConstants);
                 setCategories(thisCategories);
             } catch (err: any) {
-                setError(err.message);
+                setOpenError(true);
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
     }, []);
-    if (error) return <p>{'Something went wrong, try again later'}</p>;
     if (!hebrewConstants || !backendConstants || !generalConstants || loading) return <p>Loading...</p>;
 
-
-    async function AddToCart(id: number, selectCount: number) {
-        if (selectCount <= 0) {
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
             return;
         }
-        if (!backendConstants) {
-            console.error(generalConstants?.errors.config_not_found);
-            return;
-        }
-        const res = await fetch(backendConstants.backend_address + backendConstants.add_to_cart_api, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ product_id: id, quantity: selectCount }),
-            credentials: 'include',
-        });
-        if (isUnauthorizedResponse(res)) {
-            GoToLogin();
-            return;
-        }
+        GoToLogin();
     }
 
     const OpenCart = () => {
@@ -105,19 +85,23 @@ const HomePage = () => {
     }
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
                 goToCart={OpenCart}
-                logoSrc="./src/assets/caveret-logo.svg"
+                logoSrc="/photos/caveret-logo.svg"
                 logoClick={GoToHome}
+                showEditButton={isAdmin}
+                onEdit={GoToManagement}
+                onMenuClick={() => setMenuOpen(true)}
             />
-
-
             <Container
+                maxWidth="md"
                 sx={{
-                    height: '80vh',
-                    marginTop: '17vh',
+                    minHeight: '100vh',
+                    bgcolor: 'white',
+                    padding: '10px',
+                    marginTop: '15vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -145,8 +129,27 @@ const HomePage = () => {
                     onClose={() => setCartOpen(false)}
                     backendConstants={backendConstants}
                     hebrewConstants={hebrewConstants} />
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

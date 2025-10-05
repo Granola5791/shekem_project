@@ -34,7 +34,7 @@ func HandleLogin(c *gin.Context) {
 		return
 	}
 	if !userExists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("invalid_username_or_password")})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": GetStringFromConfig("error.invalid_username_or_password")})
 		return
 	}
 
@@ -67,16 +67,16 @@ func HandleLogin(c *gin.Context) {
 	}
 
 	http.SetCookie(c.Writer, &http.Cookie{
-		Name:     "auth_token",
+		Name:     GetStringFromConfig("jwt.token_cookie_name"),
 		Value:    token,
 		Path:     "/", // visible to all paths
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		MaxAge:   1800,
+		MaxAge:   GetIntFromConfig("jwt.token_expiration_seconds"),
 	})
 
-	c.JSON(http.StatusOK, gin.H{"success": GetStringFromConfig("success.login_success")})
+	c.JSON(http.StatusOK, gin.H{"success": GetStringFromConfig("success.login_success"), "role": role})
 }
 
 func IsValidUserInput(s string) bool {

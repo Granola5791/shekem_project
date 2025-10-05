@@ -95,3 +95,13 @@ func HandleOrderSubmit(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.order_submitted")})
 }
+
+func HandleDeleteEntireCart(c *gin.Context) {
+	userID, _ := c.Get("userID")
+
+	if err := DeleteEntireCartFromDB(userID.(int)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": GetStringFromConfig("success.delete_entire_cart")})
+}

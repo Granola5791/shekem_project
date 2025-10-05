@@ -28,9 +28,9 @@ const HomePage = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    
 
-    const {state} = useLocation();
+
+    const { state } = useLocation();
     const isAdmin = state?.role === 'admin';
     const {
         searchItems: SearchItems,
@@ -78,22 +78,23 @@ const HomePage = () => {
     }
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
                 goToCart={GoToCart}
-                logoSrc="./src/assets/caveret-logo.svg"
+                logoSrc="/photos/caveret-logo.svg"
                 logoClick={GoToHome}
                 showEditButton={isAdmin}
                 onEdit={GoToManagement}
                 onMenuClick={() => setMenuOpen(true)}
             />
-
-
             <Container
+                maxWidth="md"
                 sx={{
-                    height: '80vh',
-                    marginTop: '17vh',
+                    minHeight: '100vh',
+                    bgcolor: 'white',
+                    padding: '10px',
+                    marginTop: '15vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -135,7 +136,7 @@ const HomePage = () => {
                     />
                 </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

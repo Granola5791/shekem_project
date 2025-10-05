@@ -10,9 +10,12 @@ import Grid from '@mui/material/Grid'
 import PaginationControls from '../components/PaginationControls'
 import SearchBar from '../components/SearchBar'
 import Box from '@mui/material/Box'
-import { Link } from 'react-router-dom'
 import OneButtonPopUp from '../components/OneButtonPopUp'
 import { useConfirm } from '../components/useConfirm'
+import NavBar from '../components/NavBar'
+import { useNavigation } from '../utils/navigation'
+import HamburgerMenu from '../components/HamburgerMenu'
+import { Logout } from '../utils/logout'
 
 const UserManagementPage = () => {
 
@@ -25,7 +28,15 @@ const UserManagementPage = () => {
     const [users, setUsers] = React.useState<Map<number, User>>(new Map());
     const [userCount, setUserCount] = React.useState(0);
     const [openError, setOpenError] = React.useState(false);
+    const [menuOpen, setMenuOpen] = React.useState(false);
     const { askConfirm, ConfirmDialog } = useConfirm();
+    const { goToHome: GoToHome,
+        goToCart: GoToCart,
+        searchItems: SearchItems,
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToManagement: GoToManagement,
+    } = useNavigation(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -87,68 +98,95 @@ const UserManagementPage = () => {
         window.location.reload();
     }
 
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
+    }
+
 
     return (
-        <Container
-            disableGutters
-            sx={{
-                bgcolor: 'rgba(250, 250, 250, 1)',
-                height: '100vh',
-                padding: '10px',
-            }}
-        >
-
-            <Link to="/home" style={{ position: 'absolute' }}>
-                <img style={{ maxHeight: '200px', width: '200px' }} src="/photos/caveret-logo.svg" alt="logo" />
-            </Link>
-
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginY: '30px' }}>
-                <SearchBar
-                    onSearch={(searchQuery: string) => {
-                        setSearchParams({ q: searchQuery, page: '1' });
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
+            <NavBar
+                onSearch={SearchItems}
+                goToCart={GoToCart}
+                logoSrc="/photos/caveret-logo.svg"
+                logoClick={GoToHome}
+                showEditButton={true}
+                onEdit={GoToManagement}
+                onMenuClick={() => setMenuOpen(true)}
+            />
+            <Container
+                maxWidth='md'
+                disableGutters
+                sx={{
+                    bgcolor: 'rgba(250, 250, 250, 1)',
+                    minHeight: '100vh',
+                    padding: '10px',
+                    marginTop: '15vh',
+                }}
+            >
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginY: '30px' }}>
+                    <SearchBar
+                        onSearch={(searchQuery: string) => {
+                            setSearchParams({ q: searchQuery, page: '1' });
+                        }}
+                    />
+                </Box>
+                <Grid container spacing={2} sx={{ marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
+                    {[...users.values()].map((user: User) => (
+                        <AdminUserCard
+                            key={user.id}
+                            isAdmin={user.role.includes(generalConstants.users.admin_role)}
+                            userID={user.id}
+                            userIDLabel={hebrewConstants.users.user_id}
+                            username={user.username}
+                            usernameLabel={hebrewConstants.users.username}
+                            privileges={user.role ? user.role : hebrewConstants.users.no_privileges}
+                            privilegesLabel={hebrewConstants.users.privileges}
+                            createdAt={user.created_at}
+                            createdAtLabel={hebrewConstants.users.created_at}
+                            deleteButtonText={hebrewConstants.users.delete_user}
+                            editButtonText={hebrewConstants.users.set_admin}
+                            onDelete={DeleteUser}
+                            onEdit={SetAdmin}
+                        />
+                    ))}
+                </Grid>
+                <PaginationControls
+                    pageCount={Math.ceil(userCount / generalConstants.items_per_page)}
+                    currentPage={parseInt(page) - 1}
+                    goToPage={(page: number) => {
+                        setSearchParams({ q: query, page: (page + 1).toString() });
                     }}
                 />
-            </Box>
-            <Grid container spacing={2} sx={{ marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
-                {[...users.values()].map((user: User) => (
-                    <AdminUserCard
-                        key={user.id}
-                        isAdmin={user.role.includes(generalConstants.users.admin_role)}
-                        userID={user.id}
-                        userIDLabel={hebrewConstants.users.user_id}
-                        username={user.username}
-                        usernameLabel={hebrewConstants.users.username}
-                        privileges={user.role ? user.role : hebrewConstants.users.no_privileges}
-                        privilegesLabel={hebrewConstants.users.privileges}
-                        createdAt={user.created_at}
-                        createdAtLabel={hebrewConstants.users.created_at}
-                        deleteButtonText={hebrewConstants.users.delete_user}
-                        editButtonText={hebrewConstants.users.set_admin}
-                        onDelete={DeleteUser}
-                        onEdit={SetAdmin}
-                    />
-                ))}
-            </Grid>
-            <PaginationControls
-                pageCount={Math.ceil(userCount / generalConstants.items_per_page)}
-                currentPage={parseInt(page) - 1}
-                goToPage={(page: number) => {
-                    setSearchParams({ q: query, page: (page + 1).toString() });
-                }}
-            />
 
-            <OneButtonPopUp
-                open={openError}
-                theme='error'
-                buttonText={hebrewConstants.ok}
-                onButtonClick={() => setOpenError(false)}
-            >
-                {hebrewConstants.user_errors.generic_error}
-            </OneButtonPopUp>
-            <ConfirmDialog
-                yesButtonText={hebrewConstants.ok}
-                noButtonText={hebrewConstants.cancel}
-            />
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+                <ConfirmDialog
+                    yesButtonText={hebrewConstants.ok}
+                    noButtonText={hebrewConstants.cancel}
+                />
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
+            </Container>
         </Container>
     )
 }

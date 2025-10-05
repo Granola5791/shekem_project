@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import SearchBar from '../components/SearchBar'
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import type { HebrewConstants, BackendConstants, GeneralConstants } from '../utils/constants';
 import { FetchHebrewConstants, FetchBackendConstants, FetchGeneralConstants, insertValuesToConstantStr } from '../utils/constants';
 import { FetchSearchItems, type Item } from '../utils/manageItems';
@@ -16,6 +16,9 @@ import { Typography } from '@mui/material';
 import { useNavigation } from '../utils/navigation';
 import OneButtonPopUp from '../components/OneButtonPopUp';
 import { useConfirm } from '../components/useConfirm';
+import NavBar from '../components/NavBar';
+import HamburgerMenu from '../components/HamburgerMenu';
+import { Logout } from '../utils/logout';
 
 const ItemManagementPage = () => {
 
@@ -31,7 +34,15 @@ const ItemManagementPage = () => {
     const [backendConstants, setBackendConstants] = React.useState<BackendConstants | null>(null);
     const [generalConstants, setGeneralConstants] = React.useState<GeneralConstants | null>(null);
     const [openError, setOpenError] = React.useState(false);
-    const { goToHome: GoToHome } = useNavigation();
+    const [menuOpen, setMenuOpen] = React.useState(false);
+    const {
+        goToHome: GoToHome,
+        goToCart: GoToCart,
+        searchItems: SearchItems,
+        goToLogin: GoToLogin,
+        goToOrders: GoToOrders,
+        goToManagement: GoToManagement,
+    } = useNavigation(true);
     const { askConfirm, ConfirmDialog } = useConfirm();
 
     useEffect(() => {
@@ -170,110 +181,136 @@ const ItemManagementPage = () => {
         setOpenNewItemEdit(false);
     };
 
+    const LogoutUser = async () => {
+        const res = await Logout();
+        if (!res.ok) {
+            setOpenError(true);
+            return;
+        }
+        GoToLogin();
+    }
+
 
 
     return (
-        <Container
-            disableGutters
-            sx={{
-                bgcolor: 'rgba(250, 250, 250, 1)',
-                height: '100vh',
-                padding: '10px',
-            }}
-        >
-
-            <Link to="/home" style={{ position: 'absolute' }}>
-                <img style={{ maxHeight: '200px', width: '200px' }} src="/photos/caveret-logo.svg" alt="logo" />
-            </Link>
-
-            <Box gap={3} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '30px' }}>
-
-                <SearchBar
-                    onSearch={(searchQuery: string) => {
-                        setSearchParams({ q: searchQuery, page: '1' });
-                    }}
-                />
-
-                <IconButton onClick={handleOpenNewItemEdit} sx={{ bgcolor: 'rgba(255, 235, 19, 1)', borderRadius: '10%', height: 'fit-content' }}>
-                    <AddIcon />
-                    <Typography>{hebrewConstants.items.add_item}</Typography>
-                </IconButton>
-            </Box>
-
-
-            <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center" sx={{ marginTop: '20px' }}>
-                {[...items.values()].map((item: Item) => (
-                    <AdminItemCard
-                        key={item.id}
-                        itemID={item.id}
-                        itemIDLabel={hebrewConstants.items.item_id_label}
-                        itemTitle={item.name}
-                        price={item.price}
-                        stock={item.stock}
-                        editButtonText={hebrewConstants.items.edit_item_button}
-                        deleteButtonText={hebrewConstants.items.delete_item}
-                        moneySymbol={hebrewConstants.items.money_symbol}
-                        stockLabel={hebrewConstants.items.stock_label}
-                        image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
-                        onEdit={() => handleOpenItemEdit(item.id)}
-                        onDelete={DeleteItem}
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
+            <NavBar
+                onSearch={SearchItems}
+                goToCart={GoToCart}
+                logoSrc="/photos/caveret-logo.svg"
+                logoClick={GoToHome}
+                showEditButton={true}
+                onEdit={GoToManagement}
+                onMenuClick={() => setMenuOpen(true)}
+            />
+            <Container
+                disableGutters
+                maxWidth='md'
+                sx={{
+                    bgcolor: 'white',
+                    marginTop: '15vh',
+                    padding: '10px',
+                    minHeight: '100vh'
+                }}
+            >
+                <Box gap={3} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '30px' }}>
+                    <SearchBar
+                        onSearch={(searchQuery: string) => {
+                            setSearchParams({ q: searchQuery, page: '1' });
+                        }}
                     />
-                ))}
-            </Grid>
 
-            {currItemID !== -1 && (
+                    <IconButton onClick={handleOpenNewItemEdit} sx={{ bgcolor: 'rgba(255, 235, 19, 1)', borderRadius: '10%', height: 'fit-content' }}>
+                        <AddIcon />
+                        <Typography>{hebrewConstants.items.add_item}</Typography>
+                    </IconButton>
+                </Box>
+
+
+                <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center" sx={{ marginTop: '20px' }}>
+                    {[...items.values()].map((item: Item) => (
+                        <AdminItemCard
+                            key={item.id}
+                            itemID={item.id}
+                            itemIDLabel={hebrewConstants.items.item_id_label}
+                            itemTitle={item.name}
+                            price={item.price}
+                            stock={item.stock}
+                            editButtonText={hebrewConstants.items.edit_item_button}
+                            deleteButtonText={hebrewConstants.items.delete_item}
+                            moneySymbol={hebrewConstants.items.money_symbol}
+                            stockLabel={hebrewConstants.items.stock_label}
+                            image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
+                            onEdit={() => handleOpenItemEdit(item.id)}
+                            onDelete={DeleteItem}
+                        />
+                    ))}
+                </Grid>
+
+                {currItemID !== -1 && (
+                    <ItemEdit
+                        open={openItemEdit}
+                        itemID={currItemID}
+                        itemIDLabel={hebrewConstants.items.item_id_label}
+                        itemTitle={items.get(currItemID)?.name}
+                        itemTitleLabel={hebrewConstants.items.item_name_label}
+                        price={items.get(currItemID)?.price}
+                        priceLabel={hebrewConstants.items.price_label}
+                        stock={items.get(currItemID)?.stock}
+                        stockLabel={hebrewConstants.items.stock_label}
+                        imageLabel={hebrewConstants.items.item_photo_label}
+                        imageUrl={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, currItemID)}
+                        onCancel={handleCloseItemEdit}
+                        onSubmit={UpdateItem}
+                        cancelButtonText={hebrewConstants.items.cancel_button}
+                        submitButtonText={hebrewConstants.items.submit_button}
+                        readonlyID
+                    />
+                )}
+
                 <ItemEdit
-                    open={openItemEdit}
-                    itemID={currItemID}
+                    open={openNewItemEdit}
                     itemIDLabel={hebrewConstants.items.item_id_label}
-                    itemTitle={items.get(currItemID)?.name}
                     itemTitleLabel={hebrewConstants.items.item_name_label}
-                    price={items.get(currItemID)?.price}
                     priceLabel={hebrewConstants.items.price_label}
-                    stock={items.get(currItemID)?.stock}
                     stockLabel={hebrewConstants.items.stock_label}
                     imageLabel={hebrewConstants.items.item_photo_label}
-                    imageUrl={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, currItemID)}
-                    onCancel={handleCloseItemEdit}
-                    onSubmit={UpdateItem}
+                    onCancel={handleCloseNewItemEdit}
+                    onSubmit={AddItem}
                     cancelButtonText={hebrewConstants.items.cancel_button}
                     submitButtonText={hebrewConstants.items.submit_button}
-                    readonlyID
                 />
-            )}
 
-            <ItemEdit
-                open={openNewItemEdit}
-                itemIDLabel={hebrewConstants.items.item_id_label}
-                itemTitleLabel={hebrewConstants.items.item_name_label}
-                priceLabel={hebrewConstants.items.price_label}
-                stockLabel={hebrewConstants.items.stock_label}
-                imageLabel={hebrewConstants.items.item_photo_label}
-                onCancel={handleCloseNewItemEdit}
-                onSubmit={AddItem}
-                cancelButtonText={hebrewConstants.items.cancel_button}
-                submitButtonText={hebrewConstants.items.submit_button}
-            />
-
-            <PaginationControls
-                pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
-                currentPage={parseInt(page) - 1}
-                goToPage={(page: number) => {
-                    setSearchParams({ q: query, page: (page + 1).toString() });
-                }}
-            />
-            <OneButtonPopUp
-                open={openError}
-                theme='error'
-                buttonText={hebrewConstants.ok}
-                onButtonClick={() => setOpenError(false)}
-            >
-                {hebrewConstants.user_errors.generic_error}
-            </OneButtonPopUp>
-            <ConfirmDialog
-                yesButtonText={hebrewConstants.ok}
-                noButtonText={hebrewConstants.cancel}
-            />
+                <PaginationControls
+                    pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
+                    currentPage={parseInt(page) - 1}
+                    goToPage={(page: number) => {
+                        setSearchParams({ q: query, page: (page + 1).toString() });
+                    }}
+                />
+                <OneButtonPopUp
+                    open={openError}
+                    theme='error'
+                    buttonText={hebrewConstants.ok}
+                    onButtonClick={() => setOpenError(false)}
+                >
+                    {hebrewConstants.user_errors.generic_error}
+                </OneButtonPopUp>
+                <ConfirmDialog
+                    yesButtonText={hebrewConstants.ok}
+                    noButtonText={hebrewConstants.cancel}
+                />
+                <Box onClick={() => setMenuOpen(false)}>
+                    <HamburgerMenu
+                        isOpen={menuOpen}
+                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                        bottomItemTitles={[hebrewConstants.logout]}
+                        bottomItemFunctions={[LogoutUser]}
+                        bgColor='rgba(255, 235, 19, 1)'
+                    />
+                </Box>
+            </Container>
         </Container>
     )
 }

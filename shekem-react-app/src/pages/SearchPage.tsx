@@ -128,7 +128,7 @@ const SearchPage = () => {
     if (!backendConstants || !generalConstants || !hebrewConstants) return <div>Loading...</div>;
 
     return (
-        <>
+            <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
                 goToCart={GoToCart}
@@ -138,78 +138,78 @@ const SearchPage = () => {
                 showEditButton={isAdmin}
                 onEdit={GoToManagement}
             />
-            <Container
-                disableGutters
-                sx={{
-                    bgcolor: 'rgba(250, 250, 250, 1)',
-                    height: '100vh',
-                    padding: '10px',
-                    marginTop: '15vh'
-                }}
-            >
-
-                <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }} >
-                    {hebrewConstants.items.search_results_title}: "{query}"
-                </Typography>
-
-                <SearchFilter
-                    categories={categories}
-                    categoriesLabel={hebrewConstants.items.filter_by_category_label}
-                    sortOptions={generalConstants.items.sort_by_options}
-                    sortOptionsLabels={hebrewConstants.items.sort_by_options_labels}
-                    sortLabel={hebrewConstants.items.sort_by_label}
-                    filterButtonText={hebrewConstants.items.filter_button}
-                    noneSelectedText={hebrewConstants.items.none_selected_text}
-                    onFilter={FilterItems}
-                    sx={{ margin: '20px' }}
-                />
-
-                <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
-                    {items.map((item: Item) => (
-                        <ItemCard
-                            key={item.id}
-                            id={item.id}
-                            itemTitle={item.name}
-                            price={item.price}
-                            stock={item.stock}
-                            buttonText={hebrewConstants.items.add_to_cart_button}
-                            moneySymbol={hebrewConstants.items.money_symbol}
-                            stockLabel={hebrewConstants.items.stock_label}
-                            image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
-                            AddToCart={AddToCart}
-                        />
-                    ))}
-                </Grid>
-
-                {
-                    itemCount > generalConstants.items_per_page &&
-                    <PaginationControls
-                        pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
-                        currentPage={parseInt(page) - 1}
-                        goToPage={GoToPage}
-                    />
-                }
-
-                <OneButtonPopUp
-                    open={openError}
-                    theme='error'
-                    buttonText={hebrewConstants.ok}
-                    onButtonClick={() => setOpenError(false)}
+                <Container
+                    maxWidth='md'
+                    disableGutters
+                    sx={{
+                        minHeight: '100vh',
+                        bgcolor: 'white',
+                        padding: '10px',
+                        marginTop: '15vh'
+                    }}
                 >
-                    {hebrewConstants.user_errors.generic_error}
-                </OneButtonPopUp>
-                <Box onClick={() => setMenuOpen(false)}>
-                    <HamburgerMenu
-                        isOpen={menuOpen}
-                        topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
-                        topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
-                        bottomItemTitles={[hebrewConstants.logout]}
-                        bottomItemFunctions={[LogoutUser]}
-                        bgColor='rgba(255, 235, 19, 1)'
+                    <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }} >
+                        {hebrewConstants.items.search_results_title}: "{query}"
+                    </Typography>
+
+                    <SearchFilter
+                        categories={categories}
+                        categoriesLabel={hebrewConstants.items.filter_by_category_label}
+                        sortOptions={generalConstants.items.sort_by_options}
+                        sortOptionsLabels={hebrewConstants.items.sort_by_options_labels}
+                        sortLabel={hebrewConstants.items.sort_by_label}
+                        filterButtonText={hebrewConstants.items.filter_button}
+                        noneSelectedText={hebrewConstants.items.none_selected_text}
+                        onFilter={FilterItems}
+                        sx={{ margin: '20px' }}
                     />
-                </Box>
+
+                    <Grid container rowSpacing={1} columnSpacing={3} justifyContent="center">
+                        {items.map((item: Item) => (
+                            <ItemCard
+                                key={item.id}
+                                id={item.id}
+                                itemTitle={item.name}
+                                price={item.price}
+                                stock={item.stock}
+                                buttonText={hebrewConstants.items.add_to_cart_button}
+                                moneySymbol={hebrewConstants.items.money_symbol}
+                                stockLabel={hebrewConstants.items.stock_label}
+                                image={backendConstants.backend_address + insertValuesToConstantStr(backendConstants.get_item_photo_api, item.id)}
+                                AddToCart={AddToCart}
+                            />
+                        ))}
+                    </Grid>
+
+                    {
+                        itemCount > generalConstants.items_per_page &&
+                        <PaginationControls
+                            pageCount={Math.ceil(itemCount / generalConstants.items_per_page)}
+                            currentPage={parseInt(page) - 1}
+                            goToPage={GoToPage}
+                        />
+                    }
+
+                    <OneButtonPopUp
+                        open={openError}
+                        theme='error'
+                        buttonText={hebrewConstants.ok}
+                        onButtonClick={() => setOpenError(false)}
+                    >
+                        {hebrewConstants.user_errors.generic_error}
+                    </OneButtonPopUp>
+                    <Box onClick={() => setMenuOpen(false)}>
+                        <HamburgerMenu
+                            isOpen={menuOpen}
+                            topItemTitles={[hebrewConstants.go_to_home, hebrewConstants.go_to_cart, hebrewConstants.go_to_orders]}
+                            topItemFunctions={[GoToHome, GoToCart, GoToOrders]}
+                            bottomItemTitles={[hebrewConstants.logout]}
+                            bottomItemFunctions={[LogoutUser]}
+                            bgColor='rgba(255, 235, 19, 1)'
+                        />
+                    </Box>
+                </Container>
             </Container>
-        </>
     )
 }
 

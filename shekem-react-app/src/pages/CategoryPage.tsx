@@ -61,7 +61,7 @@ const CategoryPage = () => {
     const [openError, setOpenError] = React.useState(false);
     const [menuOpen, setMenuOpen] = React.useState(false);
 
-    const {state} = useLocation();
+    const { state } = useLocation();
     const isAdmin = state?.role === 'admin';
     const {
         goToHome: GoToHome,
@@ -142,7 +142,7 @@ const CategoryPage = () => {
     }
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
                 onSearch={SearchItems}
                 goToCart={GoToCart}
@@ -153,12 +153,12 @@ const CategoryPage = () => {
                 onEdit={GoToManagement}
             />
             <Container
-                disableGutters
+                maxWidth="md"
                 sx={{
                     bgcolor: 'rgba(250, 250, 250, 1)',
-                    height: '100vh',
                     padding: '10px',
-                    marginTop: '15vh'
+                    marginTop: '15vh',
+                    minHeight: '100vh',
                 }}
             >
                 <Typography variant="h4" gutterBottom textAlign={'center'}>
@@ -210,7 +210,7 @@ const CategoryPage = () => {
                     />
                 </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

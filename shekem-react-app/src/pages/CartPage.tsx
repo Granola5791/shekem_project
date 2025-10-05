@@ -187,9 +187,9 @@ const CartPage = () => {
 
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
-                logoSrc='/src/assets/caveret-logo.svg'
+                logoSrc='/photos/caveret-logo.svg'
                 onSearch={SearchItems}
                 logoClick={GoToHome}
                 goToCart={GoToCart}
@@ -197,16 +197,15 @@ const CartPage = () => {
                 showEditButton={isAdmin}
                 onEdit={GoToManagement}
             />
-
             <Container
                 disableGutters
                 maxWidth="md"
                 sx={{
-                    bgcolor: 'rgba(250, 250, 250, 1)',
+                    bgcolor: 'white',
                     display: 'flex',
-                    height: '100vh',
                     padding: '10px',
-                    marginTop: '15vh'
+                    marginTop: '15vh',
+                    minHeight: '100vh',
                 }}
             >
                 <Box sx={{ width: '50%', maxHeight: '90%', overflowY: 'auto', padding: '10px' }}>
@@ -290,7 +289,7 @@ const CartPage = () => {
                     />
                 </Box>
             </Container>
-        </>
+        </Container>
     )
 }
 

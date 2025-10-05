@@ -82,9 +82,9 @@ const OrdersPage = () => {
     }
 
     return (
-        <>
+        <Container maxWidth={false} sx={{ bgcolor: '#ffeb13' }}>
             <NavBar
-                logoSrc='/src/assets/caveret-logo.svg'
+                logoSrc='/photos/caveret-logo.svg'
                 onSearch={SearchItems}
                 logoClick={GoToHome}
                 goToCart={GoToCart}
@@ -92,7 +92,14 @@ const OrdersPage = () => {
                 showEditButton={false}
                 onEdit={GoToManagement}
             />
-            <Container maxWidth="md" sx={{ padding: '20px', bgcolor: 'rgba(218, 218, 218, 0.41)', marginTop: '15vh' }}>
+            <Container
+                maxWidth="md"
+                sx={{
+                    padding: '20px',
+                    bgcolor: 'white',
+                    marginTop: '15vh'
+                }}
+            >
 
                 <Typography variant="h4" align="center">
                     <s>{hebrewConstants.orders.order_page_title.part1}</s> {hebrewConstants.orders.order_page_title.part2}
@@ -141,7 +148,7 @@ const OrdersPage = () => {
                     />
                 }
             </Container >
-        </>
+        </Container>
     )
 }
 
